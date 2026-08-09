@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 import '../../domain/player_progress.dart';
+import '../../domain/character.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
@@ -24,14 +25,19 @@ class MenuScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations t = AppLocalizations.of(context);
     final PlayerProgress progress = ref.watch(progressProvider);
+    ref.watch(dialogueSeenProvider);
 
     final int firstUnfinished = kArenas
         .map((ArenaSpec a) => a.id)
         .firstWhere(
-          (int id) => !progress.isCompleted(id),
+          (int id) => !progress.isCompleted(id) && !progress.isSkipped(id),
           orElse: () => kArenas.first.id,
         );
-    final bool fresh = progress.results.isEmpty;
+    final DialogueSeenController dialogueSeen = ref.read(
+      dialogueSeenProvider.notifier,
+    );
+    final bool showGuide =
+        dialogueSeen.isRestored && !dialogueSeen.hasSeen(DialogueId.intro);
 
     return Scaffold(
       backgroundColor: BbTokens.sky,
@@ -91,7 +97,7 @@ class MenuScreen extends ConsumerWidget {
                             MaterialPageRoute<void>(
                               builder: (_) => GameScreen(
                                 arenaId: firstUnfinished,
-                                showGuide: fresh,
+                                showGuide: showGuide,
                               ),
                             ),
                           ),

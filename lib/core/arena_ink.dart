@@ -18,23 +18,28 @@ import 'bb_tokens.dart';
 /// never moved. The duplication against `BbTokens` is the price, and the
 /// comments below are the contract — if a brand hue changes, change it here too.
 abstract final class ArenaInk {
-  static Color of(int rgb, [int alpha = 255]) => Color.fromARGB(
-        alpha,
-        (rgb >> 16) & 0xFF,
-        (rgb >> 8) & 0xFF,
-        rgb & 0xFF,
-      );
+  static Color of(int rgb, [int alpha = 255]) =>
+      Color.fromARGB(alpha, (rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 
   /// Night stage. No `BbTokens` equivalent — the parent brand has no dark mode.
   static const int bgTop = 0x171238;
   static const int bgBottom = 0x2C1F5C;
+  static const int panelNavy = 0x151B3E;
 
   static const int frame = 0xFFC93C; // == BbTokens.bbYellow
+  static const int primaryGold = frame;
+  static const int trajectoryCyan = 0x7FCBFF;
   static const int outline = 0x2B2038; // == BbTokens.ink900
   static const int cream = 0xFFF6E9; // == BbTokens.cream
   static const int danger = 0xFF4D4D; // == BbTokens.danger
   static const int deflector = 0x7FCBFF; // == BbTokens.skyDeep
   static const int blockFill = 0x140F26; // darkened ink900
+
+  static const int hintAlpha = 0xE6;
+  static const double hintStrokeWidth = 0.85;
+  static const double hintDash = 2.6;
+  static const double hintGap = 1.8;
+  static const double hintWaypointRadius = 1.8;
 
   /// Target colours, in the brand's own order.
   static const List<int> targets = <int>[

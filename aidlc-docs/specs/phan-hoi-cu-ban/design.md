@@ -433,7 +433,7 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Cooldown rung 60ms | **Chưa tune.** Con số khởi điểm (A6b), không phải giá trị đã đo |
 | Trần `kMaxEffectElements = 24` | Giá trị đã chốt theo suy luận một-cú-bắn-một-lúc (~11 phần tử đồng thời), **chưa đo** dưới tải thật |
 | `endShot(exitedBottom)` cắt vạch đang toả giữa lúc mờ dần | Đây đúng chữ AC US-1/2.3 đòi ("kết thúc tầng hiệu ứng của cú đó"), nhưng rơi khỏi đáy sân là kiểu chết **thường gặp nhất** — nên phần lớn cú bắn sẽ bị cắt hiệu ứng thay vì để nó mờ hết. Nếu cầm máy thấy khó chịu, "ngừng sinh phần tử mới nhưng để phần tử đang sống mờ hết" **cũng** thoả ý định của AC (ý định là chặn *ăn mừng*, không phải cắt phản hồi đang chạy). Chỉ biết được khi có máy |
-| Tương phản `primaryGold` trên capsule `panelNavy` | **Chưa đo.** Phải đạt ≥3:1 ở state thông tin trước khi chốt golden |
+| Tương phản `primaryGold` trên capsule `panelNavy` | **Đã đo trên token sRGB:** `#FFC93C` trên `#151B3E` = **10.87:1**. Default, pressed/punch và reduced-motion dùng cùng cặp màu nên đều đạt ≥3:1. |
 | Thiếu foundation doc | `codebase-summary.md` và `code-standards.md` **không tồn tại**. Vị trí `comic_effect_controller.dart` (ở `lib/ui/` chứ không `lib/state/`) đặt theo suy luận: nó chỉ giữ state trình bày do `Ticker` lái, cùng tầng với `Stamp`/`_shake` đang sống trong `game_screen` |
 
 ---

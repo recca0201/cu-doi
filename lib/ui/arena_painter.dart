@@ -6,9 +6,13 @@ import '../core/arena_ink.dart';
 import '../core/bb_theme.dart';
 import '../sim/arena.dart';
 import '../sim/geometry.dart';
+import 'comic_effect_controller.dart';
 import 'fit.dart';
 
 double _clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
+
+double multiplierFontSizeForBanks(int banks) =>
+    6.0 + math.min(banks, kMaxBanks - 1) * 0.8;
 
 /// A floating piece of comic feedback. Purely presentational — same spirit as
 /// the production game's comic layer, except here it annotates a mechanic that
@@ -35,11 +39,14 @@ class ArenaPainter extends CustomPainter {
     required this.showPreview,
     required this.trail,
     required this.ghostTrail,
+    this.hintPath = const <V2>[],
     required this.ballPos,
     required this.currentBanks,
     required this.shotInFlight,
     required this.stamps,
     required this.shake,
+    this.effects = const <EffectElement>[],
+    this.reducedMotion = false,
   });
 
   final ArenaSpec arena;
@@ -49,6 +56,7 @@ class ArenaPainter extends CustomPainter {
   final bool showPreview;
   final List<V2> trail;
   final List<V2> ghostTrail;
+  final List<V2> hintPath;
   final V2? ballPos;
 
   /// Banks accumulated by the shot in flight, or 0 when idle. Drives the
@@ -60,6 +68,8 @@ class ArenaPainter extends CustomPainter {
   final bool shotInFlight;
   final List<Stamp> stamps;
   final double shake;
+  final List<EffectElement> effects;
+  final bool reducedMotion;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -68,7 +78,7 @@ class ArenaPainter extends CustomPainter {
     _paintBackdrop(canvas, size);
 
     canvas.save();
-    if (shake > 0.001) {
+    if (!reducedMotion && shake > 0.001) {
       // Deterministic jitter — no Random inside a paint pass.
       final double a = shake * fit.u(0.9);
       canvas.translate(math.sin(shake * 47) * a, math.cos(shake * 61) * a);
@@ -78,13 +88,15 @@ class ArenaPainter extends CustomPainter {
     _paintBlocks(canvas, fit);
     _paintDeflectors(canvas, fit);
     _paintGhost(canvas, fit);
+    _paintHint(canvas, fit);
+    _paintEffects(canvas, fit);
     _paintTrail(canvas, fit);
     _paintTargets(canvas, fit);
     if (showPreview && !shotInFlight) _paintAim(canvas, fit);
     _paintLauncher(canvas, fit);
     final V2? ball = ballPos;
     if (ball != null) _paintBall(canvas, fit, ball);
-    _paintMultiplier(canvas, fit, size);
+    _paintMultiplier(canvas, fit);
     _paintStamps(canvas, fit);
 
     canvas.restore();
@@ -98,7 +110,10 @@ class ArenaPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: <Color>[ArenaInk.of(ArenaInk.bgTop), ArenaInk.of(ArenaInk.bgBottom)],
+          colors: <Color>[
+            ArenaInk.of(ArenaInk.bgTop),
+            ArenaInk.of(ArenaInk.bgBottom),
+          ],
         ).createShader(r),
     );
   }
@@ -110,7 +125,10 @@ class ArenaPainter extends CustomPainter {
     );
 
     // Faint playfield wash so the live area reads as a stage.
-    canvas.drawRect(arenaRect, Paint()..color = ArenaInk.of(ArenaInk.frame, 0x1F));
+    canvas.drawRect(
+      arenaRect,
+      Paint()..color = ArenaInk.of(ArenaInk.frame, 0x1F),
+    );
 
     // Left, top and right are real walls. The bottom is drawn dashed and red
     // because it is NOT a wall — anything crossing it is lost. That asymmetry
@@ -197,6 +215,86 @@ class ArenaPainter extends CustomPainter {
     );
   }
 
+  void _paintHint(Canvas canvas, ArenaFit fit) {
+    if (hintPath.length < 2) return;
+    final List<Offset> points = hintPath.map(fit.toScreen).toList();
+    final Paint paint = Paint()
+      ..color = ArenaInk.of(ArenaInk.primaryGold, ArenaInk.hintAlpha)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = fit.u(ArenaInk.hintStrokeWidth)
+      ..strokeCap = StrokeCap.round;
+    _dashed(
+      canvas,
+      points,
+      paint,
+      fit.u(ArenaInk.hintDash),
+      fit.u(ArenaInk.hintGap),
+    );
+    for (int i = 1; i < points.length - 1; i++) {
+      canvas.drawCircle(points[i], fit.u(ArenaInk.hintWaypointRadius), paint);
+    }
+  }
+
+  void _paintEffects(Canvas canvas, ArenaFit fit) {
+    if (reducedMotion) return;
+    for (final EffectElement element in effects) {
+      final double progress = _clamp01(element.age / element.tier.duration);
+      final double grow = .35 + .65 * (1 - math.pow(1 - progress, 2));
+      final int alpha = ((1 - progress) * 230).round();
+      final Offset center = fit.toScreen(element.pos);
+      final double length = fit.u(element.tier.spokeLength * grow);
+      final double inner = length * .28;
+      final double phase = element.kind.index * .37;
+      for (int i = 0; i < element.tier.spokeCount; i++) {
+        final double angle = phase + math.pi * 2 * i / element.tier.spokeCount;
+        final Offset direction = Offset(math.cos(angle), math.sin(angle));
+        _paintProtectedSpoke(
+          canvas,
+          fit,
+          center + direction * inner,
+          center + direction * length,
+          alpha,
+          element.tier.spokeWidth,
+        );
+      }
+    }
+  }
+
+  void _paintProtectedSpoke(
+    Canvas canvas,
+    ArenaFit fit,
+    Offset from,
+    Offset to,
+    int alpha,
+    double width,
+  ) {
+    const int pieces = 12;
+    for (int piece = 0; piece < pieces; piece++) {
+      final double a = piece / pieces;
+      final double b = (piece + 1) / pieces;
+      final Offset start = Offset.lerp(from, to, a)!;
+      final Offset end = Offset.lerp(from, to, b)!;
+      final Offset midpoint = Offset.lerp(start, end, .5)!;
+      int segmentAlpha = alpha;
+      for (int i = 0; i < arena.targets.length; i++) {
+        if (!alive[i]) continue;
+        final Offset target = fit.toScreen(arena.targets[i].pos);
+        if ((midpoint - target).distance < fit.u(kTargetRadius * 1.55)) {
+          segmentAlpha = math.min(segmentAlpha, 0x20);
+          break;
+        }
+      }
+      canvas.drawLine(
+        start,
+        end,
+        Paint()
+          ..color = ArenaInk.of(ArenaInk.trajectoryCyan, segmentAlpha)
+          ..strokeWidth = fit.u(width)
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+  }
+
   void _paintTrail(Canvas canvas, ArenaFit fit) {
     if (trail.length < 2) return;
     canvas.drawPath(
@@ -229,7 +327,11 @@ class ArenaPainter extends CustomPainter {
       final bool armed = currentBanks >= t.requiredBanks;
 
       if (armed) {
-        canvas.drawCircle(c, r * 1.55, Paint()..color = ArenaInk.of(base, 0x28));
+        canvas.drawCircle(
+          c,
+          r * 1.55,
+          Paint()..color = ArenaInk.of(base, 0x28),
+        );
         canvas.drawCircle(
           c,
           r * 1.24,
@@ -314,8 +416,9 @@ class ArenaPainter extends CustomPainter {
   }) {
     final Offset chip = Offset(c.dx + r * 0.78, c.dy - r * 0.78);
     final double cr = r * 0.46;
-    final Color accent =
-        armed ? ArenaInk.of(ArenaInk.frame) : ArenaInk.of(ArenaInk.cream, 0x66);
+    final Color accent = armed
+        ? ArenaInk.of(ArenaInk.frame)
+        : ArenaInk.of(ArenaInk.cream, 0x66);
     canvas.drawCircle(chip, cr, Paint()..color = ArenaInk.of(ArenaInk.outline));
     canvas.drawCircle(
       chip,
@@ -336,8 +439,9 @@ class ArenaPainter extends CustomPainter {
 
   void _paintAim(Canvas canvas, ArenaFit fit) {
     if (previewPoints.length < 2) return;
-    final List<Offset> pts =
-        previewPoints.map((V2 p) => fit.toScreen(p)).toList();
+    final List<Offset> pts = previewPoints
+        .map((V2 p) => fit.toScreen(p))
+        .toList();
 
     // First leg is confident; anything past the first bank is faint. The
     // production game highlights every bubble a shot will pop, which removes
@@ -388,8 +492,16 @@ class ArenaPainter extends CustomPainter {
     );
     canvas.restore();
 
-    canvas.drawCircle(c, fit.u(5.2), Paint()..color = ArenaInk.of(ArenaInk.outline));
-    canvas.drawCircle(c, fit.u(4.0), Paint()..color = ArenaInk.of(ArenaInk.frame));
+    canvas.drawCircle(
+      c,
+      fit.u(5.2),
+      Paint()..color = ArenaInk.of(ArenaInk.outline),
+    );
+    canvas.drawCircle(
+      c,
+      fit.u(4.0),
+      Paint()..color = ArenaInk.of(ArenaInk.frame),
+    );
   }
 
   void _paintBall(Canvas canvas, ArenaFit fit, V2 pos) {
@@ -399,20 +511,51 @@ class ArenaPainter extends CustomPainter {
       fit.u(kBallRadius * 2.2),
       Paint()..color = ArenaInk.of(ArenaInk.cream, 0x33),
     );
-    canvas.drawCircle(c, fit.u(kBallRadius), Paint()..color = ArenaInk.of(ArenaInk.cream));
+    canvas.drawCircle(
+      c,
+      fit.u(kBallRadius),
+      Paint()..color = ArenaInk.of(ArenaInk.cream),
+    );
   }
 
-  /// Live BỪA multiplier. Only appears once the shot has actually banked, so
-  /// the number never sits at ×1 as furniture.
-  void _paintMultiplier(Canvas canvas, ArenaFit fit, Size size) {
-    if (!shotInFlight || currentBanks <= 0) return;
+  /// Live multiplier capsule. It remains visible at ×1 during flight so
+  /// reduced motion never removes gameplay information.
+  void _paintMultiplier(Canvas canvas, ArenaFit fit) {
+    if (!shotInFlight) return;
     final int mult = math.min(1 + currentBanks, kMaxMultiplier);
+    final bool punch =
+        !reducedMotion &&
+        effects.any(
+          (EffectElement element) =>
+              element.kind == EffectKind.bank && element.age < .18,
+        );
+    final double scale = punch ? 1.12 : 1;
+    // The campaign has no targets this low; keeping the HUD capsule here
+    // prevents an informational overlay from obscuring the armed tell.
+    final Offset center = fit.toScreen(const V2(92, 143));
+    final Rect capsule = Rect.fromCenter(
+      center: center,
+      width: fit.u(14) * scale,
+      height: fit.u(18) * scale,
+    );
+    final RRect rounded = RRect.fromRectAndRadius(
+      capsule,
+      Radius.circular(fit.u(7)),
+    );
+    canvas.drawRRect(rounded, Paint()..color = ArenaInk.of(ArenaInk.panelNavy));
+    canvas.drawRRect(
+      rounded,
+      Paint()
+        ..color = ArenaInk.of(ArenaInk.primaryGold)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(.65),
+    );
     _text(
       canvas,
-      'BỪA ×$mult',
-      Offset(size.width / 2, fit.toScreen(const V2(0, 14)).dy),
-      fit.u(11),
-      ArenaInk.of(ArenaInk.frame, 0x59),
+      '×$mult',
+      center,
+      fit.u(multiplierFontSizeForBanks(currentBanks)) * scale,
+      ArenaInk.of(ArenaInk.primaryGold),
     );
   }
 
@@ -424,7 +567,8 @@ class ArenaPainter extends CustomPainter {
       // at the target centre puts the text under the face it is reacting to,
       // which made the most important message in the game ("Bắn thẳng à?")
       // unreadable at the exact moment it needs to land.
-      final Offset at = fit.toScreen(s.pos) -
+      final Offset at =
+          fit.toScreen(s.pos) -
           Offset(0, fit.u(kTargetRadius + 3.5) + fit.u(7) * t);
       _text(
         canvas,

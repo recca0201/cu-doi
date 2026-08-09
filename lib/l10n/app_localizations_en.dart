@@ -125,6 +125,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get musicLabel => 'Music';
 
   @override
+  String get hapticsLabel => 'Haptics';
+
+  @override
   String get languageLabel => 'Language';
 
   @override
@@ -132,4 +135,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetProgressDone => 'Progress cleared.';
+
+  @override
+  String get hintButtonLabel => 'Ricochet hint';
+
+  @override
+  String hintCostBadge(int cost) {
+    return '$cost coins';
+  }
+
+  @override
+  String hintInsufficientCoins(int missing) {
+    return '$missing coins short';
+  }
+
+  @override
+  String get hintUnavailable =>
+      'No useful hint was found for the arena right now.';
+
+  @override
+  String get hintComputing => 'Finding a ricochet…';
+
+  @override
+  String get hintFailed =>
+      'The hint could not be calculated or saved. Your coins are unchanged.';
+
+  @override
+  String hintShownAnnouncement(int count) {
+    return 'Hint path shown for $count target(s).';
+  }
+
+  @override
+  String get skipArenaLabel => 'Skip stage';
+
+  @override
+  String skipArenaCostBadge(int cost) {
+    return '$cost coins';
+  }
+
+  @override
+  String skipArenaInsufficientCoins(int missing) {
+    return '$missing more coins needed to skip';
+  }
+
+  @override
+  String get skipArenaConfirmTitle => 'Skip this stage?';
+
+  @override
+  String get skipArenaConfirmBody =>
+      'Spend 150 coins to unlock the next stage. You can replay this one later to earn its stars.';
+
+  @override
+  String get skipArenaConfirmCta => 'Spend coins and skip';
+
+  @override
+  String get skipArenaWriteFailed =>
+      'Progress could not be saved. No coins were spent.';
+
+  @override
+  String get arenaSkippedBadge => 'Skipped';
+
+  @override
+  String stuckReminderHint(int cost) {
+    return 'Stuck? Reveal a hint path for $cost coins.';
+  }
+
+  @override
+  String stuckReminderHintAndSkip(int hintCost, int skipCost) {
+    return 'You can reveal a hint ($hintCost coins) or skip the stage ($skipCost coins).';
+  }
+
+  @override
+  String get stuckReminderRetryCta => 'Try again';
+
+  @override
+  String get characterName => 'Doi';
+
+  @override
+  String get chapter1Title => 'Chapter 1 · Learn the bank';
+
+  @override
+  String get chapter2Title => 'Chapter 2 · Shelves and pockets';
+
+  @override
+  String get chapter3Title => 'Chapter 3 · Zig-zag';
+
+  @override
+  String get chapter4Title => 'Chapter 4 · Diagonal obstacles';
+
+  @override
+  String get chapterOtherTitle => 'Other stages';
+
+  @override
+  String chapterProgressLabel(int earned, int max) {
+    return '$earned/$max stars';
+  }
+
+  @override
+  String get currentLevelBadge => 'Current';
+
+  @override
+  String get dialogueIntro =>
+      'I\'m Doi. Straight shots only make them laugh—bank the ball enough times, then come back for them!';
+
+  @override
+  String get dialogueWin =>
+      'That was a beautiful bank! Keep that rhythm going.';
+
+  @override
+  String get dialogueLose =>
+      'The line was just off. Read the last trail, change the angle a little, and try again.';
+
+  @override
+  String get dialogueLoseShort => 'Just one angle off—try again!';
+
+  @override
+  String get dialogueFinalVictory =>
+      'All twenty arenas have yielded. The ricochet master title is yours!';
 }

@@ -13,22 +13,22 @@ class _VariantSpec {
 
 const _variants = {
   BbVariant.primary: _VariantSpec(
-    BbTokens.bbCoral,
-    BbTokens.bbCoralDark,
-    BbTokens.bbCoralDark,
-    Colors.white,
+    BbTokens.primaryGold,
+    BbTokens.primaryGoldDark,
+    BbTokens.outlineDark,
+    BbTokens.outlineDark,
   ),
   BbVariant.secondary: _VariantSpec(
-    BbTokens.bbTeal,
-    BbTokens.bbTealDark,
-    BbTokens.ink900,
+    BbTokens.secondaryBlue,
+    BbTokens.secondaryBlueDark,
+    BbTokens.outlineDark,
     Colors.white,
   ),
   BbVariant.accent: _VariantSpec(
-    BbTokens.bbYellow,
-    BbTokens.bbYellowDark,
-    BbTokens.ink900,
-    BbTokens.ink900,
+    BbTokens.tertiaryPurple,
+    BbTokens.bbGrapeDark,
+    BbTokens.outlineDark,
+    Colors.white,
   ),
   BbVariant.grape: _VariantSpec(
     BbTokens.bbGrape,
@@ -43,10 +43,10 @@ const _variants = {
     Colors.white,
   ),
   BbVariant.light: _VariantSpec(
-    BbTokens.surface,
-    BbTokens.ink100,
-    BbTokens.ink900,
-    BbTokens.ink900,
+    BbTokens.panelNavy,
+    BbTokens.nightIndigo,
+    BbTokens.outlineDark,
+    BbTokens.textPrimary,
   ),
 };
 
@@ -372,29 +372,39 @@ class BbToggle extends StatelessWidget {
     child: ExcludeSemantics(
       child: GestureDetector(
         excludeFromSemantics: true,
+        behavior: HitTestBehavior.opaque,
         onTap: () => onChanged(!value),
-        child: AnimatedContainer(
-          duration: BbTokens.durBase,
-          curve: BbTokens.easeBounce,
+        child: SizedBox(
           width: 64,
-          height: 38,
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            color: value ? BbTokens.bbTeal : BbTokens.ink300,
-            borderRadius: BorderRadius.circular(BbTokens.rPill),
-            border: Border.all(color: BbTokens.ink900, width: BbTokens.bd2),
-          ),
-          child: AnimatedAlign(
-            duration: BbTokens.durBase,
-            curve: BbTokens.easeBounce,
-            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              width: 28,
-              height: 28,
+          height: BbTokens.tapMin,
+          child: Center(
+            child: AnimatedContainer(
+              duration: BbTokens.durBase,
+              curve: BbTokens.easeBounce,
+              width: 64,
+              height: 38,
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                color: BbTokens.surface,
-                shape: BoxShape.circle,
+                color: value ? BbTokens.bbTeal : BbTokens.ink300,
+                borderRadius: BorderRadius.circular(BbTokens.rPill),
                 border: Border.all(color: BbTokens.ink900, width: BbTokens.bd2),
+              ),
+              child: AnimatedAlign(
+                duration: BbTokens.durBase,
+                curve: BbTokens.easeBounce,
+                alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: BbTokens.surface,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: BbTokens.ink900,
+                      width: BbTokens.bd2,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

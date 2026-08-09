@@ -7,14 +7,19 @@ import '../domain/player_progress.dart';
 /// can drop in later without touching state/UI (architecture ADR-5).
 abstract class ProgressRepository {
   Future<PlayerProgress> load();
-  Future<void> save(PlayerProgress progress);
+  Future<bool> save(PlayerProgress progress);
 }
 
 /// Offline-first local store. Writes are immediate and never throw up to the UI
 /// (US-017 AC-1.1); infrastructure errors degrade to an empty/last-known value.
 class LocalProgressRepository implements ProgressRepository {
-  LocalProgressRepository(this._prefs);
+  LocalProgressRepository(
+    SharedPreferences prefs, {
+    Future<bool> Function(String key, String value)? writer,
+  }) : _prefs = prefs,
+       _writer = writer ?? prefs.setString;
   final SharedPreferences _prefs;
+  final Future<bool> Function(String key, String value) _writer;
   static const _key = 'progress_v1';
 
   @override
@@ -35,9 +40,9 @@ class LocalProgressRepository implements ProgressRepository {
   }
 
   @override
-  Future<void> save(PlayerProgress progress) async {
+  Future<bool> save(PlayerProgress progress) async {
     try {
-      await _prefs.setString(_key, jsonEncode(progress.toJson()));
+      return await _writer(_key, jsonEncode(progress.toJson()));
     } catch (e, s) {
       dev.log(
         'save progress failed',
@@ -45,6 +50,7 @@ class LocalProgressRepository implements ProgressRepository {
         error: e,
         stackTrace: s,
       );
+      return false;
     }
   }
 }

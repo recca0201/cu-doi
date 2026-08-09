@@ -125,6 +125,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get musicLabel => 'Nhạc nền';
 
   @override
+  String get hapticsLabel => 'Rung';
+
+  @override
   String get languageLabel => 'Ngôn ngữ';
 
   @override
@@ -132,4 +135,119 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get resetProgressDone => 'Đã xoá tiến trình.';
+
+  @override
+  String get hintButtonLabel => 'Gợi ý đường dội';
+
+  @override
+  String hintCostBadge(int cost) {
+    return '$cost xu';
+  }
+
+  @override
+  String hintInsufficientCoins(int missing) {
+    return 'Thiếu $missing xu';
+  }
+
+  @override
+  String get hintUnavailable => 'Chưa tìm được đường gợi ý cho sân lúc này.';
+
+  @override
+  String get hintComputing => 'Đang tính đường dội…';
+
+  @override
+  String get hintFailed =>
+      'Không thể tính hoặc lưu gợi ý. Xu của bạn vẫn còn nguyên.';
+
+  @override
+  String hintShownAnnouncement(int count) {
+    return 'Đã hiện đường gợi ý phá được $count mục tiêu.';
+  }
+
+  @override
+  String get skipArenaLabel => 'Bỏ qua màn';
+
+  @override
+  String skipArenaCostBadge(int cost) {
+    return '$cost xu';
+  }
+
+  @override
+  String skipArenaInsufficientCoins(int missing) {
+    return 'Còn thiếu $missing xu để bỏ qua';
+  }
+
+  @override
+  String get skipArenaConfirmTitle => 'Bỏ qua màn này?';
+
+  @override
+  String get skipArenaConfirmBody =>
+      'Bạn sẽ dùng 150 xu để mở màn kế tiếp. Màn này vẫn có thể chơi lại để lấy sao.';
+
+  @override
+  String get skipArenaConfirmCta => 'Dùng xu và bỏ qua';
+
+  @override
+  String get skipArenaWriteFailed =>
+      'Không lưu được tiến trình. Xu chưa bị trừ.';
+
+  @override
+  String get arenaSkippedBadge => 'Đã bỏ qua';
+
+  @override
+  String stuckReminderHint(int cost) {
+    return 'Đang bí? Thử xem đường gợi ý với $cost xu.';
+  }
+
+  @override
+  String stuckReminderHintAndSkip(int hintCost, int skipCost) {
+    return 'Bạn có thể xem gợi ý ($hintCost xu) hoặc bỏ qua màn ($skipCost xu).';
+  }
+
+  @override
+  String get stuckReminderRetryCta => 'Thử lại';
+
+  @override
+  String get characterName => 'Dội';
+
+  @override
+  String get chapter1Title => 'Chương 1 · Học luật dội';
+
+  @override
+  String get chapter2Title => 'Chương 2 · Kệ và hốc';
+
+  @override
+  String get chapter3Title => 'Chương 3 · Zig-zag';
+
+  @override
+  String get chapter4Title => 'Chương 4 · Vật cản chéo';
+
+  @override
+  String get chapterOtherTitle => 'Màn khác';
+
+  @override
+  String chapterProgressLabel(int earned, int max) {
+    return '$earned/$max sao';
+  }
+
+  @override
+  String get currentLevelBadge => 'Đang chơi';
+
+  @override
+  String get dialogueIntro =>
+      'Tôi là Dội. Bắn thẳng chỉ làm chúng bật cười — hãy cho viên bi chạm tường đủ số lần rồi quay lại!';
+
+  @override
+  String get dialogueWin => 'Đường dội đẹp đấy! Cứ giữ nhịp này nhé.';
+
+  @override
+  String get dialogueLose =>
+      'Chưa trúng đường thôi. Nhìn lại vệt bi, đổi một góc nhỏ rồi thử tiếp nhé.';
+
+  @override
+  String get dialogueLoseShort => 'Lệch một góc thôi — thử lại nhé!';
+
+  @override
+  String get dialogueFinalVictory =>
+      'Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!';
 }

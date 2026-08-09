@@ -302,6 +302,12 @@ abstract class AppLocalizations {
   /// **'Nhạc nền'**
   String get musicLabel;
 
+  /// No description provided for @hapticsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rung'**
+  String get hapticsLabel;
+
   /// No description provided for @languageLabel.
   ///
   /// In vi, this message translates to:
@@ -319,6 +325,192 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã xoá tiến trình.'**
   String get resetProgressDone;
+
+  /// No description provided for @hintButtonLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gợi ý đường dội'**
+  String get hintButtonLabel;
+
+  /// No description provided for @hintCostBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'{cost} xu'**
+  String hintCostBadge(int cost);
+
+  /// No description provided for @hintInsufficientCoins.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thiếu {missing} xu'**
+  String hintInsufficientCoins(int missing);
+
+  /// No description provided for @hintUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa tìm được đường gợi ý cho sân lúc này.'**
+  String get hintUnavailable;
+
+  /// No description provided for @hintComputing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tính đường dội…'**
+  String get hintComputing;
+
+  /// No description provided for @hintFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể tính hoặc lưu gợi ý. Xu của bạn vẫn còn nguyên.'**
+  String get hintFailed;
+
+  /// No description provided for @hintShownAnnouncement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã hiện đường gợi ý phá được {count} mục tiêu.'**
+  String hintShownAnnouncement(int count);
+
+  /// No description provided for @skipArenaLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua màn'**
+  String get skipArenaLabel;
+
+  /// No description provided for @skipArenaCostBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'{cost} xu'**
+  String skipArenaCostBadge(int cost);
+
+  /// No description provided for @skipArenaInsufficientCoins.
+  ///
+  /// In vi, this message translates to:
+  /// **'Còn thiếu {missing} xu để bỏ qua'**
+  String skipArenaInsufficientCoins(int missing);
+
+  /// No description provided for @skipArenaConfirmTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua màn này?'**
+  String get skipArenaConfirmTitle;
+
+  /// No description provided for @skipArenaConfirmBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn sẽ dùng 150 xu để mở màn kế tiếp. Màn này vẫn có thể chơi lại để lấy sao.'**
+  String get skipArenaConfirmBody;
+
+  /// No description provided for @skipArenaConfirmCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng xu và bỏ qua'**
+  String get skipArenaConfirmCta;
+
+  /// No description provided for @skipArenaWriteFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không lưu được tiến trình. Xu chưa bị trừ.'**
+  String get skipArenaWriteFailed;
+
+  /// No description provided for @arenaSkippedBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã bỏ qua'**
+  String get arenaSkippedBadge;
+
+  /// No description provided for @stuckReminderHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang bí? Thử xem đường gợi ý với {cost} xu.'**
+  String stuckReminderHint(int cost);
+
+  /// No description provided for @stuckReminderHintAndSkip.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có thể xem gợi ý ({hintCost} xu) hoặc bỏ qua màn ({skipCost} xu).'**
+  String stuckReminderHintAndSkip(int hintCost, int skipCost);
+
+  /// No description provided for @stuckReminderRetryCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử lại'**
+  String get stuckReminderRetryCta;
+
+  /// No description provided for @characterName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dội'**
+  String get characterName;
+
+  /// No description provided for @chapter1Title.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chương 1 · Học luật dội'**
+  String get chapter1Title;
+
+  /// No description provided for @chapter2Title.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chương 2 · Kệ và hốc'**
+  String get chapter2Title;
+
+  /// No description provided for @chapter3Title.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chương 3 · Zig-zag'**
+  String get chapter3Title;
+
+  /// No description provided for @chapter4Title.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chương 4 · Vật cản chéo'**
+  String get chapter4Title;
+
+  /// No description provided for @chapterOtherTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Màn khác'**
+  String get chapterOtherTitle;
+
+  /// No description provided for @chapterProgressLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'{earned}/{max} sao'**
+  String chapterProgressLabel(int earned, int max);
+
+  /// No description provided for @currentLevelBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chơi'**
+  String get currentLevelBadge;
+
+  /// No description provided for @dialogueIntro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tôi là Dội. Bắn thẳng chỉ làm chúng bật cười — hãy cho viên bi chạm tường đủ số lần rồi quay lại!'**
+  String get dialogueIntro;
+
+  /// No description provided for @dialogueWin.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đường dội đẹp đấy! Cứ giữ nhịp này nhé.'**
+  String get dialogueWin;
+
+  /// No description provided for @dialogueLose.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa trúng đường thôi. Nhìn lại vệt bi, đổi một góc nhỏ rồi thử tiếp nhé.'**
+  String get dialogueLose;
+
+  /// No description provided for @dialogueLoseShort.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lệch một góc thôi — thử lại nhé!'**
+  String get dialogueLoseShort;
+
+  /// No description provided for @dialogueFinalVictory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!'**
+  String get dialogueFinalVictory;
 }
 
 class _AppLocalizationsDelegate

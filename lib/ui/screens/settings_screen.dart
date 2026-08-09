@@ -74,6 +74,15 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                                 const Divider(height: BbTokens.sp6),
                                 _Row(
+                                  label: t.hapticsLabel,
+                                  child: BbToggle(
+                                    value: settings.hapticsOn,
+                                    semanticLabel: t.hapticsLabel,
+                                    onChanged: controller.setHaptics,
+                                  ),
+                                ),
+                                const Divider(height: BbTokens.sp6),
+                                _Row(
                                   label: t.languageLabel,
                                   child: Row(
                                     children: <Widget>[
@@ -105,9 +114,7 @@ class SettingsScreen extends ConsumerWidget {
                             label: t.resetProgressCta,
                             expand: true,
                             onPressed: () async {
-                              await ref
-                                  .read(progressProvider.notifier)
-                                  .reset();
+                              await ref.read(progressProvider.notifier).reset();
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(t.resetProgressDone)),
@@ -137,9 +144,9 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: <Widget>[
-          Expanded(child: Text(label, style: BbText.body())),
-          child,
-        ],
-      );
+    children: <Widget>[
+      Expanded(child: Text(label, style: BbText.body())),
+      child,
+    ],
+  );
 }

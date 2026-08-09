@@ -3,6 +3,21 @@ import 'package:flutter/widgets.dart';
 /// Design tokens ported 1:1 from the `Bắn Bừa Design System` (tokens/*.css).
 /// Never use raw hex or magic px in widgets — always reference [BbTokens].
 abstract final class BbTokens {
+  // --- Arcade-night semantic palette ---
+  static const nightIndigo = Color(0xFF090D2A);
+  static const panelNavy = Color(0xFF151B3E);
+  static const primaryGold = Color(0xFFFFC21C);
+  static const primaryGoldDark = Color(0xFFD99B00);
+  static const secondaryBlue = Color(0xFF1976D2);
+  static const secondaryBlueDark = Color(0xFF1056A2);
+  static const tertiaryPurple = Color(0xFF7E32C8);
+  static const dangerRed = Color(0xFFF04444);
+  static const trajectoryCyan = Color(0xFF54D9FF);
+  static const successGreen = Color(0xFF7ED321);
+  static const textPrimary = Color(0xFFFFFFFF);
+  static const textMuted = Color(0xFFAAB2D5);
+  static const outlineDark = Color(0xFF080B1B);
+
   // --- Brand ---
   static const bbCoral = Color(0xFFFF5A8C);
   static const bbCoralDark = Color(0xFFE63E72);

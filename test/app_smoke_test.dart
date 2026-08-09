@@ -34,9 +34,7 @@ Future<void> _boot(WidgetTester tester) async {
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: <Override>[
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
+      overrides: <Override>[sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const BanBuaTuongApp(),
     ),
   );
@@ -53,8 +51,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a fresh player is shown the rules, then can take a shot',
-      (WidgetTester tester) async {
+  testWidgets('a fresh player is shown the rules, then can take a shot', (
+    WidgetTester tester,
+  ) async {
     await _boot(tester);
 
     await tester.tap(find.text('Chơi ngay'));
@@ -62,10 +61,12 @@ void main() {
 
     // Fresh progress means the inversion gets explained before the first shot.
     expect(find.text('Luật chơi'), findsOneWidget);
-    await tester.tap(find.text('Hiểu rồi, bắn thôi!'));
+    final Finder gotIt = find.text('Hiểu rồi, bắn thôi!');
+    await tester.ensureVisible(gotIt);
+    await tester.pump();
+    await tester.tap(gotIt);
     await _pumpFrames(tester, frames: 4);
 
-    expect(find.textContaining('Bắn thẳng không tính'), findsWidgets);
     expect(find.textContaining('Còn 3 cú bắn'), findsOneWidget);
 
     // Tap the upper arena to aim and fire.
@@ -78,17 +79,18 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('the stage list is reachable and locks later stages',
-      (WidgetTester tester) async {
+  testWidgets('the stage list is reachable and locks later stages', (
+    WidgetTester tester,
+  ) async {
     await _boot(tester);
 
     await tester.tap(find.text('Chọn màn'));
     await _pumpFrames(tester);
 
-    expect(find.textContaining('Bắn thẳng không tính'), findsOneWidget);
+    expect(find.text('Chương 1 · Học luật dội'), findsOneWidget);
     // Stage 1 is unlocked on a fresh install; everything after it is not. The
-    // list is lazy, so assert presence rather than an exact count.
-    expect(find.text('Chưa mở'), findsWidgets);
+    // grid is lazy, so assert lock icons rather than an exact count.
+    expect(find.byIcon(Icons.lock_rounded), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 }

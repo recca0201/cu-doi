@@ -8,15 +8,24 @@ import '../../core/arena_ink.dart';
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 import '../../core/game_audio_service.dart';
+import '../../core/haptic_service.dart';
+import '../../domain/economy.dart';
+import '../../domain/character.dart';
+import '../../domain/player_progress.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
 import '../../sim/geometry.dart';
+import '../../sim/hint_finder.dart';
 import '../../sim/shot_runner.dart';
+import '../../state/hint_controller.dart';
 import '../../state/providers.dart';
 import '../arena_painter.dart';
+import '../character_dialogue.dart';
+import '../comic_effect_controller.dart';
 import '../fit.dart';
 import '../widgets/bb_widgets.dart';
+import 'arena_map_screen.dart';
 
 enum _Outcome { won, lost }
 
@@ -42,6 +51,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
   /// dispose() is unsafe — the ref may already be torn down — and this screen
   /// needs to silence gameplay effects on the way out.
   late final GameAudioService _audio;
+  late final HapticService _haptics;
+  final ComicEffectController _effects = ComicEffectController();
+  bool _reducedMotion = false;
 
   Duration _lastTick = Duration.zero;
 
@@ -53,7 +65,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
   int _score = 0;
   _Outcome? _outcome;
   bool _recorded = false;
+  bool _lossRecorded = false;
+  int? _dismissedAtLossCount;
+  int? _loadedArenaId;
   late bool _guideVisible;
+  bool _resultDialogueDismissed = false;
 
   ShotRunner? _runner;
   List<V2> _ghost = <V2>[];
@@ -68,6 +84,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     super.initState();
     _guideVisible = widget.showGuide;
     _audio = ref.read(gameAudioProvider);
+    _haptics = ref.read(hapticServiceProvider);
     _load(_indexOf(widget.arenaId));
     _ticker = createTicker(_onTick)..start();
   }
@@ -87,17 +104,23 @@ class _GameScreenState extends ConsumerState<GameScreen>
   void _load(int index) {
     final int safe = index < 0 || index >= kArenas.length ? 0 : index;
     _arena = kArenas[safe];
+    if (_loadedArenaId != _arena.id) _dismissedAtLossCount = null;
+    _loadedArenaId = _arena.id;
     _segments = buildSegments(_arena);
     _alive = List<bool>.filled(_arena.targets.length, true);
     _shotsLeft = _arena.shots;
     _score = 0;
     _outcome = null;
     _recorded = false;
+    _lossRecorded = false;
+    _resultDialogueDismissed = false;
     _runner = null;
     _ghost = <V2>[];
     _stamps.clear();
+    _effects.clear();
     _aim = const V2(0, -1);
     _shake = 0;
+    ref.read(hintControllerProvider.notifier).onArenaLoaded(_arena.id);
   }
 
   // ------------------------------------------------------------------
@@ -112,6 +135,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _lastTick = elapsed;
 
     bool dirty = false;
+
+    _effects.tick(dt);
+    if (_effects.isNotEmpty) dirty = true;
 
     final ShotRunner? runner = _runner;
     if (runner != null) {
@@ -144,10 +170,24 @@ class _GameScreenState extends ConsumerState<GameScreen>
     if (runner.pending.isEmpty) return;
     final AppLocalizations t = AppLocalizations.of(context);
     final GameAudioService audio = _audio;
+    int banksAtEvent =
+        runner.banks -
+        runner.pending
+            .where((ShotEvent e) => e.kind == ShotEventKind.bank)
+            .length;
 
     for (final ShotEvent e in runner.pending) {
+      if (e.kind == ShotEventKind.bank) banksAtEvent = e.bankCount;
+      if (e.kind == ShotEventKind.broke) banksAtEvent = e.bankCount;
+      _effects.onEvent(
+        e,
+        banksAtEvent: banksAtEvent,
+        targets: _arena.targets,
+        alive: _alive,
+      );
       if (e.kind == ShotEventKind.bank) {
         audio.play(GameSound.wallImpact);
+        _haptics.fire(HapticEvent.bank);
         if (e.bankCount == 1) {
           _stamps.add(Stamp(t.stampBank, e.pos, ArenaInk.frame));
         } else if (e.bankCount % 3 == 0) {
@@ -158,10 +198,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
         // The teaching moment. A direct hit is not a near miss — it is the
         // wrong idea, and the target says so.
         audio.play(GameSound.blockedGap);
+        _haptics.fire(HapticEvent.blockedShot);
         _stamps.add(Stamp(t.stampBlocked, e.pos, ArenaInk.danger));
       } else {
-        audio.play(GameSound.pop);
-        if (e.bankCount >= 3) audio.play(GameSound.comicImpact);
+        audio.play(GameSound.comicImpact);
+        _haptics.fire(HapticEvent.targetBroken);
         _score += e.points;
         _shake = 1;
         _stamps.add(Stamp('+${e.points}', e.pos, ArenaInk.cream, big: true));
@@ -171,6 +212,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   }
 
   void _finishShot(ShotRunner runner) {
+    _effects.endShot(runner.endReason);
     // Keep the dead shot's path as a faint ghost — learning a carom is far
     // easier when the line you just took is still on screen.
     _ghost = List<V2>.of(runner.trail);
@@ -183,10 +225,17 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
     if (remaining == 0) {
       _outcome = _Outcome.won;
+      _effects.levelEnd(runner.ball.pos);
+      _haptics.fire(HapticEvent.levelEnd);
       _onWin();
     } else if (_shotsLeft <= 0) {
       _outcome = _Outcome.lost;
+      if (!_lossRecorded) {
+        _lossRecorded = true;
+        ref.read(progressProvider.notifier).recordLoss(_arena.id);
+      }
       _audio.play(GameSound.lose, scope: GameAudioScope.terminalResult);
+      _haptics.fire(HapticEvent.levelEnd);
     }
   }
 
@@ -206,7 +255,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
         _shotsLeft <= 0) {
       return;
     }
+    _effects.clear();
     _shotsLeft--;
+    ref.read(hintControllerProvider.notifier).clearOnShot();
     _audio.play(GameSound.shoot);
     _runner = ShotRunner(
       segments: _segments,
@@ -228,7 +279,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
   @override
   Widget build(BuildContext context) {
+    _reducedMotion = MediaQuery.disableAnimationsOf(context);
+    _effects.reducedMotion = _reducedMotion;
     final AppLocalizations t = AppLocalizations.of(context);
+    final HintState hint = ref.watch(hintControllerProvider);
     return Scaffold(
       backgroundColor: ArenaInk.of(ArenaInk.bgTop),
       body: SafeArea(
@@ -254,7 +308,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                             setState(() => _aimAt(d.localPosition)),
                         onPanEnd: (DragEndDetails d) => setState(_fire),
                         child: SizedBox.expand(
-                          child: CustomPaint(painter: _painter()),
+                          child: CustomPaint(painter: _painter(hint.path)),
                         ),
                       ),
                       if (_guideVisible) _guide(t),
@@ -265,14 +319,14 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 },
               ),
             ),
-            _footer(t),
+            _footer(t, hint),
           ],
         ),
       ),
     );
   }
 
-  ArenaPainter _painter() {
+  ArenaPainter _painter(List<V2> hintPath) {
     final ShotRunner? runner = _runner;
     final bool inFlight = runner != null && runner.ball.alive;
 
@@ -296,11 +350,14 @@ class _GameScreenState extends ConsumerState<GameScreen>
       showPreview: _shotsLeft > 0,
       trail: runner?.trail ?? const <V2>[],
       ghostTrail: _ghost,
+      hintPath: hintPath,
       ballPos: inFlight ? runner.ball.pos : null,
       currentBanks: runner?.banks ?? 0,
       shotInFlight: inFlight,
       stamps: _stamps,
-      shake: _shake,
+      shake: _reducedMotion ? 0 : _shake,
+      effects: _effects.elements,
+      reducedMotion: _reducedMotion,
     );
   }
 
@@ -362,8 +419,27 @@ class _GameScreenState extends ConsumerState<GameScreen>
     );
   }
 
-  Widget _footer(AppLocalizations t) {
+  Widget _footer(AppLocalizations t, HintState hint) {
     final String code = Localizations.localeOf(context).languageCode;
+    final PlayerProgress progress = ref.watch(progressProvider);
+    final int missing = progress.coins < kHintCost
+        ? kHintCost - progress.coins
+        : 0;
+    final bool enabled =
+        progress.canAfford(kHintCost) &&
+        hint.status != HintStatus.computing &&
+        hint.status != HintStatus.shown &&
+        _runner == null &&
+        _outcome == null &&
+        !_guideVisible;
+    final String statusText = switch (hint.status) {
+      HintStatus.computing => t.hintComputing,
+      HintStatus.unavailable => t.hintUnavailable,
+      HintStatus.failed => t.hintFailed,
+      HintStatus.insufficientCoins => t.hintInsufficientCoins(missing),
+      HintStatus.shown => t.hintShownAnnouncement(hint.targetsDestroyed),
+      HintStatus.idle => '',
+    };
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         BbTokens.sp4,
@@ -371,12 +447,65 @@ class _GameScreenState extends ConsumerState<GameScreen>
         BbTokens.sp4,
         BbTokens.sp4,
       ),
-      child: Text(
-        forLocale(code, _arena.hint, _arena.hintEn),
-        textAlign: TextAlign.center,
-        style: BbText.small(ArenaInk.of(ArenaInk.cream, 0xCC)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            forLocale(code, _arena.hint, _arena.hintEn),
+            textAlign: TextAlign.center,
+            style: BbText.small(ArenaInk.of(ArenaInk.cream, 0xCC)),
+          ),
+          const SizedBox(height: BbTokens.sp2),
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: BbTokens.sp2,
+            runSpacing: BbTokens.sp2,
+            children: <Widget>[
+              BbButton.primary(
+                key: const Key('hint-button'),
+                label: t.hintButtonLabel,
+                icon: Icons.route_rounded,
+                onPressed: enabled ? _requestHint : null,
+              ),
+              BbBadge(
+                missing > 0
+                    ? t.hintInsufficientCoins(missing)
+                    : t.hintCostBadge(kHintCost),
+                color: ArenaInk.of(ArenaInk.bgTop),
+                fg: ArenaInk.of(ArenaInk.primaryGold),
+              ),
+            ],
+          ),
+          if (statusText.isNotEmpty) ...<Widget>[
+            const SizedBox(height: BbTokens.sp2),
+            Semantics(
+              liveRegion: true,
+              label: statusText,
+              child: Text(
+                statusText,
+                textAlign: TextAlign.center,
+                style: BbText.tiny(ArenaInk.of(ArenaInk.cream)),
+              ),
+            ),
+          ],
+        ],
       ),
     );
+  }
+
+  void _requestHint() {
+    ref
+        .read(hintControllerProvider.notifier)
+        .request(
+          ArenaSnapshot(
+            segments: _segments,
+            targets: _arena.targets,
+            alive: _alive,
+            origin: kShooterOrigin,
+            arenaId: _arena.id,
+          ),
+        );
   }
 
   Widget _guide(AppLocalizations t) {
@@ -388,6 +517,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            CharacterDialogue(id: DialogueId.intro, onDismiss: _dismissGuide),
+            const SizedBox(height: BbTokens.sp4),
             Text(
               t.howToTitle,
               style: BbText.h1(ArenaInk.of(ArenaInk.frame)),
@@ -409,14 +540,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 ),
               ),
             const SizedBox(height: BbTokens.sp4),
-            BbButton.accent(
-              label: t.gotItCta,
-              onPressed: () => setState(() => _guideVisible = false),
-            ),
+            BbButton.accent(label: t.gotItCta, onPressed: _dismissGuide),
           ],
         ),
       ),
     );
+  }
+
+  void _dismissGuide() {
+    ref.read(dialogueSeenProvider.notifier).markSeen(DialogueId.intro);
+    if (mounted) setState(() => _guideVisible = false);
   }
 
   Widget _result(AppLocalizations t, _Outcome outcome) {
@@ -424,57 +557,198 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final int stars = won ? starsFor(_arena, _score) : 0;
     final int index = _indexOf(_arena.id);
     final bool hasNext = index + 1 < kArenas.length;
+    final PlayerProgress progress = ref.watch(progressProvider);
+    final int losses = progress.lossesFor(_arena.id);
+    final bool maySkip =
+        !won &&
+        losses >= kSkipOfferAfterLosses &&
+        !progress.isCompleted(_arena.id) &&
+        !progress.isSkipped(_arena.id);
+    final bool showReminder =
+        !won &&
+        losses >= kHintReminderAfterLosses &&
+        _dismissedAtLossCount != losses;
+    final bool canSkip = progress.canAfford(kSkipCost);
+    final bool crowded = losses >= kSkipOfferAfterLosses;
+    final DialogueId resultDialogue = won
+        ? (hasNext ? DialogueId.levelWin : DialogueId.finalVictory)
+        : (crowded ? DialogueId.levelLoseShort : DialogueId.levelLose);
 
     return Container(
       color: ArenaInk.of(ArenaInk.bgTop, 0xE6),
       alignment: Alignment.center,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(BbTokens.sp6),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  won ? t.resultWin : t.resultLose,
+                  style: BbText.display(ArenaInk.of(ArenaInk.cream)),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: BbTokens.sp2),
+                Text(
+                  t.resultScore(_score),
+                  style: BbText.h3(ArenaInk.of(ArenaInk.frame)),
+                ),
+                if (won) ...<Widget>[
+                  const SizedBox(height: BbTokens.sp3),
+                  Text(
+                    '${'★' * stars}${'☆' * (3 - stars)}',
+                    style: BbText.display(ArenaInk.of(ArenaInk.frame)),
+                  ),
+                ],
+                if (!_resultDialogueDismissed) ...<Widget>[
+                  const SizedBox(height: BbTokens.sp3),
+                  CharacterDialogue(
+                    id: resultDialogue,
+                    onDismiss: () =>
+                        setState(() => _resultDialogueDismissed = true),
+                  ),
+                ],
+                if (showReminder) ...<Widget>[
+                  const SizedBox(height: BbTokens.sp3),
+                  BbCard(
+                    color: ArenaInk.of(ArenaInk.bgBottom),
+                    padding: const EdgeInsets.all(BbTokens.sp3),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            losses >= kSkipOfferAfterLosses &&
+                                    !progress.isCompleted(_arena.id)
+                                ? t.stuckReminderHintAndSkip(
+                                    kHintCost,
+                                    kSkipCost,
+                                  )
+                                : t.stuckReminderHint(kHintCost),
+                            style: BbText.small(ArenaInk.of(ArenaInk.cream)),
+                          ),
+                        ),
+                        BbIconButton(
+                          icon: Icons.close_rounded,
+                          diameter: BbTokens.tapMin,
+                          variant: BbVariant.light,
+                          semanticLabel: t.backCta,
+                          onPressed: () =>
+                              setState(() => _dismissedAtLossCount = losses),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: BbTokens.sp6),
+                BbButton.primary(
+                  label: won ? t.retryCta : t.stuckReminderRetryCta,
+                  expand: true,
+                  onPressed: () => setState(() => _load(index)),
+                ),
+                const SizedBox(height: BbTokens.sp3),
+                if (maySkip) ...<Widget>[
+                  BbButton.secondary(
+                    key: const Key('skip-arena-button'),
+                    label: t.skipArenaLabel,
+                    expand: true,
+                    onPressed: canSkip ? () => _confirmSkip(t, index) : null,
+                  ),
+                  const SizedBox(height: BbTokens.sp2),
+                  BbBadge(
+                    canSkip
+                        ? t.skipArenaCostBadge(kSkipCost)
+                        : t.skipArenaInsufficientCoins(
+                            progress.coins < kSkipCost
+                                ? kSkipCost - progress.coins
+                                : 0,
+                          ),
+                    color: ArenaInk.of(ArenaInk.bgTop),
+                    fg: ArenaInk.of(ArenaInk.primaryGold),
+                  ),
+                  const SizedBox(height: BbTokens.sp3),
+                ],
+                if (won && hasNext)
+                  BbButton.accent(
+                    label: t.nextArenaCta,
+                    expand: true,
+                    onPressed: () => setState(() {
+                      _guideVisible = false;
+                      _load(index + 1);
+                    }),
+                  )
+                else
+                  BbButton.light(
+                    label: t.menuCta,
+                    expand: true,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmSkip(AppLocalizations t, int index) async {
+    final bool? confirmed = await showBbDialog<bool>(
+      context,
+      (BuildContext dialogContext) => BbDialog(
+        color: ArenaInk.of(ArenaInk.bgBottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              won ? t.resultWin : t.resultLose,
-              style: BbText.display(ArenaInk.of(ArenaInk.cream)),
+              t.skipArenaConfirmTitle,
+              style: BbText.h2(ArenaInk.of(ArenaInk.cream)),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: BbTokens.sp2),
+            const SizedBox(height: BbTokens.sp3),
             Text(
-              t.resultScore(_score),
-              style: BbText.h3(ArenaInk.of(ArenaInk.frame)),
+              t.skipArenaConfirmBody,
+              style: BbText.body(ArenaInk.of(ArenaInk.cream)),
+              textAlign: TextAlign.center,
             ),
-            if (won) ...<Widget>[
-              const SizedBox(height: BbTokens.sp3),
-              Text(
-                '${'★' * stars}${'☆' * (3 - stars)}',
-                style: BbText.display(ArenaInk.of(ArenaInk.frame)),
-              ),
-            ],
-            const SizedBox(height: BbTokens.sp6),
+            const SizedBox(height: BbTokens.sp5),
             BbButton.primary(
-              label: t.retryCta,
+              label: t.skipArenaConfirmCta,
               expand: true,
-              onPressed: () => setState(() => _load(index)),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
             ),
             const SizedBox(height: BbTokens.sp3),
-            if (won && hasNext)
-              BbButton.accent(
-                label: t.nextArenaCta,
-                expand: true,
-                onPressed: () => setState(() {
-                  _guideVisible = false;
-                  _load(index + 1);
-                }),
-              )
-            else
-              BbButton.light(
-                label: t.menuCta,
-                expand: true,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+            BbButton.secondary(
+              label: t.backCta,
+              expand: true,
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+            ),
           ],
         ),
       ),
     );
+    if (confirmed != true || !mounted) return;
+    final SpendResult result = await ref
+        .read(progressProvider.notifier)
+        .skipArena(_arena.id);
+    if (!mounted) return;
+    switch (result) {
+      case SpendResult.ok:
+        final int targetArenaId = index + 1 < kArenas.length
+            ? kArenas[index + 1].id
+            : _arena.id;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) =>
+                ArenaMapScreen(targetArenaId: targetArenaId),
+          ),
+        );
+      case SpendResult.insufficientCoins:
+        setState(() {});
+      case SpendResult.writeFailed:
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(t.skipArenaWriteFailed)));
+    }
   }
 }

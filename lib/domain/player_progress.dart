@@ -1,12 +1,28 @@
 /// Per-level best result.
 class LevelResult {
-  const LevelResult({required this.stars, required this.highScore});
+  const LevelResult({
+    this.stars = 0,
+    this.highScore = 0,
+    this.skipped = false,
+    this.losses = 0,
+  });
   final int stars;
   final int highScore;
+  final bool skipped;
+  final int losses;
 
-  Map<String, dynamic> toJson() => {'stars': stars, 'highScore': highScore};
-  factory LevelResult.fromJson(Map<String, dynamic> j) =>
-      LevelResult(stars: j['stars'] as int, highScore: j['highScore'] as int);
+  Map<String, dynamic> toJson() => {
+    'stars': stars,
+    'highScore': highScore,
+    'skipped': skipped,
+    'losses': losses,
+  };
+  factory LevelResult.fromJson(Map<String, dynamic> j) => LevelResult(
+    stars: j['stars'] as int? ?? 0,
+    highScore: j['highScore'] as int? ?? 0,
+    skipped: j['skipped'] as bool? ?? false,
+    losses: j['losses'] as int? ?? 0,
+  );
 }
 
 /// Immutable player progress: level results, coins, and unlock derivation
@@ -25,7 +41,7 @@ class PlayerProgress {
       results.values.fold(0, (mx, r) => r.highScore > mx ? r.highScore : mx);
 
   int get completedMax => results.entries
-      .where((e) => e.value.stars >= 1)
+      .where((e) => e.value.stars >= 1 || e.value.skipped)
       .fold(0, (mx, e) => e.key > mx ? e.key : mx);
 
   /// Highest unlocked level id — the next after the furthest completed.
@@ -35,6 +51,37 @@ class PlayerProgress {
   int starsFor(int levelId) => results[levelId]?.stars ?? 0;
   int highScoreFor(int levelId) => results[levelId]?.highScore ?? 0;
   bool isCompleted(int levelId) => starsFor(levelId) >= 1;
+  bool isSkipped(int levelId) => results[levelId]?.skipped ?? false;
+  int lossesFor(int levelId) => results[levelId]?.losses ?? 0;
+  bool canAfford(int amount) => amount >= 0 && coins >= amount;
+
+  PlayerProgress withCoinsSpent(int amount) => PlayerProgress(
+    results: results,
+    coins: (coins - (amount < 0 ? 0 : amount)).clamp(0, 1 << 30),
+  );
+
+  PlayerProgress withSkipped(int levelId) {
+    final LevelResult prev = results[levelId] ?? const LevelResult();
+    final next = Map<int, LevelResult>.from(results)
+      ..[levelId] = LevelResult(
+        stars: prev.stars,
+        highScore: prev.highScore,
+        skipped: true,
+      );
+    return PlayerProgress(results: next, coins: coins);
+  }
+
+  PlayerProgress withLoss(int levelId) {
+    final LevelResult prev = results[levelId] ?? const LevelResult();
+    final next = Map<int, LevelResult>.from(results)
+      ..[levelId] = LevelResult(
+        stars: prev.stars,
+        highScore: prev.highScore,
+        skipped: prev.skipped,
+        losses: prev.losses + 1,
+      );
+    return PlayerProgress(results: next, coins: coins);
+  }
 
   /// Record a finished level. Keeps the best stars/score; awards coins only for
   /// net new score progress (coins are accumulated display points in MVP).
