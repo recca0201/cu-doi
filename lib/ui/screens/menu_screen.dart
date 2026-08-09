@@ -3,21 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
-import '../../domain/player_progress.dart';
 import '../../domain/character.dart';
+import '../../domain/player_progress.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
 import '../../state/providers.dart';
-import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 import 'arena_map_screen.dart';
 import 'game_screen.dart';
+import 'how_to_play_screen.dart';
 import 'settings_screen.dart';
 
-/// Daylight brand shell. Only the arena itself goes dark — keeping the menu in
-/// the parent game's cream-and-sunburst language is what makes this still read
-/// as Bắn Bừa rather than as an unrelated app.
+/// Galaxy-arcade launcher inspired by the product key art. Only real product
+/// flows are surfaced; decorative shop/event/mission buttons stay out.
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
 
@@ -28,7 +27,7 @@ class MenuScreen extends ConsumerWidget {
     ref.watch(dialogueSeenProvider);
 
     final int firstUnfinished = kArenas
-        .map((ArenaSpec a) => a.id)
+        .map((ArenaSpec arena) => arena.id)
         .firstWhere(
           (int id) => !progress.isCompleted(id) && !progress.isSkipped(id),
           orElse: () => kArenas.first.id,
@@ -39,137 +38,623 @@ class MenuScreen extends ConsumerWidget {
     final bool showGuide =
         dialogueSeen.isRestored && !dialogueSeen.hasSeen(DialogueId.intro);
 
+    void play() => Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            GameScreen(arenaId: firstUnfinished, showGuide: showGuide),
+      ),
+    );
+
     return Scaffold(
-      backgroundColor: BbTokens.sky,
+      backgroundColor: BbTokens.nightIndigo,
       body: Stack(
         children: <Widget>[
-          const Positioned.fill(child: BbSunburst(rays: 14, opacity: 0.35)),
-          const Positioned.fill(child: BbDotPattern()),
+          const Positioned.fill(child: CustomPaint(painter: _MenuBackdrop())),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: BbTokens.gutter,
-                vertical: BbTokens.sp4,
-              ),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      BbBadge('${t.coinsLabel} ${progress.coins}'),
-                      BbIconButton(
-                        icon: Icons.settings_rounded,
-                        variant: BbVariant.light,
-                        semanticLabel: t.settingsCta,
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const SettingsScreen(),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) =>
+                  Center(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: SizedBox(
+                        width: 390,
+                        height: 790,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
+                          child: Column(
+                            children: <Widget>[
+                              _PlayerHud(
+                                t: t,
+                                progress: progress,
+                                currentArena: firstUnfinished,
+                                onSettings: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const SettingsScreen(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              _GameLogo(title: t.appTitle),
+                              const SizedBox(height: 8),
+                              _ScorePlaque(
+                                label: t.bestScoreLabel,
+                                score: progress.bestScore,
+                              ),
+                              const SizedBox(height: 14),
+                              BbButton.primary(
+                                label: t.playCta,
+                                size: BbSize.lg,
+                                icon: Icons.play_arrow_rounded,
+                                expand: true,
+                                onPressed: play,
+                              ),
+                              const SizedBox(height: 14),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: BbButton.secondary(
+                                      label: t.arenaSelectCta,
+                                      icon: Icons.track_changes_rounded,
+                                      expand: true,
+                                      onPressed: () =>
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                              builder: (_) =>
+                                                  const ArenaMapScreen(),
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: BbButton.accent(
+                                      label: t.howToCta,
+                                      icon: Icons.route_rounded,
+                                      expand: true,
+                                      onPressed: () =>
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                              builder: (_) => HowToPlayScreen(
+                                                onDontShowAgain: () {
+                                                  dialogueSeen.markSeen(
+                                                    DialogueId.intro,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Expanded(
+                                child: _MascotStage(
+                                  tagline: t.menuTagline,
+                                  onPlay: play,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    t.appTitle,
-                    style: BbText.logo(BbTokens.bbCoral),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: BbTokens.sp3),
-                  Text(
-                    t.menuTagline,
-                    style: BbText.body(BbTokens.ink700),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Spacer(),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: BbTokens.screenMax,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        BbButton.primary(
-                          label: t.playCta,
-                          size: BbSize.lg,
-                          icon: Icons.play_arrow_rounded,
-                          expand: true,
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => GameScreen(
-                                arenaId: firstUnfinished,
-                                showGuide: showGuide,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: BbTokens.sp3),
-                        BbButton.accent(
-                          label: t.arenaSelectCta,
-                          icon: Icons.grid_view_rounded,
-                          expand: true,
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const ArenaMapScreen(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: BbTokens.sp3),
-                        BbButton.light(
-                          label: t.howToCta,
-                          icon: Icons.help_outline_rounded,
-                          expand: true,
-                          onPressed: () => _showRules(context, t),
-                        ),
-                      ],
                     ),
                   ),
-                  const SizedBox(height: BbTokens.sp5),
-                  Text(
-                    '${t.bestScoreLabel}: ${progress.bestScore}',
-                    style: BbText.small(BbTokens.ink500),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  void _showRules(BuildContext context, AppLocalizations t) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext ctx) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(BbTokens.sp5),
-        child: BbCard(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+class _PlayerHud extends StatelessWidget {
+  const _PlayerHud({
+    required this.t,
+    required this.progress,
+    required this.currentArena,
+    required this.onSettings,
+  });
+
+  final AppLocalizations t;
+  final PlayerProgress progress;
+  final int currentArena;
+  final VoidCallback onSettings;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 66,
+    child: Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            height: 58,
+            padding: const EdgeInsets.fromLTRB(54, 6, 10, 6),
+            decoration: _navyPanel(radius: 18),
+            child: Stack(
+              clipBehavior: Clip.none,
               children: <Widget>[
-                Text(t.howToTitle, style: BbText.h2()),
-                const SizedBox(height: BbTokens.sp4),
-                for (final String rule in <String>[
-                  t.howToRule1,
-                  t.howToRule2,
-                  t.howToRule3,
-                  t.howToRule4,
-                ])
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: BbTokens.sp3),
-                    child: Text(rule, style: BbText.body()),
+                Positioned(
+                  left: -58,
+                  top: -10,
+                  child: Container(
+                    width: 66,
+                    height: 66,
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: BbTokens.primaryGold,
+                      border: Border.all(color: BbTokens.outlineDark, width: 4),
+                      boxShadow: BbTokens.sticker(3),
+                    ),
+                    child: const ClipOval(
+                      child: Image(
+                        image: AssetImage(
+                          'assets/images/mascot/ban_bua_mascot_v2.png',
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                BbButton.primary(
-                  label: t.gotItCta,
-                  expand: true,
-                  onPressed: () => Navigator.of(ctx).pop(),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      t.characterName.toUpperCase(),
+                      style: BbText.h3(Colors.white).copyWith(fontSize: 17),
+                    ),
+                    Text(
+                      '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BbText.tiny(
+                        BbTokens.textMuted,
+                      ).copyWith(letterSpacing: 0, fontSize: 10),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: 118,
+          child: Column(
+            children: <Widget>[
+              _CounterPill(
+                icon: Icons.monetization_on_rounded,
+                color: BbTokens.primaryGold,
+                value: '${progress.coins}',
+              ),
+              const SizedBox(height: 6),
+              _CounterPill(
+                icon: Icons.star_rounded,
+                color: BbTokens.primaryGold,
+                value: '${progress.totalStars}/${kArenas.length * 3}',
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        BbIconButton(
+          icon: Icons.settings_rounded,
+          semanticLabel: t.settingsCta,
+          diameter: 44,
+          onPressed: onSettings,
+        ),
+      ],
+    ),
+  );
+}
+
+class _CounterPill extends StatelessWidget {
+  const _CounterPill({
+    required this.icon,
+    required this.color,
+    required this.value,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 28,
+    padding: const EdgeInsets.only(left: 5, right: 8),
+    decoration: _navyPanel(radius: 14, borderWidth: 2),
+    child: Row(
+      children: <Widget>[
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 4),
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value, style: BbText.h3(Colors.white)),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _GameLogo extends StatelessWidget {
+  const _GameLogo({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 152,
+    child: Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        const Positioned.fill(
+          child: IgnorePointer(
+            child: CustomPaint(painter: _LogoBurstPainter()),
+          ),
+        ),
+        const Positioned(
+          left: 28,
+          top: 12,
+          child: _BankToken(value: '2', color: BbTokens.tertiaryPurple),
+        ),
+        const Positioned(
+          right: 26,
+          top: 22,
+          child: _BankToken(value: '3', color: BbTokens.dangerRed),
+        ),
+        Positioned(
+          top: 18,
+          child: ShaderMask(
+            shaderCallback: (Rect bounds) => const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[Color(0xFFFFFF78), Color(0xFFFF9B05)],
+            ).createShader(bounds),
+            child: Text(
+              'CÚ DỘI!',
+              style: BbText.logo(Colors.white).copyWith(
+                fontSize: 66,
+                letterSpacing: -2,
+                shadows: const <Shadow>[
+                  Shadow(
+                    color: BbTokens.outlineDark,
+                    offset: Offset(0, 7),
+                    blurRadius: 0,
+                  ),
+                  Shadow(
+                    color: BbTokens.secondaryBlueDark,
+                    offset: Offset(0, 11),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 3,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+            decoration: BoxDecoration(
+              color: BbTokens.secondaryBlueDark,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: BbTokens.outlineDark, width: 3),
+              boxShadow: BbTokens.sticker(3),
+            ),
+            child: Text(
+              title,
+              style: BbText.button(Colors.white).copyWith(fontSize: 16),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _BankToken extends StatelessWidget {
+  const _BankToken({required this.value, required this.color});
+
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 48,
+    height: 48,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: color,
+      border: Border.all(color: BbTokens.outlineDark, width: 4),
+      boxShadow: BbTokens.sticker(4),
+    ),
+    child: Text(value, style: BbText.h1(Colors.white).copyWith(fontSize: 28)),
+  );
+}
+
+class _ScorePlaque extends StatelessWidget {
+  const _ScorePlaque({required this.label, required this.score});
+
+  final String label;
+  final int score;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 260,
+    height: 78,
+    padding: const EdgeInsets.symmetric(vertical: 5),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: <Color>[Color(0xFFFFF9E8), Color(0xFFFFE6A0)],
       ),
+      borderRadius: BorderRadius.circular(22),
+      border: Border.all(color: BbTokens.primaryGoldDark, width: 4),
+      boxShadow: BbTokens.sticker(6, BbTokens.outlineDark),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          label.toUpperCase(),
+          style: BbText.tiny(BbTokens.primaryGoldDark).copyWith(fontSize: 11),
+        ),
+        Text(
+          _formatScore(score),
+          style: BbText.score(const Color(0xFF6A2500)).copyWith(fontSize: 36),
+        ),
+      ],
+    ),
+  );
+}
+
+class _MascotStage extends StatelessWidget {
+  const _MascotStage({required this.tagline, required this.onPlay});
+
+  final String tagline;
+  final VoidCallback onPlay;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    alignment: Alignment.topCenter,
+    children: <Widget>[
+      Positioned(
+        left: 8,
+        right: 8,
+        top: 42,
+        child: CustomPaint(
+          size: const Size(double.infinity, 115),
+          painter: _RicochetPainter(),
+        ),
+      ),
+      Positioned(
+        top: 12,
+        child: Semantics(
+          button: true,
+          label: tagline,
+          onTap: onPlay,
+          child: GestureDetector(
+            onTap: onPlay,
+            child: const Image(
+              image: AssetImage('assets/images/mascot/ban_bua_mascot_v2.png'),
+              width: 205,
+              height: 205,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+      Positioned(
+        left: 10,
+        right: 10,
+        top: 210,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+          decoration: _navyPanel(radius: 16),
+          child: Text(
+            tagline,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: BbText.small(Colors.white).copyWith(fontSize: 12),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+BoxDecoration _navyPanel({required double radius, double borderWidth = 3}) =>
+    BoxDecoration(
+      color: BbTokens.panelNavy.withValues(alpha: .96),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: BbTokens.outlineDark, width: borderWidth),
+      boxShadow: BbTokens.sticker(3),
     );
+
+String _formatScore(int score) {
+  final String digits = score.toString();
+  final StringBuffer out = StringBuffer();
+  for (int i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) out.write(',');
+    out.write(digits[i]);
   }
+  return out.toString();
+}
+
+class _MenuBackdrop extends CustomPainter {
+  const _MenuBackdrop();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Offset.zero & size;
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(-.45, -.72),
+          radius: 1.28,
+          colors: <Color>[
+            Color(0xFF331D78),
+            Color(0xFF101D55),
+            Color(0xFF05091F),
+          ],
+        ).createShader(rect),
+    );
+
+    void nebula(Offset center, double radius, Color color, double alpha) {
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..shader = RadialGradient(
+            colors: <Color>[
+              color.withValues(alpha: alpha),
+              color.withValues(alpha: alpha * .25),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromCircle(center: center, radius: radius)),
+      );
+    }
+
+    nebula(
+      Offset(size.width * .92, size.height * .28),
+      size.width * .62,
+      const Color(0xFF00C2D8),
+      .18,
+    );
+    nebula(
+      Offset(size.width * -.08, size.height * .66),
+      size.width * .72,
+      const Color(0xFFCF3FAF),
+      .16,
+    );
+
+    // Distant ringed planet: recognizable galaxy cue, kept behind the UI.
+    final Offset planet = Offset(size.width * .84, size.height * .55);
+    final double planetRadius = size.width * .16;
+    canvas.save();
+    canvas.translate(planet.dx, planet.dy);
+    canvas.rotate(-.28);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset.zero,
+        width: planetRadius * 3.2,
+        height: planetRadius * .72,
+      ),
+      Paint()
+        ..color = const Color(0xFF7BDCF2).withValues(alpha: .18)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 7,
+    );
+    canvas.restore();
+    canvas.drawCircle(
+      planet,
+      planetRadius,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(-.45, -.45),
+          colors: <Color>[
+            Color(0xFF78E1F4),
+            Color(0xFF3767B8),
+            Color(0xFF172B6B),
+          ],
+        ).createShader(Rect.fromCircle(center: planet, radius: planetRadius)),
+    );
+
+    final Paint star = Paint()..color = Colors.white.withValues(alpha: .72);
+    final Paint cyan = Paint()
+      ..color = BbTokens.trajectoryCyan.withValues(alpha: .78);
+    for (int i = 0; i < 92; i++) {
+      final Offset p = Offset(
+        ((i * 79 + 23) % 487) / 487 * size.width,
+        ((i * 131 + 41) % 491) / 491 * size.height,
+      );
+      canvas.drawCircle(p, i % 16 == 0 ? 1.65 : .62, i % 11 == 0 ? cyan : star);
+    }
+    for (final Offset p in <Offset>[
+      Offset(size.width * .12, size.height * .19),
+      Offset(size.width * .88, size.height * .25),
+      Offset(size.width * .24, size.height * .44),
+      Offset(size.width * .72, size.height * .78),
+    ]) {
+      canvas.drawLine(p - const Offset(5, 0), p + const Offset(5, 0), cyan..strokeWidth = 1.1);
+      canvas.drawLine(p - const Offset(0, 5), p + const Offset(0, 5), cyan);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MenuBackdrop oldDelegate) => false;
+}
+
+class _LogoBurstPainter extends CustomPainter {
+  const _LogoBurstPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Offset c = size.center(Offset.zero);
+    final Paint glow = Paint()
+      ..shader = RadialGradient(
+        colors: <Color>[
+          Colors.white.withValues(alpha: .55),
+          Colors.white.withValues(alpha: 0),
+        ],
+      ).createShader(Rect.fromCircle(center: c, radius: size.width * .48));
+    canvas.drawCircle(c, size.width * .48, glow);
+  }
+
+  @override
+  bool shouldRepaint(covariant _LogoBurstPainter oldDelegate) => false;
+}
+
+class _RicochetPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Path path = Path()
+      ..moveTo(8, size.height * .72)
+      ..lineTo(size.width * .28, 8)
+      ..lineTo(size.width * .53, size.height * .78)
+      ..lineTo(size.width - 8, size.height * .18);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = BbTokens.secondaryBlue.withValues(alpha: .7)
+        ..strokeWidth = 9
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = BbTokens.trajectoryCyan
+        ..strokeWidth = 4
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
+    final Paint dot = Paint()..color = Colors.white;
+    for (final Offset p in <Offset>[
+      Offset(8, size.height * .72),
+      Offset(size.width * .28, 8),
+      Offset(size.width * .53, size.height * .78),
+      Offset(size.width - 8, size.height * .18),
+    ]) {
+      canvas.drawCircle(p, 7, dot);
+      canvas.drawCircle(
+        p,
+        11,
+        Paint()
+          ..color = BbTokens.trajectoryCyan.withValues(alpha: .35)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 5,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RicochetPainter oldDelegate) => false;
 }

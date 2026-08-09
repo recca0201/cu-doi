@@ -26,8 +26,118 @@ import '../comic_effect_controller.dart';
 import '../fit.dart';
 import '../widgets/bb_widgets.dart';
 import 'arena_map_screen.dart';
+import 'how_to_play_screen.dart';
 
 enum _Outcome { won, lost }
+
+class _GameHudPill extends StatelessWidget {
+  const _GameHudPill({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    this.center = false,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final bool center;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 34,
+    constraints: const BoxConstraints(minWidth: 68),
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          ArenaInk.of(ArenaInk.panelNavy),
+          ArenaInk.of(ArenaInk.bgTop),
+        ],
+      ),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(
+        color: ArenaInk.of(ArenaInk.trajectoryCyan, 0x88),
+        width: 2,
+      ),
+      boxShadow: const <BoxShadow>[
+        BoxShadow(color: BbTokens.outlineDark, offset: Offset(0, 3)),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: center
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.start,
+      mainAxisSize: center ? MainAxisSize.max : MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, color: iconColor, size: 18),
+        const SizedBox(width: 5),
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              maxLines: 1,
+              style: BbText.button(Colors.white).copyWith(fontSize: 13),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _ArenaBankMeter extends StatelessWidget {
+  const _ArenaBankMeter({required this.label, required this.banks});
+
+  final String label;
+  final int banks;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 92,
+    padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[Color(0xFF234F9A), Color(0xFF0A1D4B)],
+      ),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: BbTokens.primaryGold, width: 2),
+      boxShadow: const <BoxShadow>[
+        BoxShadow(color: BbTokens.outlineDark, offset: Offset(0, 5)),
+        BoxShadow(color: Color(0x6655C9FF), blurRadius: 7),
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          '×${math.min(1 + banks, kMaxMultiplier)}',
+          style: BbText.h1(BbTokens.primaryGold).copyWith(
+            fontSize: 30,
+            shadows: const <Shadow>[
+              Shadow(color: BbTokens.outlineDark, offset: Offset(0, 2)),
+            ],
+          ),
+        ),
+        Container(height: 1, color: Colors.white24),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: BbText.tiny(
+            Colors.white,
+          ).copyWith(fontSize: 9, letterSpacing: .4),
+        ),
+        Text('$banks', style: BbText.h2(Colors.white).copyWith(fontSize: 25)),
+      ],
+    ),
+  );
+}
 
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({required this.arenaId, this.showGuide = false, super.key});
@@ -54,6 +164,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   late final HapticService _haptics;
   final ComicEffectController _effects = ComicEffectController();
   bool _reducedMotion = false;
+  bool _paused = false;
 
   Duration _lastTick = Duration.zero;
 
@@ -133,6 +244,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
         ? 1 / 60
         : (elapsed - _lastTick).inMicroseconds / 1000000.0;
     _lastTick = elapsed;
+    if (_paused) return;
 
     bool dirty = false;
 
@@ -311,6 +423,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           child: CustomPaint(painter: _painter(hint.path)),
                         ),
                       ),
+                      Positioned(
+                        left: 10,
+                        bottom: 12,
+                        child: IgnorePointer(
+                          child: _ArenaBankMeter(
+                            label: t.banksLabel,
+                            banks: _runner?.banks ?? 0,
+                          ),
+                        ),
+                      ),
                       if (_guideVisible) _guide(t),
                       if (_outcome != null && !_guideVisible)
                         _result(t, _outcome!),
@@ -364,54 +486,107 @@ class _GameScreenState extends ConsumerState<GameScreen>
   Widget _hud(AppLocalizations t) {
     final String code = Localizations.localeOf(context).languageCode;
     final int banks = _runner?.banks ?? 0;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        BbTokens.sp4,
-        BbTokens.sp3,
-        BbTokens.sp4,
-        BbTokens.sp2,
+    final PlayerProgress progress = ref.watch(progressProvider);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 9),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            ArenaInk.of(ArenaInk.bgTop),
+            ArenaInk.of(ArenaInk.panelNavy),
+          ],
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: ArenaInk.of(ArenaInk.trajectoryCyan, 0x55),
+            width: 2,
+          ),
+        ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(color: Colors.black54, offset: Offset(0, 4)),
+        ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          BbIconButton(
-            icon: Icons.close_rounded,
-            variant: BbVariant.light,
-            semanticLabel: t.menuCta,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          const SizedBox(width: BbTokens.sp3),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  t.arenaHeading(
-                    _arena.id,
-                    forLocale(code, _arena.name, _arena.nameEn),
-                  ),
-                  style: BbText.h3(ArenaInk.of(ArenaInk.cream)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  t.shotsLeft(_shotsLeft),
-                  style: BbText.small(ArenaInk.of(ArenaInk.frame)),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
             children: <Widget>[
-              Text('$_score', style: BbText.score(ArenaInk.of(ArenaInk.cream))),
-              Text(
-                banks > 0
-                    ? t.multiplier(math.min(1 + banks, kMaxMultiplier))
-                    : t.scoreLabel,
-                style: BbText.small(
-                  ArenaInk.of(banks > 0 ? ArenaInk.frame : ArenaInk.cream),
+              BbIconButton(
+                icon: Icons.arrow_back_rounded,
+                variant: BbVariant.secondary,
+                semanticLabel: t.menuCta,
+                diameter: 46,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      t.arenaNumberLabel(_arena.id),
+                      style: BbText.h2(Colors.white).copyWith(
+                        shadows: const <Shadow>[
+                          Shadow(
+                            color: BbTokens.outlineDark,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      forLocale(code, _arena.name, _arena.nameEn),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: BbText.small(
+                        BbTokens.textMuted,
+                      ).copyWith(fontSize: 12),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(width: 10),
+              BbIconButton(
+                icon: Icons.pause_rounded,
+                variant: BbVariant.secondary,
+                semanticLabel: t.pauseTitle,
+                diameter: 46,
+                onPressed: () => _showPause(t),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          Row(
+            children: <Widget>[
+              _GameHudPill(
+                icon: Icons.monetization_on_rounded,
+                iconColor: BbTokens.primaryGold,
+                label: '${progress.coins}',
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _GameHudPill(
+                  icon: Icons.auto_awesome_rounded,
+                  iconColor: BbTokens.trajectoryCyan,
+                  label: '$_score ${t.scoreLabel}',
+                  center: true,
+                ),
+              ),
+              const SizedBox(width: 8),
+              _GameHudPill(
+                icon: Icons.radio_button_checked_rounded,
+                iconColor: BbTokens.dangerRed,
+                label: t.shotsLeft(_shotsLeft),
+              ),
+              if (banks > 0) ...<Widget>[
+                const SizedBox(width: 8),
+                _GameHudPill(
+                  icon: Icons.bolt_rounded,
+                  iconColor: BbTokens.primaryGold,
+                  label: t.multiplier(math.min(1 + banks, kMaxMultiplier)),
+                ),
+              ],
             ],
           ),
         ],
@@ -440,40 +615,62 @@ class _GameScreenState extends ConsumerState<GameScreen>
       HintStatus.shown => t.hintShownAnnouncement(hint.targetsDestroyed),
       HintStatus.idle => '',
     };
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        BbTokens.sp4,
-        BbTokens.sp2,
-        BbTokens.sp4,
-        BbTokens.sp4,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 7, 12, 10),
+      decoration: BoxDecoration(
+        color: ArenaInk.of(ArenaInk.panelNavy),
+        border: Border(
+          top: BorderSide(color: ArenaInk.of(ArenaInk.danger, 0x99), width: 2),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            forLocale(code, _arena.hint, _arena.hintEn),
-            textAlign: TextAlign.center,
-            style: BbText.small(ArenaInk.of(ArenaInk.cream, 0xCC)),
-          ),
-          const SizedBox(height: BbTokens.sp2),
-          Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: BbTokens.sp2,
-            runSpacing: BbTokens.sp2,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: BbTokens.dangerRed,
+                size: 20,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                t.floorDangerLabel,
+                style: BbText.button(BbTokens.dangerRed).copyWith(fontSize: 14),
+              ),
+              const SizedBox(width: 6),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: BbTokens.dangerRed,
+                size: 20,
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  forLocale(code, _arena.hint, _arena.hintEn),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: BbText.small(
+                    ArenaInk.of(ArenaInk.cream, 0xCC),
+                  ).copyWith(fontSize: 12),
+                ),
+              ),
+              const SizedBox(width: 8),
               BbButton.primary(
                 key: const Key('hint-button'),
-                label: t.hintButtonLabel,
+                label:
+                    (missing > 0
+                            ? t.hintInsufficientCoins(missing)
+                            : t.hintCostBadge(kHintCost))
+                        .toUpperCase(),
+                size: BbSize.md,
                 icon: Icons.route_rounded,
                 onPressed: enabled ? _requestHint : null,
-              ),
-              BbBadge(
-                missing > 0
-                    ? t.hintInsufficientCoins(missing)
-                    : t.hintCostBadge(kHintCost),
-                color: ArenaInk.of(ArenaInk.bgTop),
-                fg: ArenaInk.of(ArenaInk.primaryGold),
               ),
             ],
           ),
@@ -494,6 +691,49 @@ class _GameScreenState extends ConsumerState<GameScreen>
     );
   }
 
+  Future<void> _showPause(AppLocalizations t) async {
+    if (_paused || _outcome != null) return;
+    setState(() => _paused = true);
+    final bool? leave = await showBbDialog<bool>(
+      context,
+      (BuildContext dialogContext) => BbDialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.pause_circle_filled_rounded,
+              size: 72,
+              color: ArenaInk.of(ArenaInk.trajectoryCyan),
+            ),
+            const SizedBox(height: BbTokens.sp3),
+            Text(
+              t.pauseTitle.toUpperCase(),
+              style: BbText.h1(BbTokens.textPrimary),
+            ),
+            const SizedBox(height: BbTokens.sp5),
+            BbButton.primary(
+              label: t.resumeCta,
+              icon: Icons.play_arrow_rounded,
+              expand: true,
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+            ),
+            const SizedBox(height: BbTokens.sp3),
+            BbButton.light(
+              label: t.menuCta,
+              icon: Icons.home_rounded,
+              expand: true,
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+            ),
+          ],
+        ),
+      ),
+      dismissible: false,
+    );
+    if (!mounted) return;
+    setState(() => _paused = false);
+    if (leave == true && mounted) Navigator.of(context).pop();
+  }
+
   void _requestHint() {
     ref
         .read(hintControllerProvider.notifier)
@@ -509,41 +749,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
   }
 
   Widget _guide(AppLocalizations t) {
-    return Container(
-      color: ArenaInk.of(ArenaInk.bgTop, 0xF2),
-      alignment: Alignment.center,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(BbTokens.sp6),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            CharacterDialogue(id: DialogueId.intro, onDismiss: _dismissGuide),
-            const SizedBox(height: BbTokens.sp4),
-            Text(
-              t.howToTitle,
-              style: BbText.h1(ArenaInk.of(ArenaInk.frame)),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: BbTokens.sp4),
-            for (final String rule in <String>[
-              t.howToRule1,
-              t.howToRule2,
-              t.howToRule3,
-              t.howToRule4,
-            ])
-              Padding(
-                padding: const EdgeInsets.only(bottom: BbTokens.sp3),
-                child: Text(
-                  rule,
-                  textAlign: TextAlign.center,
-                  style: BbText.body(ArenaInk.of(ArenaInk.cream)),
-                ),
-              ),
-            const SizedBox(height: BbTokens.sp4),
-            BbButton.accent(label: t.gotItCta, onPressed: _dismissGuide),
-          ],
-        ),
-      ),
+    return HowToPlayPanel(
+      showDialogue: true,
+      onDismiss: _dismissGuide,
+      onDontShowAgain: _dismissGuide,
     );
   }
 
@@ -587,21 +796,73 @@ class _GameScreenState extends ConsumerState<GameScreen>
               children: <Widget>[
                 Text(
                   won ? t.resultWin : t.resultLose,
-                  style: BbText.display(ArenaInk.of(ArenaInk.cream)),
+                  style:
+                      BbText.display(
+                        won ? BbTokens.primaryGold : BbTokens.dangerRed,
+                      ).copyWith(
+                        fontSize: won ? 50 : 44,
+                        shadows: const <Shadow>[
+                          Shadow(
+                            color: BbTokens.outlineDark,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: BbTokens.sp2),
-                Text(
-                  t.resultScore(_score),
-                  style: BbText.h3(ArenaInk.of(ArenaInk.frame)),
-                ),
                 if (won) ...<Widget>[
-                  const SizedBox(height: BbTokens.sp3),
-                  Text(
-                    '${'★' * stars}${'☆' * (3 - stars)}',
-                    style: BbText.display(ArenaInk.of(ArenaInk.frame)),
+                  const SizedBox(height: BbTokens.sp4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List<Widget>.generate(
+                      3,
+                      (int i) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BbTokens.sp1,
+                        ),
+                        child: Icon(
+                          i < stars
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          size: i == 1 ? 72 : 58,
+                          color: i < stars
+                              ? BbTokens.primaryGold
+                              : BbTokens.textMuted,
+                          shadows: const <Shadow>[
+                            Shadow(
+                              color: BbTokens.outlineDark,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
+                const SizedBox(height: BbTokens.sp3),
+                if (won)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(BbTokens.sp4),
+                    decoration: BoxDecoration(
+                      color: BbTokens.panelNavy,
+                      borderRadius: BorderRadius.circular(BbTokens.rLg),
+                      border: Border.all(
+                        color: BbTokens.textMuted.withValues(alpha: .45),
+                        width: 2,
+                      ),
+                    ),
+                    child: Text(
+                      t.resultScore(_score),
+                      textAlign: TextAlign.center,
+                      style: BbText.score(BbTokens.textPrimary),
+                    ),
+                  )
+                else
+                  Text(
+                    t.resultScore(_score),
+                    style: BbText.h3(BbTokens.trajectoryCyan),
+                  ),
                 if (!_resultDialogueDismissed) ...<Widget>[
                   const SizedBox(height: BbTokens.sp3),
                   CharacterDialogue(
@@ -632,7 +893,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         BbIconButton(
                           icon: Icons.close_rounded,
                           diameter: BbTokens.tapMin,
-                          variant: BbVariant.light,
+                          variant: BbVariant.danger,
                           semanticLabel: t.backCta,
                           onPressed: () =>
                               setState(() => _dismissedAtLossCount = losses),
@@ -642,12 +903,28 @@ class _GameScreenState extends ConsumerState<GameScreen>
                   ),
                 ],
                 const SizedBox(height: BbTokens.sp6),
-                BbButton.primary(
-                  label: won ? t.retryCta : t.stuckReminderRetryCta,
-                  expand: true,
-                  onPressed: () => setState(() => _load(index)),
-                ),
-                const SizedBox(height: BbTokens.sp3),
+                if (won && hasNext) ...<Widget>[
+                  BbButton.primary(
+                    label: t.nextArenaCta,
+                    size: won ? BbSize.lg : BbSize.md,
+                    icon: Icons.double_arrow_rounded,
+                    expand: true,
+                    onPressed: () => setState(() {
+                      _guideVisible = false;
+                      _load(index + 1);
+                    }),
+                  ),
+                  const SizedBox(height: BbTokens.sp3),
+                ] else ...<Widget>[
+                  BbButton.primary(
+                    label: won ? t.retryCta : t.stuckReminderRetryCta,
+                    size: BbSize.lg,
+                    icon: Icons.refresh_rounded,
+                    expand: true,
+                    onPressed: () => setState(() => _load(index)),
+                  ),
+                  const SizedBox(height: BbTokens.sp3),
+                ],
                 if (maySkip) ...<Widget>[
                   BbButton.secondary(
                     key: const Key('skip-arena-button'),
@@ -669,21 +946,31 @@ class _GameScreenState extends ConsumerState<GameScreen>
                   ),
                   const SizedBox(height: BbTokens.sp3),
                 ],
-                if (won && hasNext)
-                  BbButton.accent(
-                    label: t.nextArenaCta,
+                if (won && hasNext) ...<Widget>[
+                  BbButton.secondary(
+                    label: t.retryCta,
+                    icon: Icons.refresh_rounded,
                     expand: true,
-                    onPressed: () => setState(() {
-                      _guideVisible = false;
-                      _load(index + 1);
-                    }),
-                  )
-                else
-                  BbButton.light(
-                    label: t.menuCta,
-                    expand: true,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => setState(() => _load(index)),
                   ),
+                  const SizedBox(height: BbTokens.sp3),
+                ],
+                BbButton.light(
+                  label: won ? t.arenaSelectCta : t.menuCta,
+                  icon: won ? Icons.grid_view_rounded : Icons.home_rounded,
+                  expand: true,
+                  onPressed: won
+                      ? () => Navigator.of(context).pushReplacement(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ArenaMapScreen(
+                              targetArenaId: hasNext
+                                  ? kArenas[index + 1].id
+                                  : _arena.id,
+                            ),
+                          ),
+                        )
+                      : () => Navigator.of(context).pop(),
+                ),
               ],
             ),
           ),

@@ -82,18 +82,31 @@ abstract final class BbTheme {
   static ThemeData light() {
     final base = ThemeData(
       useMaterial3: true,
+      brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: BbTokens.bbCoral,
-        primary: BbTokens.bbCoral,
-        secondary: BbTokens.bbTeal,
-        surface: BbTokens.surface,
+        brightness: Brightness.dark,
+        seedColor: BbTokens.primaryGold,
+        primary: BbTokens.primaryGold,
+        secondary: BbTokens.secondaryBlue,
+        surface: BbTokens.panelNavy,
       ),
-      scaffoldBackgroundColor: BbTokens.cream,
+      scaffoldBackgroundColor: BbTokens.nightIndigo,
     );
     return base.copyWith(
       textTheme: base.textTheme
           .apply(fontFamily: BbText.bodyFamily)
-          .apply(bodyColor: BbTokens.ink700, displayColor: BbTokens.ink900),
+          .apply(
+            bodyColor: BbTokens.textPrimary,
+            displayColor: BbTokens.textPrimary,
+          ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: BbTokens.panelNavy,
+        barrierColor: Color(0xD9000000),
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: BbTokens.panelNavy,
+        contentTextStyle: TextStyle(color: BbTokens.textPrimary),
+      ),
     );
   }
 }

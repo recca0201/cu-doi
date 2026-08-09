@@ -35,6 +35,126 @@ class BbDotPattern extends StatelessWidget {
   );
 }
 
+/// Layered galaxy atmosphere used behind arcade-night screens. Everything is
+/// deterministic so golden tests stay stable, while the soft nebulae, star
+/// clusters and diffraction flares read as deep space instead of dotted paper.
+class BbStarfield extends StatelessWidget {
+  const BbStarfield({super.key, this.opacity = 0.5});
+
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+    child: CustomPaint(
+      size: Size.infinite,
+      painter: _StarfieldPainter(opacity),
+    ),
+  );
+}
+
+class _StarfieldPainter extends CustomPainter {
+  const _StarfieldPainter(this.opacity);
+
+  final double opacity;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect bounds = Offset.zero & size;
+
+    void nebula(Alignment center, double radius, Color color, double alpha) {
+      final Offset c = center.alongSize(size);
+      final double r = size.longestSide * radius;
+      canvas.drawCircle(
+        c,
+        r,
+        Paint()
+          ..shader = RadialGradient(
+            colors: <Color>[
+              color.withValues(alpha: opacity * alpha),
+              color.withValues(alpha: opacity * alpha * .28),
+              color.withValues(alpha: 0),
+            ],
+            stops: const <double>[0, .38, 1],
+          ).createShader(Rect.fromCircle(center: c, radius: r)),
+      );
+    }
+
+    nebula(const Alignment(-.9, -.72), .34, const Color(0xFF7B3FF2), .24);
+    nebula(const Alignment(.92, -.05), .42, const Color(0xFF00B8D9), .17);
+    nebula(const Alignment(-.55, .92), .38, const Color(0xFFE349B7), .12);
+
+    // A faint diagonal Milky-Way band breaks the uniform dot-field silhouette.
+    canvas.save();
+    canvas.clipRect(bounds);
+    canvas.translate(size.width * .52, size.height * .48);
+    canvas.rotate(-.34);
+    final Rect band = Rect.fromCenter(
+      center: Offset.zero,
+      width: size.longestSide * 1.7,
+      height: size.shortestSide * .28,
+    );
+    canvas.drawOval(
+      band,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            Colors.transparent,
+            const Color(0xFF93DFFF).withValues(alpha: opacity * .045),
+            const Color(0xFFD7B5FF).withValues(alpha: opacity * .085),
+            Colors.transparent,
+          ],
+        ).createShader(band),
+    );
+    canvas.restore();
+
+    final Paint dot = Paint()
+      ..color = Colors.white.withValues(alpha: opacity * .42);
+    final Paint cyan = Paint()
+      ..color = BbTokens.trajectoryCyan.withValues(alpha: opacity * .55);
+    final Paint gold = Paint()
+      ..color = BbTokens.primaryGold.withValues(alpha: opacity * .65);
+    for (int i = 0; i < 86; i++) {
+      final double x = ((i * 83 + 29) % 997) / 997 * size.width;
+      final double y = ((i * 137 + 47) % 991) / 991 * size.height;
+      canvas.drawCircle(
+        Offset(x, y),
+        i % 17 == 0 ? 1.7 : (i % 5 == 0 ? 1.05 : .58),
+        i % 13 == 0 ? cyan : dot,
+      );
+    }
+    for (int i = 0; i < 8; i++) {
+      final Offset p = Offset(
+        ((i * 151 + 61) % 947) / 947 * size.width,
+        ((i * 211 + 89) % 953) / 953 * size.height,
+      );
+      final double r = i.isEven ? 3.5 : 2.5;
+      canvas.drawCircle(
+        p,
+        r * 2.6,
+        Paint()
+          ..shader = RadialGradient(
+            colors: <Color>[
+              BbTokens.trajectoryCyan.withValues(alpha: opacity * .18),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromCircle(center: p, radius: r * 2.6)),
+      );
+      canvas.drawLine(
+        p - Offset(r, 0),
+        p + Offset(r, 0),
+        gold..strokeWidth = .8,
+      );
+      canvas.drawLine(p - Offset(0, r), p + Offset(0, r), gold);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _StarfieldPainter oldDelegate) =>
+      oldDelegate.opacity != opacity;
+}
+
 class _DotPainter extends CustomPainter {
   _DotPainter({
     required this.color,

@@ -1,13 +1,13 @@
 import 'package:ban_bua_tuong/domain/player_progress.dart';
 import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
-import 'package:ban_bua_tuong/ui/screens/game_screen.dart';
+import 'package:ban_bua_tuong/ui/widgets/bb_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/pump_app.dart';
 
 void main() {
-  testWidgets('night shell shows chapter progress and four-column nodes', (
+  testWidgets('night shell shows chapter progress and three-column cards', (
     tester,
   ) async {
     await pumpApp(tester, home: const ArenaMapScreen());
@@ -29,7 +29,7 @@ void main() {
     expect(five.dy, greaterThan(one.dy));
   });
 
-  testWidgets('locked node explains while an open node routes to the game', (
+  testWidgets('open card enables play while a locked card explains', (
     tester,
   ) async {
     await pumpApp(tester, home: const ArenaMapScreen());
@@ -40,10 +40,12 @@ void main() {
     tester.widget<InkWell>(openNode).onTap!();
     await tester.pump();
     expect(find.byType(SnackBar), findsNothing);
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.byType(GameScreen), findsOneWidget);
-    Navigator.of(tester.element(find.byType(GameScreen))).pop();
-    await tester.pump(const Duration(milliseconds: 400));
+    expect(
+      tester
+          .widget<BbButton>(find.byKey(const Key('selected-arena-play')))
+          .onPressed,
+      isNotNull,
+    );
     final Finder lockedNode = find.descendant(
       of: find.byKey(const ValueKey<String>('arena-2')),
       matching: find.byType(InkWell),
@@ -79,13 +81,14 @@ void main() {
         home: const ArenaMapScreen(),
       );
       expect(find.text('ĐÃ BỎ QUA'), findsOneWidget);
-      expect(find.text('★★☆'), findsOneWidget);
-      expect(find.text('4'), findsOneWidget);
+      expect(find.byIcon(Icons.star_rounded), findsWidgets);
+      expect(find.byIcon(Icons.star_outline_rounded), findsWidgets);
+      expect(find.text('4'), findsWidgets);
       expect(find.byIcon(Icons.lock_rounded), findsWidgets);
       for (var id = 1; id <= 5; id++) {
         expect(
           tester.getSize(find.byKey(ValueKey<String>('arena-$id'))).height,
-          112,
+          176,
         );
       }
     },

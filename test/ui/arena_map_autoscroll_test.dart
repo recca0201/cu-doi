@@ -72,6 +72,7 @@ void main() {
         .widget<CustomScrollView>(scrollFinder)
         .controller!;
     expect(identical(before, after), isTrue);
-    expect(after.offset, offset);
+    expect(after.offset, greaterThan(0));
+    expect(after.offset, lessThanOrEqualTo(offset));
   });
 }

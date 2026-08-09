@@ -83,6 +83,7 @@ class CharacterDialogue extends ConsumerWidget {
                       BbIconButton(
                         key: const Key('dialogue-close'),
                         icon: Icons.close_rounded,
+                        variant: BbVariant.danger,
                         diameter: BbTokens.tapMin,
                         semanticLabel: t.backCta,
                         onPressed: () => _dismiss(ref),

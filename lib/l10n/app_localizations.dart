@@ -146,6 +146,36 @@ abstract class AppLocalizations {
   /// **'Xu'**
   String get coinsLabel;
 
+  /// No description provided for @floorDangerLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'RƠI RA LÀ MẤT!'**
+  String get floorDangerLabel;
+
+  /// No description provided for @banksLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'SỐ LẦN DỘI'**
+  String get banksLabel;
+
+  /// No description provided for @pauseTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm dừng'**
+  String get pauseTitle;
+
+  /// No description provided for @resumeCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chơi tiếp'**
+  String get resumeCta;
+
+  /// No description provided for @arenaNumberLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'MÀN {id}'**
+  String arenaNumberLabel(int id);
+
   /// No description provided for @arenaHeading.
   ///
   /// In vi, this message translates to:
@@ -254,11 +284,107 @@ abstract class AppLocalizations {
   /// **'Xong màn trước đã rồi mới tới màn này nha!'**
   String get arenaLockedHint;
 
+  /// No description provided for @arenaTargetsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mục tiêu'**
+  String get arenaTargetsLabel;
+
+  /// No description provided for @arenaBankRequirementsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Yêu cầu dội'**
+  String get arenaBankRequirementsLabel;
+
+  /// No description provided for @arenaShotsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lượt'**
+  String get arenaShotsLabel;
+
+  /// No description provided for @arenaStarThresholdsLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mốc sao'**
+  String get arenaStarThresholdsLabel;
+
   /// No description provided for @howToTitle.
   ///
   /// In vi, this message translates to:
   /// **'Luật chơi'**
   String get howToTitle;
+
+  /// No description provided for @howToAimTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngắm và bắn'**
+  String get howToAimTitle;
+
+  /// No description provided for @howToAimBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kéo để ngắm, thả tay để bắn.'**
+  String get howToAimBody;
+
+  /// No description provided for @howToBounceTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tích lần dội'**
+  String get howToBounceTitle;
+
+  /// No description provided for @howToBounceBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bi dội tường, khối chắn và vật cản chéo.'**
+  String get howToBounceBody;
+
+  /// No description provided for @howToDirectTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắn thẳng không tính'**
+  String get howToDirectTitle;
+
+  /// No description provided for @howToDirectBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mục tiêu chỉ vỡ khi bi đã dội đủ số lần yêu cầu.'**
+  String get howToDirectBody;
+
+  /// No description provided for @howToScoreTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dội nhiều, điểm cao'**
+  String get howToScoreTitle;
+
+  /// No description provided for @howToScoreBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm nhận = 100 × (1 + số lần dội).'**
+  String get howToScoreBody;
+
+  /// No description provided for @howToFloorTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đáy sân mở'**
+  String get howToFloorTitle;
+
+  /// No description provided for @howToFloorBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đáy sân không có tường. Bi rơi xuống là mất lượt.'**
+  String get howToFloorBody;
+
+  /// No description provided for @howToTargetNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số trên mục tiêu là số lần dội tối thiểu cần đạt.'**
+  String get howToTargetNote;
+
+  /// No description provided for @dontShowAgainCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không hiện lại'**
+  String get dontShowAgainCta;
 
   /// No description provided for @howToRule1.
   ///

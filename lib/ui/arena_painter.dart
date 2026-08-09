@@ -96,7 +96,6 @@ class ArenaPainter extends CustomPainter {
     _paintLauncher(canvas, fit);
     final V2? ball = ballPos;
     if (ball != null) _paintBall(canvas, fit, ball);
-    _paintMultiplier(canvas, fit);
     _paintStamps(canvas, fit);
 
     canvas.restore();
@@ -107,15 +106,56 @@ class ArenaPainter extends CustomPainter {
     canvas.drawRect(
       r,
       Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+        ..shader = RadialGradient(
+          center: const Alignment(-.35, -.65),
+          radius: 1.35,
           colors: <Color>[
-            ArenaInk.of(ArenaInk.bgTop),
-            ArenaInk.of(ArenaInk.bgBottom),
+            const Color(0xFF2A1762),
+            const Color(0xFF0B1B49),
+            const Color(0xFF03081E),
           ],
         ).createShader(r),
     );
+
+    // Cyan and magenta nebulae give the arena a deep-space silhouette while
+    // staying dimmer than the cyan trajectory and armed target glow.
+    for (final ({Alignment center, Color color, double radius}) cloud in <({
+      Alignment center,
+      Color color,
+      double radius,
+    })>[
+      (center: const Alignment(.92, -.28), color: const Color(0xFF00B7D8), radius: .62),
+      (center: const Alignment(-.86, .54), color: const Color(0xFFA23BC7), radius: .55),
+    ]) {
+      final Offset c = cloud.center.alongSize(size);
+      final double radius = size.longestSide * cloud.radius;
+      canvas.drawCircle(
+        c,
+        radius,
+        Paint()
+          ..shader = RadialGradient(
+            colors: <Color>[
+              cloud.color.withValues(alpha: .12),
+              cloud.color.withValues(alpha: .035),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromCircle(center: c, radius: radius)),
+      );
+    }
+
+    final Paint mote = Paint()..color = Colors.white.withValues(alpha: .30);
+    final Paint blueStar = Paint()
+      ..color = const Color(0xFF8FE9FF).withValues(alpha: .46);
+    for (int i = 0; i < 64; i++) {
+      final double x = ((i * 73 + 19) % 389) / 389 * size.width;
+      final double y = ((i * 127 + 31) % 397) / 397 * size.height;
+      final Offset p = Offset(x, y);
+      canvas.drawCircle(p, i % 13 == 0 ? 1.45 : .55, i % 9 == 0 ? blueStar : mote);
+      if (i % 19 == 0) {
+        canvas.drawLine(p - const Offset(3, 0), p + const Offset(3, 0), blueStar..strokeWidth = .6);
+        canvas.drawLine(p - const Offset(0, 3), p + const Offset(0, 3), blueStar);
+      }
+    }
   }
 
   void _paintFrame(Canvas canvas, ArenaFit fit) {
@@ -127,7 +167,7 @@ class ArenaPainter extends CustomPainter {
     // Faint playfield wash so the live area reads as a stage.
     canvas.drawRect(
       arenaRect,
-      Paint()..color = ArenaInk.of(ArenaInk.frame, 0x1F),
+      Paint()..color = Colors.black.withValues(alpha: .06),
     );
 
     // Left, top and right are real walls. The bottom is drawn dashed and red
@@ -141,11 +181,42 @@ class ArenaPainter extends CustomPainter {
     canvas.drawPath(
       p,
       Paint()
-        ..color = ArenaInk.of(ArenaInk.frame)
+        ..color = ArenaInk.of(ArenaInk.outline)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = fit.u(0.9)
-        ..strokeCap = StrokeCap.round,
+        ..strokeWidth = fit.u(4.2)
+        ..strokeCap = StrokeCap.square,
     );
+    canvas.drawPath(
+      p,
+      Paint()
+        ..color = const Color(0xFF234D83)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(2.8)
+        ..strokeCap = StrokeCap.square,
+    );
+    canvas.drawPath(
+      p,
+      Paint()
+        ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x7A)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(.35),
+    );
+
+    final Paint seam = Paint()
+      ..color = ArenaInk.of(ArenaInk.outline, 0xCC)
+      ..strokeWidth = fit.u(.45);
+    for (double y = 15; y < kArenaHeight - 8; y += 24) {
+      canvas.drawLine(
+        fit.toScreen(V2(0, y)),
+        fit.toScreen(V2(2.1, y + 2)),
+        seam,
+      );
+      canvas.drawLine(
+        fit.toScreen(V2(kArenaWidth - 2.1, y + 2)),
+        fit.toScreen(V2(kArenaWidth, y)),
+        seam,
+      );
+    }
 
     _dashed(
       canvas,
@@ -169,13 +240,33 @@ class ArenaPainter extends CustomPainter {
         fit.toScreen(V2(b.right, b.bottom)),
       );
       final RRect rr = RRect.fromRectAndRadius(r, Radius.circular(fit.u(1.2)));
-      canvas.drawRRect(rr, Paint()..color = ArenaInk.of(ArenaInk.blockFill));
+      canvas.drawRRect(
+        rr.shift(Offset(0, fit.u(.9))),
+        Paint()..color = ArenaInk.of(ArenaInk.outline, 0xCC),
+      );
       canvas.drawRRect(
         rr,
         Paint()
-          ..color = ArenaInk.of(ArenaInk.frame, 0x99)
+          ..shader = const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[Color(0xFF61779B), Color(0xFF243A61)],
+          ).createShader(r),
+      );
+      canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = const Color(0xFF9CB4D6)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = fit.u(0.55),
+          ..strokeWidth = fit.u(0.38),
+      );
+      canvas.drawLine(
+        Offset(r.left + fit.u(.8), r.top + fit.u(.7)),
+        Offset(r.right - fit.u(.8), r.top + fit.u(.7)),
+        Paint()
+          ..color = Colors.white.withValues(alpha: .22)
+          ..strokeWidth = fit.u(.35)
+          ..strokeCap = StrokeCap.round,
       );
     }
   }
@@ -188,18 +279,38 @@ class ArenaPainter extends CustomPainter {
         a,
         b,
         Paint()
-          ..color = ArenaInk.of(ArenaInk.deflector, 0x38)
-          ..strokeWidth = fit.u(3.0)
+          ..color = ArenaInk.of(ArenaInk.outline)
+          ..strokeWidth = fit.u(4.6)
           ..strokeCap = StrokeCap.round,
       );
       canvas.drawLine(
         a,
         b,
         Paint()
-          ..color = ArenaInk.of(ArenaInk.deflector)
-          ..strokeWidth = fit.u(1.1)
+          ..color = const Color(0xFF5E7397)
+          ..strokeWidth = fit.u(3.2)
           ..strokeCap = StrokeCap.round,
       );
+      canvas.drawLine(
+        a,
+        b,
+        Paint()
+          ..color = const Color(0xFFB6C8E2)
+          ..strokeWidth = fit.u(.42)
+          ..strokeCap = StrokeCap.round,
+      );
+      for (final Offset bolt in <Offset>[a, b]) {
+        canvas.drawCircle(
+          bolt,
+          fit.u(1.15),
+          Paint()..color = ArenaInk.of(ArenaInk.outline),
+        );
+        canvas.drawCircle(
+          bolt,
+          fit.u(.55),
+          Paint()..color = const Color(0xFFB6C8E2),
+        );
+      }
     }
   }
 
@@ -300,9 +411,17 @@ class ArenaPainter extends CustomPainter {
     canvas.drawPath(
       _pathOf(trail, fit),
       Paint()
-        ..color = ArenaInk.of(ArenaInk.cream, 0x59)
+        ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x26)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = fit.u(0.55)
+        ..strokeWidth = fit.u(2.4)
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawPath(
+      _pathOf(trail, fit),
+      Paint()
+        ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0xA8)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(.72)
         ..strokeCap = StrokeCap.round,
     );
     // Hot head of the trail, so the eye can follow a fast carom.
@@ -310,9 +429,9 @@ class ArenaPainter extends CustomPainter {
     canvas.drawPath(
       _pathOf(trail.sublist(from), fit),
       Paint()
-        ..color = ArenaInk.of(ArenaInk.cream)
+        ..color = Colors.white
         ..style = PaintingStyle.stroke
-        ..strokeWidth = fit.u(0.95)
+        ..strokeWidth = fit.u(.52)
         ..strokeCap = StrokeCap.round,
     );
   }
@@ -322,27 +441,40 @@ class ArenaPainter extends CustomPainter {
       if (!alive[i]) continue;
       final TargetSpec t = arena.targets[i];
       final Offset c = fit.toScreen(t.pos);
-      final double r = fit.u(kTargetRadius);
+      final double r = fit.u(kTargetRadius * 1.18);
       final int base = ArenaInk.targets[t.palette % ArenaInk.targets.length];
       final bool armed = currentBanks >= t.requiredBanks;
 
-      if (armed) {
-        canvas.drawCircle(
-          c,
-          r * 1.55,
-          Paint()..color = ArenaInk.of(base, 0x28),
-        );
-        canvas.drawCircle(
-          c,
-          r * 1.24,
-          Paint()
-            ..color = ArenaInk.of(base, 0x96)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = fit.u(0.5),
-        );
-      }
+      canvas.drawCircle(
+        c,
+        r * (armed ? 1.72 : 1.38),
+        Paint()..color = ArenaInk.of(base, armed ? 0x48 : 0x18),
+      );
+      canvas.drawCircle(
+        c,
+        r * 1.16,
+        Paint()
+          ..color = ArenaInk.of(
+            armed ? ArenaInk.cream : base,
+            armed ? 0xD0 : 0x88,
+          )
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = fit.u(armed ? .72 : .42),
+      );
 
-      canvas.drawCircle(c, r, Paint()..color = ArenaInk.of(base));
+      canvas.drawCircle(
+        c,
+        r,
+        Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-.35, -.45),
+            radius: .95,
+            colors: <Color>[
+              ArenaInk.of(base),
+              Color.lerp(ArenaInk.of(base), Colors.black, .38)!,
+            ],
+          ).createShader(Rect.fromCircle(center: c, radius: r)),
+      );
       canvas.drawCircle(
         c,
         r,
@@ -352,8 +484,23 @@ class ArenaPainter extends CustomPainter {
           ..strokeWidth = fit.u(0.6),
       );
 
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: c - Offset(r * .28, r * .38),
+          width: r * .7,
+          height: r * .3,
+        ),
+        Paint()..color = Colors.white.withValues(alpha: .26),
+      );
       _paintFace(canvas, c, r, armed: armed);
-      _paintRequirementChip(canvas, fit, c, r, t.requiredBanks, armed: armed);
+      _outlinedText(
+        canvas,
+        '${t.requiredBanks}',
+        c + Offset(0, r * .34),
+        r * .86,
+        Colors.white,
+        ArenaInk.of(ArenaInk.outline),
+      );
     }
   }
 
@@ -361,40 +508,59 @@ class ArenaPainter extends CustomPainter {
   /// explanation — a player should never have to read the number to get it.
   void _paintFace(Canvas canvas, Offset c, double r, {required bool armed}) {
     final double ex = r * 0.36;
-    final double ey = -r * 0.14;
+    final double ey = -r * 0.30;
     final Color dark = ArenaInk.of(ArenaInk.outline);
+    final Paint white = Paint()..color = const Color(0xFFFFFBEC);
+    final Paint pupil = Paint()..color = dark;
+
+    canvas.drawCircle(Offset(c.dx - ex, c.dy + ey), r * .23, white);
+    canvas.drawCircle(Offset(c.dx + ex, c.dy + ey), r * .23, white);
+    canvas.drawCircle(
+      Offset(c.dx - ex + (armed ? r * .04 : r * .06), c.dy + ey),
+      r * .105,
+      pupil,
+    );
+    canvas.drawCircle(
+      Offset(c.dx + ex - (armed ? r * .04 : r * .06), c.dy + ey),
+      r * .105,
+      pupil,
+    );
+
+    final Paint brow = Paint()
+      ..color = dark
+      ..strokeWidth = r * .11
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(c.dx - ex - r * .19, c.dy + ey - r * .27),
+      Offset(c.dx - ex + r * .16, c.dy + ey - r * (armed ? .12 : .18)),
+      brow,
+    );
+    canvas.drawLine(
+      Offset(c.dx + ex - r * .16, c.dy + ey - r * (armed ? .12 : .18)),
+      Offset(c.dx + ex + r * .19, c.dy + ey - r * .27),
+      brow,
+    );
 
     if (armed) {
-      final Paint fill = Paint()..color = dark;
-      canvas.drawCircle(Offset(c.dx - ex, c.dy + ey), r * 0.20, fill);
-      canvas.drawCircle(Offset(c.dx + ex, c.dy + ey), r * 0.20, fill);
-      canvas.drawCircle(Offset(c.dx, c.dy + r * 0.42), r * 0.15, fill);
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(c.dx, c.dy - r * .02),
+          width: r * .32,
+          height: r * .22,
+        ),
+        pupil,
+      );
       return;
     }
 
-    // Half-lidded eyes.
-    final Paint lid = Paint()
-      ..color = dark
-      ..strokeWidth = r * 0.15
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(c.dx - ex - r * 0.16, c.dy + ey),
-      Offset(c.dx - ex + r * 0.16, c.dy + ey),
-      lid,
-    );
-    canvas.drawLine(
-      Offset(c.dx + ex - r * 0.16, c.dy + ey),
-      Offset(c.dx + ex + r * 0.16, c.dy + ey),
-      lid,
-    );
     // Smirk, pulled to one side.
     final Path smirk = Path()
-      ..moveTo(c.dx - r * 0.18, c.dy + r * 0.38)
+      ..moveTo(c.dx - r * 0.18, c.dy - r * 0.02)
       ..quadraticBezierTo(
         c.dx + r * 0.10,
-        c.dy + r * 0.56,
-        c.dx + r * 0.34,
-        c.dy + r * 0.30,
+        c.dy + r * 0.12,
+        c.dx + r * 0.30,
+        c.dy - r * 0.08,
       );
     canvas.drawPath(
       smirk,
@@ -403,37 +569,6 @@ class ArenaPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = r * 0.13
         ..strokeCap = StrokeCap.round,
-    );
-  }
-
-  void _paintRequirementChip(
-    Canvas canvas,
-    ArenaFit fit,
-    Offset c,
-    double r,
-    int required, {
-    required bool armed,
-  }) {
-    final Offset chip = Offset(c.dx + r * 0.78, c.dy - r * 0.78);
-    final double cr = r * 0.46;
-    final Color accent = armed
-        ? ArenaInk.of(ArenaInk.frame)
-        : ArenaInk.of(ArenaInk.cream, 0x66);
-    canvas.drawCircle(chip, cr, Paint()..color = ArenaInk.of(ArenaInk.outline));
-    canvas.drawCircle(
-      chip,
-      cr,
-      Paint()
-        ..color = accent
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = fit.u(0.35),
-    );
-    _text(
-      canvas,
-      '$required',
-      chip,
-      cr * 1.25,
-      armed ? ArenaInk.of(ArenaInk.frame) : ArenaInk.of(ArenaInk.cream),
     );
   }
 
@@ -451,8 +586,8 @@ class ArenaPainter extends CustomPainter {
       canvas,
       pts.sublist(0, 2),
       Paint()
-        ..color = ArenaInk.of(ArenaInk.frame, 0x8A)
-        ..strokeWidth = fit.u(0.6)
+        ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0xDE)
+        ..strokeWidth = fit.u(0.72)
         ..strokeCap = StrokeCap.round,
       fit.u(2.2),
       fit.u(1.8),
@@ -462,8 +597,8 @@ class ArenaPainter extends CustomPainter {
         canvas,
         pts.sublist(1),
         Paint()
-          ..color = ArenaInk.of(ArenaInk.frame, 0x3D)
-          ..strokeWidth = fit.u(0.5)
+          ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x62)
+          ..strokeWidth = fit.u(0.52)
           ..strokeCap = StrokeCap.round,
         fit.u(1.5),
         fit.u(2.4),
@@ -475,6 +610,36 @@ class ArenaPainter extends CustomPainter {
     final Offset c = fit.toScreen(kShooterOrigin);
     final double angle = math.atan2(aimDirection.y, aimDirection.x);
 
+    final Rect pedestal = Rect.fromCenter(
+      center: c + Offset(0, fit.u(4.8)),
+      width: fit.u(13.5),
+      height: fit.u(11),
+    );
+    final RRect pedestalShape = RRect.fromRectAndRadius(
+      pedestal,
+      Radius.circular(fit.u(3)),
+    );
+    canvas.drawRRect(
+      pedestalShape.shift(Offset(0, fit.u(1.3))),
+      Paint()..color = ArenaInk.of(ArenaInk.outline),
+    );
+    canvas.drawRRect(
+      pedestalShape,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[Color(0xFF269DE7), Color(0xFF164D96)],
+        ).createShader(pedestal),
+    );
+    canvas.drawRRect(
+      pedestalShape,
+      Paint()
+        ..color = ArenaInk.of(ArenaInk.primaryGold)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(.7),
+    );
+
     canvas.save();
     canvas.translate(c.dx, c.dy);
     canvas.rotate(angle);
@@ -482,7 +647,7 @@ class ArenaPainter extends CustomPainter {
       Rect.fromLTRB(0, -fit.u(2.4), fit.u(10), fit.u(2.4)),
       Radius.circular(fit.u(1.2)),
     );
-    canvas.drawRRect(barrel, Paint()..color = ArenaInk.of(ArenaInk.frame));
+    canvas.drawRRect(barrel, Paint()..color = const Color(0xFF278FE0));
     canvas.drawRRect(
       barrel,
       Paint()
@@ -494,68 +659,53 @@ class ArenaPainter extends CustomPainter {
 
     canvas.drawCircle(
       c,
-      fit.u(5.2),
+      fit.u(5.5),
       Paint()..color = ArenaInk.of(ArenaInk.outline),
     );
     canvas.drawCircle(
       c,
-      fit.u(4.0),
-      Paint()..color = ArenaInk.of(ArenaInk.frame),
+      fit.u(4.35),
+      Paint()..color = ArenaInk.of(ArenaInk.primaryGold),
     );
+    canvas.drawCircle(c, fit.u(3.55), Paint()..color = const Color(0xFF1F6EBB));
+    final Path bolt = Path()
+      ..moveTo(c.dx + fit.u(.7), c.dy - fit.u(2.3))
+      ..lineTo(c.dx - fit.u(1.4), c.dy + fit.u(.3))
+      ..lineTo(c.dx - fit.u(.2), c.dy + fit.u(.2))
+      ..lineTo(c.dx - fit.u(.7), c.dy + fit.u(2.3))
+      ..lineTo(c.dx + fit.u(1.5), c.dy - fit.u(.5))
+      ..lineTo(c.dx + fit.u(.25), c.dy - fit.u(.3))
+      ..close();
+    canvas.drawPath(bolt, Paint()..color = ArenaInk.of(ArenaInk.primaryGold));
   }
 
   void _paintBall(Canvas canvas, ArenaFit fit, V2 pos) {
     final Offset c = fit.toScreen(pos);
     canvas.drawCircle(
       c,
-      fit.u(kBallRadius * 2.2),
-      Paint()..color = ArenaInk.of(ArenaInk.cream, 0x33),
+      fit.u(kBallRadius * 2.8),
+      Paint()..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x32),
     );
     canvas.drawCircle(
       c,
       fit.u(kBallRadius),
-      Paint()..color = ArenaInk.of(ArenaInk.cream),
-    );
-  }
-
-  /// Live multiplier capsule. It remains visible at ×1 during flight so
-  /// reduced motion never removes gameplay information.
-  void _paintMultiplier(Canvas canvas, ArenaFit fit) {
-    if (!shotInFlight) return;
-    final int mult = math.min(1 + currentBanks, kMaxMultiplier);
-    final bool punch =
-        !reducedMotion &&
-        effects.any(
-          (EffectElement element) =>
-              element.kind == EffectKind.bank && element.age < .18,
-        );
-    final double scale = punch ? 1.12 : 1;
-    // The campaign has no targets this low; keeping the HUD capsule here
-    // prevents an informational overlay from obscuring the armed tell.
-    final Offset center = fit.toScreen(const V2(92, 143));
-    final Rect capsule = Rect.fromCenter(
-      center: center,
-      width: fit.u(14) * scale,
-      height: fit.u(18) * scale,
-    );
-    final RRect rounded = RRect.fromRectAndRadius(
-      capsule,
-      Radius.circular(fit.u(7)),
-    );
-    canvas.drawRRect(rounded, Paint()..color = ArenaInk.of(ArenaInk.panelNavy));
-    canvas.drawRRect(
-      rounded,
       Paint()
-        ..color = ArenaInk.of(ArenaInk.primaryGold)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = fit.u(.65),
+        ..shader = RadialGradient(
+          center: const Alignment(-.35, -.45),
+          colors: <Color>[
+            Colors.white,
+            ArenaInk.of(ArenaInk.trajectoryCyan),
+            const Color(0xFF2A79C7),
+          ],
+        ).createShader(Rect.fromCircle(center: c, radius: fit.u(kBallRadius))),
     );
-    _text(
-      canvas,
-      '×$mult',
-      center,
-      fit.u(multiplierFontSizeForBanks(currentBanks)) * scale,
-      ArenaInk.of(ArenaInk.primaryGold),
+    canvas.drawCircle(
+      c,
+      fit.u(kBallRadius),
+      Paint()
+        ..color = Colors.white.withValues(alpha: .9)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fit.u(.35),
     );
   }
 
@@ -640,6 +790,40 @@ class ArenaPainter extends CustomPainter {
       textAlign: TextAlign.center,
     )..layout();
     tp.paint(canvas, center - Offset(tp.width / 2, tp.height / 2));
+  }
+
+  void _outlinedText(
+    Canvas canvas,
+    String value,
+    Offset center,
+    double fontSize,
+    Color fill,
+    Color outline,
+  ) {
+    TextPainter painter(Paint foreground) => TextPainter(
+      text: TextSpan(
+        text: value,
+        style: TextStyle(
+          foreground: foreground,
+          fontFamily: BbText.displayFamily,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w800,
+          height: 1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    )..layout();
+
+    final TextPainter stroke = painter(
+      Paint()
+        ..color = outline
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = fontSize * .13,
+    );
+    stroke.paint(canvas, center - Offset(stroke.width / 2, stroke.height / 2));
+    final TextPainter face = painter(Paint()..color = fill);
+    face.paint(canvas, center - Offset(face.width / 2, face.height / 2));
   }
 
   @override

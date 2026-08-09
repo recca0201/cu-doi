@@ -33,6 +33,23 @@ class AppLocalizationsVi extends AppLocalizations {
   String get coinsLabel => 'Xu';
 
   @override
+  String get floorDangerLabel => 'RƠI RA LÀ MẤT!';
+
+  @override
+  String get banksLabel => 'SỐ LẦN DỘI';
+
+  @override
+  String get pauseTitle => 'Tạm dừng';
+
+  @override
+  String get resumeCta => 'Chơi tiếp';
+
+  @override
+  String arenaNumberLabel(int id) {
+    return 'MÀN $id';
+  }
+
+  @override
   String arenaHeading(int id, String name) {
     return 'Màn $id · $name';
   }
@@ -97,7 +114,58 @@ class AppLocalizationsVi extends AppLocalizations {
   String get arenaLockedHint => 'Xong màn trước đã rồi mới tới màn này nha!';
 
   @override
+  String get arenaTargetsLabel => 'Mục tiêu';
+
+  @override
+  String get arenaBankRequirementsLabel => 'Yêu cầu dội';
+
+  @override
+  String get arenaShotsLabel => 'Lượt';
+
+  @override
+  String get arenaStarThresholdsLabel => 'Mốc sao';
+
+  @override
   String get howToTitle => 'Luật chơi';
+
+  @override
+  String get howToAimTitle => 'Ngắm và bắn';
+
+  @override
+  String get howToAimBody => 'Kéo để ngắm, thả tay để bắn.';
+
+  @override
+  String get howToBounceTitle => 'Tích lần dội';
+
+  @override
+  String get howToBounceBody => 'Bi dội tường, khối chắn và vật cản chéo.';
+
+  @override
+  String get howToDirectTitle => 'Bắn thẳng không tính';
+
+  @override
+  String get howToDirectBody =>
+      'Mục tiêu chỉ vỡ khi bi đã dội đủ số lần yêu cầu.';
+
+  @override
+  String get howToScoreTitle => 'Dội nhiều, điểm cao';
+
+  @override
+  String get howToScoreBody => 'Điểm nhận = 100 × (1 + số lần dội).';
+
+  @override
+  String get howToFloorTitle => 'Đáy sân mở';
+
+  @override
+  String get howToFloorBody =>
+      'Đáy sân không có tường. Bi rơi xuống là mất lượt.';
+
+  @override
+  String get howToTargetNote =>
+      'Số trên mục tiêu là số lần dội tối thiểu cần đạt.';
+
+  @override
+  String get dontShowAgainCta => 'Không hiện lại';
 
   @override
   String get howToRule1 =>

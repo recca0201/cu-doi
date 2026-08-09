@@ -13,15 +13,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Portrait only. The arena is a fixed 100x160 logical space with no landscape
   // composition, and the parent project shipped portrait-only too.
-  await SystemChrome.setPreferredOrientations(
-    const <DeviceOrientation>[DeviceOrientation.portraitUp],
-  );
+  await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+  ]);
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
-      overrides: <Override>[
-        sharedPreferencesProvider.overrideWithValue(prefs),
-      ],
+      overrides: <Override>[sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const BanBuaTuongApp(),
     ),
   );
@@ -36,9 +34,8 @@ class BanBuaTuongApp extends ConsumerWidget {
     return MaterialApp(
       onGenerateTitle: (BuildContext ctx) => AppLocalizations.of(ctx).appTitle,
       debugShowCheckedModeBanner: false,
-      // Menus keep the parent brand's daylight cream theme; only the arena goes
-      // to the night stage. That contrast is intentional — the brand stays
-      // recognisable in the shell, the game reads as something new.
+      // The whole product shares the arcade-night shell; gameplay remains the
+      // darkest layer so cyan trajectories and armed targets stay dominant.
       theme: BbTheme.light(),
       locale: Locale(settings.localeCode),
       localizationsDelegates: AppLocalizations.localizationsDelegates,

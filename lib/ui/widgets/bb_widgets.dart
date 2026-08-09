@@ -7,46 +7,58 @@ enum BbVariant { primary, secondary, accent, grape, danger, light }
 enum BbSize { sm, md, lg }
 
 class _VariantSpec {
-  const _VariantSpec(this.bg, this.dark, this.shadow, this.fg);
-  final Color bg, dark, shadow, fg;
+  const _VariantSpec({
+    required this.top,
+    required this.bottom,
+    required this.rim,
+    required this.shadow,
+    required this.fg,
+  });
+  final Color top, bottom, rim, shadow, fg;
 }
 
 const _variants = {
   BbVariant.primary: _VariantSpec(
-    BbTokens.primaryGold,
-    BbTokens.primaryGoldDark,
-    BbTokens.outlineDark,
-    BbTokens.outlineDark,
+    top: Color(0xFFFFE64A),
+    bottom: Color(0xFFFFA800),
+    rim: Color(0xFFFFF07A),
+    shadow: Color(0xFF8A4A00),
+    fg: Color(0xFF3B2100),
   ),
   BbVariant.secondary: _VariantSpec(
-    BbTokens.secondaryBlue,
-    BbTokens.secondaryBlueDark,
-    BbTokens.outlineDark,
-    Colors.white,
+    top: Color(0xFF32BFFF),
+    bottom: Color(0xFF0863C8),
+    rim: Color(0xFF92E7FF),
+    shadow: Color(0xFF052D69),
+    fg: Colors.white,
   ),
   BbVariant.accent: _VariantSpec(
-    BbTokens.tertiaryPurple,
-    BbTokens.bbGrapeDark,
-    BbTokens.outlineDark,
-    Colors.white,
+    top: Color(0xFFC45AF5),
+    bottom: Color(0xFF7023C5),
+    rim: Color(0xFFE4A4FF),
+    shadow: Color(0xFF38106E),
+    fg: Colors.white,
   ),
   BbVariant.grape: _VariantSpec(
-    BbTokens.bbGrape,
-    BbTokens.bbGrapeDark,
-    BbTokens.ink900,
-    Colors.white,
+    top: Color(0xFFB474FF),
+    bottom: Color(0xFF7131C7),
+    rim: Color(0xFFD7B1FF),
+    shadow: Color(0xFF351361),
+    fg: Colors.white,
   ),
   BbVariant.danger: _VariantSpec(
-    BbTokens.danger,
-    Color(0xFFD43A3A),
-    BbTokens.ink900,
-    Colors.white,
+    top: Color(0xFFFF6255),
+    bottom: Color(0xFFC91422),
+    rim: Color(0xFFFFB1A8),
+    shadow: Color(0xFF670E18),
+    fg: Colors.white,
   ),
   BbVariant.light: _VariantSpec(
-    BbTokens.panelNavy,
-    BbTokens.nightIndigo,
-    BbTokens.outlineDark,
-    BbTokens.textPrimary,
+    top: Color(0xFF274E93),
+    bottom: Color(0xFF102553),
+    rim: Color(0xFF6FA6E8),
+    shadow: Color(0xFF050A1C),
+    fg: BbTokens.textPrimary,
   ),
 };
 
@@ -143,21 +155,21 @@ class _BbButtonState extends State<BbButton> {
     final enabled = widget.onPressed != null;
     final pressed = _down && enabled;
     final drop = pressed ? BbTokens.pressDrop : 0.0;
-    final shadowOffset = pressed ? 1.0 : BbTokens.stickerMd;
+    final shadowOffset = pressed ? 1.0 : BbTokens.stickerMd + 1;
+    final top = pressed ? Color.lerp(spec.top, spec.bottom, .5)! : spec.top;
 
     Widget child = AnimatedContainer(
       duration: BbTokens.durFast,
       curve: BbTokens.easeOut,
       height: _height * controlScale,
       transform: Matrix4.translationValues(drop, drop, 0),
-      padding: EdgeInsets.symmetric(horizontal: BbTokens.sp5 * controlScale),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: pressed ? spec.dark : spec.bg,
+        color: BbTokens.outlineDark,
         borderRadius: BorderRadius.circular(BbTokens.rPill),
-        border: Border.all(color: BbTokens.ink900, width: BbTokens.bd3),
+        border: Border.all(color: const Color(0xFF050816), width: 2.5),
         boxShadow: enabled
-            ? [
+            ? <BoxShadow>[
                 BoxShadow(
                   offset: Offset(shadowOffset, shadowOffset),
                   blurRadius: 0,
@@ -166,30 +178,92 @@ class _BbButtonState extends State<BbButton> {
               ]
             : const [],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.icon != null) ...[
-            Icon(widget.icon, color: spec.fg, size: 20 * controlScale),
-            SizedBox(width: BbTokens.sp2 * controlScale),
-          ],
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                widget.label,
-                maxLines: 1,
-                softWrap: false,
-                textScaler: TextScaler.linear(buttonTextScale),
-                style: BbText.button(spec.fg).copyWith(
-                  fontSize: widget.size == BbSize.lg
-                      ? 20
-                      : (widget.size == BbSize.sm ? 15 : 18),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[top, spec.bottom],
+              stops: const <double>[0, .82],
+            ),
+            borderRadius: BorderRadius.circular(BbTokens.rPill - 3),
+            border: Border.all(color: spec.rim, width: 1.5),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.white.withValues(alpha: .32),
+                offset: const Offset(0, 1),
               ),
+            ],
+          ),
+          child: SizedBox(
+            height: _height * controlScale - 4,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned(
+                  left: 14,
+                  right: 14,
+                  top: 3,
+                  child: Container(
+                    height: 2,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .62),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: BbTokens.sp5 * controlScale,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      if (widget.icon != null) ...<Widget>[
+                        Icon(
+                          widget.icon,
+                          color: spec.fg,
+                          size:
+                              (widget.size == BbSize.lg ? 28 : 21) *
+                              controlScale,
+                          shadows: const <Shadow>[
+                            Shadow(color: Colors.black45, offset: Offset(0, 2)),
+                          ],
+                        ),
+                        SizedBox(width: BbTokens.sp2 * controlScale),
+                      ],
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            widget.label,
+                            maxLines: 1,
+                            softWrap: false,
+                            textScaler: TextScaler.linear(buttonTextScale),
+                            style: BbText.button(spec.fg).copyWith(
+                              fontSize: widget.size == BbSize.lg
+                                  ? 22
+                                  : (widget.size == BbSize.sm ? 15 : 18),
+                              shadows: const <Shadow>[
+                                Shadow(
+                                  color: Colors.black38,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
 
@@ -248,7 +322,9 @@ class _BbIconButtonState extends State<BbIconButton> {
     final enabled = widget.onPressed != null;
     final pressed = _down && enabled;
     final drop = pressed ? BbTokens.pressDrop : 0.0;
-    final shadowOffset = pressed ? 1.0 : BbTokens.stickerSm + 1;
+    final shadowOffset = pressed ? 1.0 : BbTokens.stickerSm + 2;
+    final radius = widget.diameter * .24;
+    final top = pressed ? Color.lerp(spec.top, spec.bottom, .5)! : spec.top;
 
     return Semantics(
       container: true,
@@ -271,10 +347,10 @@ class _BbIconButtonState extends State<BbIconButton> {
             transform: Matrix4.translationValues(drop, drop, 0),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: pressed ? spec.dark : spec.bg,
-              shape: BoxShape.circle,
-              border: Border.all(color: BbTokens.ink900, width: BbTokens.bd3),
-              boxShadow: [
+              color: BbTokens.outlineDark,
+              borderRadius: BorderRadius.circular(radius),
+              border: Border.all(color: const Color(0xFF050816), width: 2.5),
+              boxShadow: <BoxShadow>[
                 BoxShadow(
                   offset: Offset(shadowOffset, shadowOffset),
                   blurRadius: 0,
@@ -282,10 +358,47 @@ class _BbIconButtonState extends State<BbIconButton> {
                 ),
               ],
             ),
-            child: Icon(
-              widget.icon,
-              color: spec.fg,
-              size: widget.diameter * 0.44,
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[top, spec.bottom],
+                  ),
+                  borderRadius: BorderRadius.circular(radius - 3),
+                  border: Border.all(color: spec.rim, width: 1.5),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.white.withValues(alpha: .35),
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Positioned(
+                      left: 7,
+                      right: 7,
+                      top: 3,
+                      child: Container(
+                        height: 2,
+                        color: Colors.white.withValues(alpha: .5),
+                      ),
+                    ),
+                    Icon(
+                      widget.icon,
+                      color: spec.fg,
+                      size: widget.diameter * .48,
+                      shadows: const <Shadow>[
+                        Shadow(color: Colors.black54, offset: Offset(0, 2)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -299,7 +412,7 @@ class BbCard extends StatelessWidget {
   const BbCard({
     super.key,
     required this.child,
-    this.color = BbTokens.surface,
+    this.color = BbTokens.panelNavy,
     this.padding = const EdgeInsets.all(BbTokens.sp5),
     this.sticker = true,
     this.radius = BbTokens.rLg,
@@ -316,8 +429,10 @@ class BbCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: BbTokens.ink900, width: BbTokens.bd3),
-      boxShadow: sticker ? BbTokens.sticker(BbTokens.stickerMd) : const [],
+      border: Border.all(color: BbTokens.outlineDark, width: BbTokens.bd3),
+      boxShadow: sticker
+          ? BbTokens.sticker(BbTokens.stickerMd, BbTokens.outlineDark)
+          : const [],
     ),
     child: child,
   );
@@ -351,7 +466,7 @@ class BbBadge extends StatelessWidget {
   );
 }
 
-/// Chunky settings switch — thumb slides with bounce; on = teal, off = ink300.
+/// Chunky settings switch — thumb slides with bounce; on = blue, off = muted.
 class BbToggle extends StatelessWidget {
   const BbToggle({
     super.key,
@@ -385,9 +500,12 @@ class BbToggle extends StatelessWidget {
               height: 38,
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                color: value ? BbTokens.bbTeal : BbTokens.ink300,
+                color: value ? BbTokens.secondaryBlue : BbTokens.textMuted,
                 borderRadius: BorderRadius.circular(BbTokens.rPill),
-                border: Border.all(color: BbTokens.ink900, width: BbTokens.bd2),
+                border: Border.all(
+                  color: BbTokens.outlineDark,
+                  width: BbTokens.bd2,
+                ),
               ),
               child: AnimatedAlign(
                 duration: BbTokens.durBase,
@@ -397,10 +515,10 @@ class BbToggle extends StatelessWidget {
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: BbTokens.surface,
+                    color: BbTokens.textPrimary,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: BbTokens.ink900,
+                      color: BbTokens.outlineDark,
                       width: BbTokens.bd2,
                     ),
                   ),
@@ -419,7 +537,7 @@ class BbDialog extends StatelessWidget {
   const BbDialog({
     super.key,
     required this.child,
-    this.color = BbTokens.surface,
+    this.color = BbTokens.panelNavy,
   });
   final Widget child;
   final Color color;
@@ -434,8 +552,8 @@ class BbDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(BbTokens.rXl),
-          border: Border.all(color: BbTokens.ink900, width: BbTokens.bd4),
-          boxShadow: BbTokens.sticker(BbTokens.stickerLg),
+          border: Border.all(color: BbTokens.outlineDark, width: BbTokens.bd4),
+          boxShadow: BbTokens.sticker(BbTokens.stickerLg, BbTokens.outlineDark),
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [child]),
       ),
@@ -453,7 +571,7 @@ Future<T?> showBbDialog<T>(
     context: context,
     barrierDismissible: dismissible,
     barrierLabel: 'dialog',
-    barrierColor: BbTokens.ink900.withValues(alpha: 0.6),
+    barrierColor: Colors.black.withValues(alpha: 0.78),
     transitionDuration: BbTokens.durSlow,
     pageBuilder: (ctx, a1, a2) => builder(ctx),
     transitionBuilder: (ctx, anim, _, child) => ScaleTransition(

@@ -33,6 +33,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coinsLabel => 'Coins';
 
   @override
+  String get floorDangerLabel => 'DROP OUT = SHOT LOST!';
+
+  @override
+  String get banksLabel => 'BANK COUNT';
+
+  @override
+  String get pauseTitle => 'Paused';
+
+  @override
+  String get resumeCta => 'Resume';
+
+  @override
+  String arenaNumberLabel(int id) {
+    return 'STAGE $id';
+  }
+
+  @override
   String arenaHeading(int id, String name) {
     return 'Stage $id · $name';
   }
@@ -97,7 +114,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get arenaLockedHint => 'Finish the stage before this one first!';
 
   @override
+  String get arenaTargetsLabel => 'Targets';
+
+  @override
+  String get arenaBankRequirementsLabel => 'Bank requirements';
+
+  @override
+  String get arenaShotsLabel => 'Shots';
+
+  @override
+  String get arenaStarThresholdsLabel => 'Star targets';
+
+  @override
   String get howToTitle => 'How to play';
+
+  @override
+  String get howToAimTitle => 'Aim and shoot';
+
+  @override
+  String get howToAimBody => 'Drag to aim, then release to shoot.';
+
+  @override
+  String get howToBounceTitle => 'Build up banks';
+
+  @override
+  String get howToBounceBody =>
+      'The ball banks off walls, blocks, and diagonal deflectors.';
+
+  @override
+  String get howToDirectTitle => 'Direct hits don\'t count';
+
+  @override
+  String get howToDirectBody =>
+      'A target only breaks after the ball has banked enough times.';
+
+  @override
+  String get howToScoreTitle => 'More banks, more points';
+
+  @override
+  String get howToScoreBody => 'Points earned = 100 × (1 + bank count).';
+
+  @override
+  String get howToFloorTitle => 'The floor is open';
+
+  @override
+  String get howToFloorBody =>
+      'There is no bottom wall. A ball that drops out costs the shot.';
+
+  @override
+  String get howToTargetNote =>
+      'The number on a target is the minimum bank count it needs.';
+
+  @override
+  String get dontShowAgainCta => 'Don\'t show again';
 
   @override
   String get howToRule1 =>
