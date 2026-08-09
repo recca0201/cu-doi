@@ -25,6 +25,11 @@ abstract final class ArenaInk {
   static const int bgTop = 0x171238;
   static const int bgBottom = 0x2C1F5C;
   static const int panelNavy = 0x151B3E;
+  static const int galaxyIndigo = 0x12073E;
+  static const int galaxyPurple = 0x7127D6;
+  static const int galaxyMagenta = 0xFF3FE6;
+  static const int energyCyan = 0x40E8FF;
+  static const int metalBlue = 0x16356F;
 
   static const int frame = 0xFFC93C; // == BbTokens.bbYellow
   static const int primaryGold = frame;

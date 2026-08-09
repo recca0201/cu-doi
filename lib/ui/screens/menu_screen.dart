@@ -52,50 +52,91 @@ class MenuScreen extends ConsumerWidget {
           const Positioned.fill(child: CustomPaint(painter: _MenuBackdrop())),
           SafeArea(
             child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) =>
-                  Center(
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: SizedBox(
-                        width: 390,
-                        height: 790,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
-                          child: Column(
-                            children: <Widget>[
-                              _PlayerHud(
-                                t: t,
-                                progress: progress,
-                                currentArena: firstUnfinished,
-                                onSettings: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const SettingsScreen(),
-                                  ),
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final bool tablet =
+                    MediaQuery.sizeOf(context).shortestSide >=
+                    BbTokens.tabletBreakpoint;
+                final bool compactHeight = constraints.maxHeight < 720;
+                final double maxContentWidth = tablet ? 520 : 430;
+                final double contentWidth = constraints.maxWidth.clamp(
+                  0,
+                  maxContentWidth,
+                );
+                final double maxCompositionHeight = tablet ? 920 : 860;
+                final double compositionHeight = constraints.maxHeight
+                    .clamp(650, maxCompositionHeight)
+                    .toDouble();
+                final double verticalInset =
+                    constraints.maxHeight > compositionHeight
+                    ? (constraints.maxHeight - compositionHeight) / 2
+                    : 0;
+                final double sidePadding = tablet ? 20 : 14;
+                final double actionWidth = (contentWidth - sidePadding * 2)
+                    .clamp(0, 460)
+                    .toDouble();
+                final double logoHeight = compactHeight
+                    ? 142
+                    : (tablet ? 200 : 176);
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    top: verticalInset,
+                    bottom: verticalInset,
+                  ),
+                  child: Center(
+                    child: SizedBox(
+                      width: contentWidth,
+                      height: compositionHeight,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          sidePadding,
+                          compactHeight ? 4 : 8,
+                          sidePadding,
+                          compactHeight ? 4 : 6,
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            _PlayerHud(
+                              t: t,
+                              progress: progress,
+                              currentArena: firstUnfinished,
+                              onSettings: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const SettingsScreen(),
                                 ),
                               ),
-                              const SizedBox(height: 14),
-                              _GameLogo(title: t.appTitle),
-                              const SizedBox(height: 8),
-                              _ScorePlaque(
-                                label: t.bestScoreLabel,
-                                score: progress.bestScore,
-                              ),
-                              const SizedBox(height: 14),
-                              BbButton.primary(
+                            ),
+                            SizedBox(height: compactHeight ? 4 : 8),
+                            _GameLogo(title: t.appTitle, height: logoHeight),
+                            SizedBox(height: compactHeight ? 2 : 6),
+                            _ScorePlaque(
+                              label: t.bestScoreLabel,
+                              score: progress.bestScore,
+                              width: actionWidth * .72,
+                              height: compactHeight ? 68 : 78,
+                            ),
+                            SizedBox(height: compactHeight ? 8 : 12),
+                            SizedBox(
+                              width: actionWidth,
+                              child: BbMenuButton(
+                                key: const Key('menu-play'),
                                 label: t.playCta,
-                                size: BbSize.lg,
                                 icon: Icons.play_arrow_rounded,
-                                expand: true,
+                                hero: true,
                                 onPressed: play,
                               ),
-                              const SizedBox(height: 14),
-                              Row(
+                            ),
+                            SizedBox(height: compactHeight ? 10 : 14),
+                            SizedBox(
+                              width: actionWidth,
+                              child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: BbButton.secondary(
+                                    child: BbMenuButton(
+                                      key: const Key('menu-arena-select'),
                                       label: t.arenaSelectCta,
                                       icon: Icons.track_changes_rounded,
-                                      expand: true,
+                                      variant: BbVariant.secondary,
                                       onPressed: () =>
                                           Navigator.of(context).push(
                                             MaterialPageRoute<void>(
@@ -107,10 +148,11 @@ class MenuScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: BbButton.accent(
+                                    child: BbMenuButton(
+                                      key: const Key('menu-how-to-play'),
                                       label: t.howToCta,
                                       icon: Icons.route_rounded,
-                                      expand: true,
+                                      variant: BbVariant.accent,
                                       onPressed: () =>
                                           Navigator.of(context).push(
                                             MaterialPageRoute<void>(
@@ -127,18 +169,20 @@ class MenuScreen extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              Expanded(
-                                child: _MascotStage(
-                                  tagline: t.menuTagline,
-                                  onPlay: play,
-                                ),
+                            ),
+                            Expanded(
+                              child: _MascotStage(
+                                tagline: t.menuTagline,
+                                onPlay: play,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
+                );
+              },
             ),
           ),
         ],
@@ -161,92 +205,115 @@ class _PlayerHud extends StatelessWidget {
   final VoidCallback onSettings;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 66,
-    child: Row(
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            height: 58,
-            padding: const EdgeInsets.fromLTRB(54, 6, 10, 6),
-            decoration: _navyPanel(radius: 18),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Positioned(
-                  left: -58,
-                  top: -10,
-                  child: Container(
-                    width: 66,
-                    height: 66,
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: BbTokens.primaryGold,
-                      border: Border.all(color: BbTokens.outlineDark, width: 4),
-                      boxShadow: BbTokens.sticker(3),
-                    ),
-                    child: const ClipOval(
-                      child: Image(
-                        image: AssetImage(
-                          'assets/images/mascot/ban_bua_mascot_v2.png',
+  Widget build(BuildContext context) {
+    final bool narrow = MediaQuery.sizeOf(context).width < 360;
+    final double hudHeight = narrow ? 60 : 66;
+    final double panelHeight = narrow ? 52 : 58;
+    final double avatarSize = narrow ? 56 : 66;
+    final double avatarPadding = narrow ? 46 : 54;
+    final double counterWidth = narrow ? 92 : 118;
+    final double gap = narrow ? 6 : 10;
+
+    return SizedBox(
+      height: hudHeight,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              height: panelHeight,
+              padding: EdgeInsets.fromLTRB(
+                avatarPadding,
+                6,
+                narrow ? 6 : 10,
+                6,
+              ),
+              decoration: _navyPanel(radius: 18),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  Positioned(
+                    left: -(avatarPadding + 4),
+                    top: narrow ? -8 : -10,
+                    child: Container(
+                      width: avatarSize,
+                      height: avatarSize,
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: BbTokens.primaryGold,
+                        border: Border.all(
+                          color: BbTokens.outlineDark,
+                          width: 4,
                         ),
-                        fit: BoxFit.cover,
+                        boxShadow: BbTokens.sticker(3),
+                      ),
+                      child: const ClipOval(
+                        child: Image(
+                          image: AssetImage(
+                            'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        t.characterName.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: BbText.h3(
+                          Colors.white,
+                        ).copyWith(fontSize: narrow ? 14 : 17),
+                      ),
+                      if (!narrow)
+                        Text(
+                          '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: BbText.tiny(
+                            BbTokens.textMuted,
+                          ).copyWith(letterSpacing: 0, fontSize: 10),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: gap),
+          SizedBox(
+            width: counterWidth,
+            child: Column(
+              children: <Widget>[
+                _CounterPill(
+                  icon: Icons.monetization_on_rounded,
+                  color: BbTokens.primaryGold,
+                  value: '${progress.coins}',
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      t.characterName.toUpperCase(),
-                      style: BbText.h3(Colors.white).copyWith(fontSize: 17),
-                    ),
-                    Text(
-                      '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: BbText.tiny(
-                        BbTokens.textMuted,
-                      ).copyWith(letterSpacing: 0, fontSize: 10),
-                    ),
-                  ],
+                SizedBox(height: narrow ? 2 : 6),
+                _CounterPill(
+                  icon: Icons.star_rounded,
+                  color: BbTokens.primaryGold,
+                  value: '${progress.totalStars}/${kArenas.length * 3}',
                 ),
               ],
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-        SizedBox(
-          width: 118,
-          child: Column(
-            children: <Widget>[
-              _CounterPill(
-                icon: Icons.monetization_on_rounded,
-                color: BbTokens.primaryGold,
-                value: '${progress.coins}',
-              ),
-              const SizedBox(height: 6),
-              _CounterPill(
-                icon: Icons.star_rounded,
-                color: BbTokens.primaryGold,
-                value: '${progress.totalStars}/${kArenas.length * 3}',
-              ),
-            ],
+          SizedBox(width: narrow ? 5 : 8),
+          BbIconButton(
+            icon: Icons.settings_rounded,
+            semanticLabel: t.settingsCta,
+            diameter: narrow ? 40 : 44,
+            onPressed: onSettings,
           ),
-        ),
-        const SizedBox(width: 8),
-        BbIconButton(
-          icon: Icons.settings_rounded,
-          semanticLabel: t.settingsCta,
-          diameter: 44,
-          onPressed: onSettings,
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }
 
 class _CounterPill extends StatelessWidget {
@@ -281,13 +348,14 @@ class _CounterPill extends StatelessWidget {
 }
 
 class _GameLogo extends StatelessWidget {
-  const _GameLogo({required this.title});
+  const _GameLogo({required this.title, required this.height});
 
   final String title;
+  final double height;
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 152,
+    height: height,
     child: Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
@@ -298,42 +366,25 @@ class _GameLogo extends StatelessWidget {
           ),
         ),
         const Positioned(
-          left: 28,
-          top: 12,
+          left: 3,
+          bottom: 33,
           child: _BankToken(value: '2', color: BbTokens.tertiaryPurple),
         ),
         const Positioned(
-          right: 26,
-          top: 22,
+          right: 3,
+          bottom: 41,
           child: _BankToken(value: '3', color: BbTokens.dangerRed),
         ),
-        Positioned(
-          top: 18,
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) => const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: <Color>[Color(0xFFFFFF78), Color(0xFFFF9B05)],
-            ).createShader(bounds),
-            child: Text(
-              'CÚ DỘI!',
-              style: BbText.logo(Colors.white).copyWith(
-                fontSize: 66,
-                letterSpacing: -2,
-                shadows: const <Shadow>[
-                  Shadow(
-                    color: BbTokens.outlineDark,
-                    offset: Offset(0, 7),
-                    blurRadius: 0,
-                  ),
-                  Shadow(
-                    color: BbTokens.secondaryBlueDark,
-                    offset: Offset(0, 11),
-                    blurRadius: 0,
-                  ),
-                ],
-              ),
-            ),
+        const Positioned(
+          left: 5,
+          right: 5,
+          top: 0,
+          bottom: 23,
+          child: Image(
+            key: Key('main-logo'),
+            image: AssetImage('assets/images/brand/cu_doi_logo_galaxy_v1.png'),
+            fit: BoxFit.contain,
+            semanticLabel: 'CÚ DỘI!',
           ),
         ),
         Positioned(
@@ -379,38 +430,52 @@ class _BankToken extends StatelessWidget {
 }
 
 class _ScorePlaque extends StatelessWidget {
-  const _ScorePlaque({required this.label, required this.score});
+  const _ScorePlaque({
+    required this.label,
+    required this.score,
+    required this.width,
+    required this.height,
+  });
 
   final String label;
   final int score;
+  final double width;
+  final double height;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 260,
-    height: 78,
-    padding: const EdgeInsets.symmetric(vertical: 5),
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: <Color>[Color(0xFFFFF9E8), Color(0xFFFFE6A0)],
+  Widget build(BuildContext context) {
+    final bool compact = height < 74;
+    return Container(
+      width: width.clamp(240, 330),
+      height: height,
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: <Color>[Color(0xFFFFF9E8), Color(0xFFFFE6A0)],
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: BbTokens.primaryGoldDark, width: 4),
+        boxShadow: BbTokens.sticker(6, BbTokens.outlineDark),
       ),
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: BbTokens.primaryGoldDark, width: 4),
-      boxShadow: BbTokens.sticker(6, BbTokens.outlineDark),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          label.toUpperCase(),
-          style: BbText.tiny(BbTokens.primaryGoldDark).copyWith(fontSize: 11),
-        ),
-        Text(
-          _formatScore(score),
-          style: BbText.score(const Color(0xFF6A2500)).copyWith(fontSize: 36),
-        ),
-      ],
-    ),
-  );
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            label.toUpperCase(),
+            style: BbText.tiny(
+              BbTokens.primaryGoldDark,
+            ).copyWith(fontSize: compact ? 10 : 11),
+          ),
+          Text(
+            _formatScore(score),
+            style: BbText.score(
+              const Color(0xFF6A2500),
+            ).copyWith(fontSize: compact ? 32 : 36),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _MascotStage extends StatelessWidget {
@@ -441,7 +506,9 @@ class _MascotStage extends StatelessWidget {
           child: GestureDetector(
             onTap: onPlay,
             child: const Image(
-              image: AssetImage('assets/images/mascot/ban_bua_mascot_v2.png'),
+              image: AssetImage(
+                'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
+              ),
               width: 205,
               height: 205,
               fit: BoxFit.contain,
@@ -583,7 +650,11 @@ class _MenuBackdrop extends CustomPainter {
       Offset(size.width * .24, size.height * .44),
       Offset(size.width * .72, size.height * .78),
     ]) {
-      canvas.drawLine(p - const Offset(5, 0), p + const Offset(5, 0), cyan..strokeWidth = 1.1);
+      canvas.drawLine(
+        p - const Offset(5, 0),
+        p + const Offset(5, 0),
+        cyan..strokeWidth = 1.1,
+      );
       canvas.drawLine(p - const Offset(0, 5), p + const Offset(0, 5), cyan);
     }
   }

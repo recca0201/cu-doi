@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @playCta.
   ///
   /// In vi, this message translates to:
-  /// **'Chơi ngay'**
+  /// **'Chơi'**
   String get playCta;
 
   /// No description provided for @arenaSelectCta.

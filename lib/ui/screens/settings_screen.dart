@@ -48,9 +48,15 @@ class SettingsScreen extends ConsumerWidget {
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           const SizedBox(width: BbTokens.sp3),
-                          Text(
-                            t.settingsTitle.toUpperCase(),
-                            style: BbText.h2(BbTokens.textPrimary),
+                          Expanded(
+                            child: BbGameTitle(
+                              key: const Key('settings-title'),
+                              label: t.settingsTitle,
+                              height: 44,
+                              fontSize: 31,
+                              tilt: -.01,
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ],
                       ),

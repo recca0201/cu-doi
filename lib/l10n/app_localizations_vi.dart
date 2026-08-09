@@ -15,7 +15,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get menuTagline => 'Bắn thẳng không tính. Dội tường mới ăn.';
 
   @override
-  String get playCta => 'Chơi ngay';
+  String get playCta => 'Chơi';
 
   @override
   String get arenaSelectCta => 'Chọn màn';

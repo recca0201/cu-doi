@@ -160,26 +160,11 @@ class _RulesHeader extends StatelessWidget {
           left: 22,
           right: 22,
           top: 10,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[Colors.white, Color(0xFFFFB70A)],
-              ).createShader(bounds),
-              child: Text(
-                title.toUpperCase(),
-                style: BbText.logo(Colors.white).copyWith(
-                  fontSize: 62,
-                  letterSpacing: -1,
-                  shadows: const <Shadow>[
-                    Shadow(color: BbTokens.outlineDark, offset: Offset(0, 6)),
-                    Shadow(color: BbTokens.secondaryBlue, offset: Offset(0, 9)),
-                  ],
-                ),
-              ),
-            ),
+          child: BbGameTitle(
+            key: const Key('how-to-title'),
+            label: title,
+            height: 72,
+            fontSize: 58,
           ),
         ),
         Positioned.fill(

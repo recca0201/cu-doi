@@ -63,7 +63,7 @@ class CharacterDialogue extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Image.asset(
-                      'assets/images/mascot/ban_bua_mascot_v2.png',
+                      'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
                       width: 72,
                       height: 72,
                       fit: BoxFit.contain,

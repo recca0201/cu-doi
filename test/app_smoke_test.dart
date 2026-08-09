@@ -21,7 +21,10 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 12}) async {
   }
 }
 
-Future<void> _boot(WidgetTester tester) async {
+Future<void> _boot(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+}) async {
   SharedPreferences.setMockInitialValues(<String, Object>{
     'soundOn': false,
     'musicOn': false,
@@ -29,7 +32,7 @@ Future<void> _boot(WidgetTester tester) async {
   });
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  await tester.binding.setSurfaceSize(const Size(390, 844));
+  await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
 
   await tester.pumpWidget(
@@ -42,12 +45,35 @@ Future<void> _boot(WidgetTester tester) async {
 }
 
 void main() {
+  for (final Size size in <Size>[
+    const Size(320, 568),
+    const Size(390, 844),
+    const Size(600, 960),
+    const Size(1024, 1366),
+  ]) {
+    testWidgets('menu stays usable at ${size.width}x${size.height}', (
+      WidgetTester tester,
+    ) async {
+      await _boot(tester, size: size);
+
+      final Finder logo = find.byKey(const Key('main-logo'));
+      final Finder play = find.byKey(const Key('menu-play'));
+      expect(logo, findsOneWidget);
+      expect(play, findsOneWidget);
+      expect(tester.getRect(logo).left, greaterThanOrEqualTo(0));
+      expect(tester.getRect(logo).right, lessThanOrEqualTo(size.width));
+      expect(tester.getRect(play).left, greaterThanOrEqualTo(0));
+      expect(tester.getRect(play).right, lessThanOrEqualTo(size.width));
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('the menu builds in Vietnamese', (WidgetTester tester) async {
     await _boot(tester);
 
     expect(find.text('Bắn Bừa'), findsOneWidget);
-    expect(find.text('Chơi ngay'), findsOneWidget);
-    expect(find.text('Chọn màn'), findsOneWidget);
+    expect(find.byKey(const Key('menu-play')), findsOneWidget);
+    expect(find.byKey(const Key('menu-arena-select')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -56,7 +82,7 @@ void main() {
   ) async {
     await _boot(tester);
 
-    await tester.tap(find.text('Chơi ngay'));
+    await tester.tap(find.byKey(const Key('menu-play')));
     await _pumpFrames(tester);
 
     // Fresh progress means the inversion gets explained before the first shot.
@@ -84,7 +110,7 @@ void main() {
   ) async {
     await _boot(tester);
 
-    await tester.tap(find.text('Chọn màn'));
+    await tester.tap(find.byKey(const Key('menu-arena-select')));
     await _pumpFrames(tester);
 
     expect(find.text('Chương 1 · Học luật dội'), findsOneWidget);

@@ -524,16 +524,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      t.arenaNumberLabel(_arena.id),
-                      style: BbText.h2(Colors.white).copyWith(
-                        shadows: const <Shadow>[
-                          Shadow(
-                            color: BbTokens.outlineDark,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
+                    BbGameTitle(
+                      key: const Key('game-stage-title'),
+                      label: t.arenaNumberLabel(_arena.id),
+                      height: 36,
+                      fontSize: 27,
+                      tilt: -.01,
                     ),
                     Text(
                       forLocale(code, _arena.name, _arena.nameEn),
@@ -706,10 +702,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               color: ArenaInk.of(ArenaInk.trajectoryCyan),
             ),
             const SizedBox(height: BbTokens.sp3),
-            Text(
-              t.pauseTitle.toUpperCase(),
-              style: BbText.h1(BbTokens.textPrimary),
-            ),
+            BbGameTitle(label: t.pauseTitle, height: 52, fontSize: 38),
             const SizedBox(height: BbTokens.sp5),
             BbButton.primary(
               label: t.resumeCta,
@@ -794,21 +787,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
-                  won ? t.resultWin : t.resultLose,
-                  style:
-                      BbText.display(
-                        won ? BbTokens.primaryGold : BbTokens.dangerRed,
-                      ).copyWith(
-                        fontSize: won ? 50 : 44,
-                        shadows: const <Shadow>[
-                          Shadow(
-                            color: BbTokens.outlineDark,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                  textAlign: TextAlign.center,
+                BbGameTitle(
+                  key: Key(won ? 'result-win-title' : 'result-lose-title'),
+                  label: won ? t.resultWin : t.resultLose,
+                  tone: won ? BbTitleTone.victory : BbTitleTone.danger,
+                  height: won ? 82 : 72,
+                  fontSize: won ? 56 : 48,
                 ),
                 if (won) ...<Widget>[
                   const SizedBox(height: BbTokens.sp4),

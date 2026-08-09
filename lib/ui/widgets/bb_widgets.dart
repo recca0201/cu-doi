@@ -6,6 +6,109 @@ enum BbVariant { primary, secondary, accent, grape, danger, light }
 
 enum BbSize { sm, md, lg }
 
+enum BbTitleTone { standard, victory, danger }
+
+/// Comic wordmark for localized and dynamic screen titles.
+class BbGameTitle extends StatelessWidget {
+  const BbGameTitle({
+    super.key,
+    required this.label,
+    this.tone = BbTitleTone.standard,
+    this.height = 58,
+    this.fontSize = 48,
+    this.tilt = -.018,
+    this.textAlign = TextAlign.center,
+  });
+
+  final String label;
+  final BbTitleTone tone;
+  final double height;
+  final double fontSize;
+  final double tilt;
+  final TextAlign textAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Color> fill = switch (tone) {
+      BbTitleTone.standard => const <Color>[
+        Colors.white,
+        Color(0xFFE9FAFF),
+        Color(0xFFFFC21C),
+      ],
+      BbTitleTone.victory => const <Color>[
+        Color(0xFFFFFF8A),
+        Color(0xFFFFC21C),
+        Color(0xFFFF8A00),
+      ],
+      BbTitleTone.danger => const <Color>[
+        Color(0xFFFFF1EA),
+        Color(0xFFFF694F),
+        Color(0xFFD91F3A),
+      ],
+    };
+    final Color extrusion = tone == BbTitleTone.danger
+        ? const Color(0xFF721438)
+        : BbTokens.secondaryBlueDark;
+    final Paint foreground = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: fill,
+        stops: const <double>[0, .48, 1],
+      ).createShader(Rect.fromLTWH(0, 0, fontSize * 12, fontSize * 1.2));
+    final List<Shadow> shadows = <Shadow>[
+      Shadow(color: extrusion, offset: const Offset(-1, 8)),
+      Shadow(color: extrusion, offset: const Offset(1, 8)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(-3, -2)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(3, -2)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(-4, 1)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(4, 1)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(-3, 4)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(3, 4)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(0, -4)),
+      const Shadow(color: BbTokens.outlineDark, offset: Offset(0, 5)),
+      const Shadow(
+        color: Color(0x6654D9FF),
+        offset: Offset(0, 7),
+        blurRadius: 7,
+      ),
+    ];
+
+    return Semantics(
+      header: true,
+      label: label,
+      child: ExcludeSemantics(
+        child: SizedBox(
+          height: height,
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Transform.rotate(
+                angle: tilt,
+                child: Text(
+                  label.toUpperCase(),
+                  maxLines: 1,
+                  softWrap: false,
+                  textAlign: textAlign,
+                  style: BbText.logo().copyWith(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w900,
+                    fontStyle: FontStyle.italic,
+                    height: 1,
+                    letterSpacing: -1.2,
+                    foreground: foreground,
+                    shadows: shadows,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _VariantSpec {
   const _VariantSpec({
     required this.top,
@@ -288,6 +391,238 @@ class _BbButtonState extends State<BbButton> {
               : child,
         ),
       ),
+    );
+  }
+}
+
+/// Large, layered launcher button used by the home screen.
+///
+/// The label is centred against the whole button, while the icon occupies its
+/// own space on the left. This matches the optical alignment in the key art.
+class BbMenuButton extends StatefulWidget {
+  const BbMenuButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    required this.icon,
+    this.variant = BbVariant.primary,
+    this.hero = false,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final IconData icon;
+  final BbVariant variant;
+  final bool hero;
+
+  @override
+  State<BbMenuButton> createState() => _BbMenuButtonState();
+}
+
+class _BbMenuButtonState extends State<BbMenuButton> {
+  bool _down = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final _VariantSpec spec = _variants[widget.variant]!;
+    final bool enabled = widget.onPressed != null;
+    final bool pressed = enabled && _down;
+    final double height = widget.hero ? 86 : 62;
+    final double radius = widget.hero ? 30 : 20;
+    final double drop = pressed ? BbTokens.pressDrop : 0;
+    final double shadowOffset = pressed ? 2 : (widget.hero ? 8 : 6);
+    final double iconSize = widget.hero ? 42 : 27;
+    final double iconLeft = widget.hero ? 24 : 10;
+    final double labelFontSize = widget.hero ? 36 : 22;
+    final double labelReserve = widget.hero ? 74 : 38;
+    final Color top = pressed
+        ? Color.lerp(spec.top, spec.bottom, .46)!
+        : spec.top;
+
+    return Semantics(
+      container: true,
+      button: true,
+      enabled: enabled,
+      label: widget.label,
+      onTap: enabled ? widget.onPressed : null,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          excludeFromSemantics: true,
+          behavior: HitTestBehavior.opaque,
+          onTapDown: enabled ? (_) => setState(() => _down = true) : null,
+          onTapUp: enabled ? (_) => setState(() => _down = false) : null,
+          onTapCancel: enabled ? () => setState(() => _down = false) : null,
+          onTap: widget.onPressed,
+          child: AnimatedOpacity(
+            duration: BbTokens.durFast,
+            opacity: enabled ? 1 : .52,
+            child: AnimatedContainer(
+              duration: BbTokens.durFast,
+              curve: BbTokens.easeOut,
+              height: height,
+              transform: Matrix4.translationValues(drop, drop, 0),
+              decoration: BoxDecoration(
+                color: BbTokens.outlineDark,
+                borderRadius: BorderRadius.circular(radius + 3),
+                border: Border.all(color: const Color(0xFF030510), width: 3),
+                boxShadow: enabled
+                    ? <BoxShadow>[
+                        BoxShadow(
+                          color: spec.shadow,
+                          offset: Offset(0, shadowOffset),
+                          blurRadius: 0,
+                        ),
+                        if (widget.hero && !pressed)
+                          BoxShadow(
+                            color: BbTokens.primaryGold.withValues(alpha: .2),
+                            blurRadius: 14,
+                            spreadRadius: 1,
+                          ),
+                      ]
+                    : const <BoxShadow>[],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[top, spec.bottom],
+                      stops: const <double>[0, .8],
+                    ),
+                    borderRadius: BorderRadius.circular(radius - 1),
+                    border: Border.all(color: spec.rim, width: 2),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(radius - 3),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        Positioned(
+                          left: widget.hero ? 28 : 18,
+                          right: widget.hero ? 28 : 18,
+                          top: 5,
+                          child: Container(
+                            height: widget.hero ? 7 : 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: .56),
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: iconLeft,
+                          top: 0,
+                          bottom: 0,
+                          child: Center(
+                            child: Icon(
+                              widget.icon,
+                              size: iconSize,
+                              color: spec.fg,
+                              shadows: const <Shadow>[
+                                Shadow(
+                                  color: BbTokens.outlineDark,
+                                  offset: Offset(-2, 0),
+                                ),
+                                Shadow(
+                                  color: BbTokens.outlineDark,
+                                  offset: Offset(2, 0),
+                                ),
+                                Shadow(
+                                  color: BbTokens.outlineDark,
+                                  offset: Offset(0, -2),
+                                ),
+                                Shadow(
+                                  color: BbTokens.outlineDark,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: labelReserve,
+                              vertical: 8,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _OutlinedButtonLabel(
+                                widget.label.toUpperCase(),
+                                color: spec.fg,
+                                fontSize: labelFontSize,
+                                outlineWidth: widget.hero ? 1.4 : 3,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: radius,
+                          right: radius,
+                          bottom: 3,
+                          child: Container(
+                            height: 3,
+                            color: spec.shadow.withValues(alpha: .42),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OutlinedButtonLabel extends StatelessWidget {
+  const _OutlinedButtonLabel(
+    this.text, {
+    required this.color,
+    required this.fontSize,
+    required this.outlineWidth,
+  });
+
+  final String text;
+  final Color color;
+  final double fontSize;
+  final double outlineWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle style = BbText.button(
+      color,
+    ).copyWith(fontSize: fontSize, height: 1, letterSpacing: -.25);
+    return Stack(
+      children: <Widget>[
+        Text(
+          text,
+          maxLines: 1,
+          softWrap: false,
+          style: style.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeJoin = StrokeJoin.round
+              ..strokeWidth = outlineWidth
+              ..color = BbTokens.outlineDark,
+          ),
+        ),
+        Text(
+          text,
+          maxLines: 1,
+          softWrap: false,
+          style: style.copyWith(
+            shadows: const <Shadow>[
+              Shadow(color: Colors.black45, offset: Offset(0, 2)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

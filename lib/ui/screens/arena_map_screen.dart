@@ -81,9 +81,7 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
       backgroundColor: BbTokens.nightIndigo,
       body: Stack(
         children: <Widget>[
-          const Positioned.fill(
-            child: BbStarfield(opacity: .82),
-          ),
+          const Positioned.fill(child: BbStarfield(opacity: .82)),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -276,28 +274,11 @@ class _MapAppBar extends StatelessWidget {
           Positioned(
             left: 58,
             right: 118,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: ShaderMask(
-                shaderCallback: (Rect bounds) => const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[Colors.white, BbTokens.primaryGold],
-                ).createShader(bounds),
-                child: Text(
-                  t.arenaSelectTitle.toUpperCase(),
-                  style: BbText.logo(Colors.white).copyWith(
-                    fontSize: 45,
-                    shadows: const <Shadow>[
-                      Shadow(color: BbTokens.outlineDark, offset: Offset(0, 5)),
-                      Shadow(
-                        color: BbTokens.secondaryBlue,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            child: BbGameTitle(
+              key: const Key('arena-map-title'),
+              label: t.arenaSelectTitle,
+              height: 62,
+              fontSize: 48,
             ),
           ),
         ],
