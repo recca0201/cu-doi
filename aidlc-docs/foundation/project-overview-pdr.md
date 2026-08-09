@@ -4,12 +4,13 @@ document: project-overview-pdr
 project: ban_bua_tuong
 status: draft
 created: 2026-08-04
-updated: 2026-08-04
+updated: 2026-08-09
 source_artifacts:
   - ../../../ban_bua/aidlc-docs/brainstorming/0003-ricochet-core-loop-reconcept.md
   - lib/sim/shot_runner.dart
   - lib/sim/arenas.dart
   - tools/solver/campaign.js
+  - Cu_Doi_UI_UX_Design_Spec.docx
 ---
 
 # Bắn Bừa — Cú Dội · Mô tả sản phẩm
@@ -104,6 +105,18 @@ Ba thứ làm luật tự dạy chính nó, không cần tutorial dài:
 Ngắm chỉ hiện **hai đoạn đầu** của đường bay. Game cũ tô sáng mọi bong bóng sẽ nổ,
 tức là lấy luôn phần kỹ năng của người chơi — ở đây chỉ cho đủ để học phản xạ của
 tường, không cho đáp án.
+
+### Hướng hình ảnh đã chốt
+
+UI/UX Design Spec 1.0 ngày 09/08/2026 chốt toàn app theo phong cách **arcade đêm**:
+nền indigo/navy, panel tối, CTA vàng, CTA phụ xanh, quỹ đạo cyan và viền comic dày.
+Định hướng này thay mô hình “vỏ ngoài sáng, chỉ sân đấu tối” trước đây. Chi tiết,
+screen states và quy tắc migration nằm ở
+[`uiux-guideline.md`](./uiux-guideline.md).
+
+Hình tham chiếu chỉ quyết art direction và hierarchy. Mọi con số màn, vị trí hình
+học, luật dội, mở màn và mốc sao vẫn lấy từ model/solver; các nút shop/event/mission
+trong hình không được đưa vào production nếu chưa có luồng chức năng thật.
 
 ## 6. Nội dung: 20 màn, 4 chương
 

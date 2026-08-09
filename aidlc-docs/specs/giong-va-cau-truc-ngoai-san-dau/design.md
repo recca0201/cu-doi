@@ -3,10 +3,12 @@ artifact_type: design
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: giong-va-cau-truc-ngoai-san-dau
 source_artifacts:
   - aidlc-docs/specs/giong-va-cau-truc-ngoai-san-dau/requirements.md
+  - aidlc-docs/foundation/uiux-guideline.md
+  - Cu_Doi_UI_UX_Design_Spec.docx
 ---
 
 # Design: Giọng và cấu trúc ngoài sân đấu
@@ -28,6 +30,7 @@ source_artifacts:
 | Q5 | Cổng "lần đầu" cho thoại giới thiệu là `showGuide`/`fresh` hay seen-set? | **Đã chốt** | **Seen-set.** `menu_screen.dart:34` hiện tính `fresh = progress.results.isEmpty` — nhưng sau Unit 1, **một lần thua** cũng sinh `LevelResult` (Unit 1 Q4), nên `fresh` thành `false` và `_guide()` **không bao giờ hiện lại**. Người chơi thua ngay lần đầu sẽ mất luôn phần hướng dẫn. `showGuide` phải đọc `!hasSeen(DialogueId.intro)`. **Trong lúc seen-set còn đang restore**, `showGuide` là `false` — hiện lại hướng dẫn cho người chơi cũ tệ hơn là hiện muộn một khung cho người mới. `markSeen(DialogueId.intro)` gọi từ handler `gotItCta` chỗ đang clear `_guideVisible` (`game_screen.dart:414`). Đây là **thêm một lần đụng call site của Unit 1**. |
 | Q3 | Trạng thái "đã xem thoại" lưu vào `progress_v1` hay khoá riêng? | **Đã chốt** | **Khoá riêng `dialogue_seen_v1`.** Unit 1 đã thêm hai field vào `LevelResult` trong `progress_v1`; nhồi thêm một `Set<String>` vào cùng khoá là lần đổi schema thứ ba trên cùng payload trong cùng release. Thoại cũng **không phải tiến trình chơi** — mất nó thì người chơi xem lại một đoạn thoại, không mất sao hay xu. |
 | Q4 | `scrollable_positioned_list` có cần thêm không? | **Đã chốt** | **Không.** Xem § Tự cuộn — dùng `mapExtents(TextScaler)` + `initialScrollOffset` tính bằng số học. Thêm package cho một lần cuộn là chi phí không cần, và `initialScrollOffset` là cách **duy nhất** thoả AC US-3/2.1 ("không giật nhìn thấy được") vì nó đặt vị trí **trước** khung đầu. |
+| Q6 | Level select dùng danh sách, đường mòn hay grid? | **Đã chốt** | **Grid 4 cột trên nền navy.** UI/UX Design Spec 1.0 thay thế composition đường mòn của `ban_bua`; chỉ tái sử dụng state/progress và component primitive, không port `ChapterTrail`/`TrailPainter`. |
 
 ## Architecture
 
@@ -159,7 +162,38 @@ class ArenaMapScreen extends ConsumerStatefulWidget {
 
 **Luật suy ra khi không có `requestedArenaId`**: màn mở gần nhất **chưa hoàn thành**, tức `completedMax + 1` theo định nghĩa **sau Unit 1** (`stars >= 1 || skipped`). Nghĩa là một màn đã bỏ qua tính là đã xong, nên bản đồ mở ở màn **sau** nó — đúng ý AC US-3/1.1, và bản trước chỉ liệt kê ba ca trả `null` mà không viết ra nhánh này.
 
-## Nền tảng: dùng lại design bản `ban_bua` cũ
+## Thiết kế bản đồ đích — UI/UX Design Spec 1.0
+
+Phần composition bản đồ được thay thế ngày 2026-08-09:
+
+- Shell dùng `nightIndigo` + texture sao/chấm nhẹ, header `panelNavy` với Back,
+  “CHỌN MÀN” và tổng sao.
+- Mỗi chapter là một section có title + `earned/max`; phần level là
+  `GridView`/`SliverGrid` **4 cột**, `NeverScrollableScrollPhysics` nếu nằm trong
+  một `CustomScrollView` duy nhất.
+- Mỗi node có vùng chạm tối thiểu 48dp; số màn ở giữa; hàng 0–3 sao nằm dưới hoặc
+  trong đáy node nhưng không làm thay đổi extent giữa các state.
+- `current`: gold outline + glow; `completed`: sao vàng; `locked`: navy/gray +
+  lock; `skipped`: badge/icon chữ, không chỉ đổi màu.
+- Chapter 5 node giữ đúng lưới; ô trống không được lấp bằng màn của chapter sau.
+- Không port `ChapterTrail`, `TrailPainter`, đường cubic đứt nét, công thức sin
+  zig-zag, season/boss hoặc palette lễ hội từ `ban_bua`.
+- Tự định vị dùng `ScrollController(initialScrollOffset:)` hoặc sliver key/offset
+  đã tính trước khung đầu. Offset phải dựa trên extent section/grid đã test, clamp
+  hợp lệ và không animate khi mở màn.
+
+`kChapters`, `targetLevelId`, luật mở tuyến tính, tiến độ sao, `targetArenaId` và
+nhóm dự phòng vẫn giữ như phần thiết kế miền ở trên; thay đổi này chỉ thay
+composition trình bày.
+
+<details>
+<summary><strong>Phương án đường mòn đã bị loại — chỉ giữ để tra lịch sử</strong></summary>
+
+> **Không dùng phần thu gọn này làm đầu vào triển khai.**
+
+Toàn bộ phân tích từ đây đến trước mục “Thiết kế nhân vật và thoại” mô tả phương
+án đường mòn kế thừa `ban_bua`. Nó được giữ lại để biết lịch sử quyết định, nhưng
+**không còn là hướng triển khai** sau UI/UX Design Spec 1.0.
 
 Người dùng chỉ ra giao diện hiện tại "chưa phải" và yêu cầu dùng lại design của bản `ban_bua` cũ (`C:eposan_bua`). Khảo sát bản cũ đổi ba quyết định lớn của design này.
 
@@ -365,6 +399,10 @@ void didChangeDependencies() {
 
 **Reduced-motion** (AC US-3/2.3): `initialScrollOffset` **không phải hoạt ảnh** — không có gì để gate. Ghi ra đây vì một reviewer đọc AC-2.3 sẽ đi tìm `disableAnimationsOf` và không thấy; sự vắng mặt là đúng, không phải bỏ sót.
 
+</details>
+
+## Thiết kế nhân vật và thoại
+
 ### `lib/domain/character.dart` [NEW]
 
 ```dart
@@ -491,13 +529,21 @@ final bool crowded = losses >= kSkipOfferAfterLosses;   // Unit 1, KHÔNG viết
 
 ## UI Design Specification
 
-Không có `mockup.html`, không có Figma URL — UI handoff không áp dụng. Ràng buộc đi từ `uiux-guideline.md`:
+Ràng buộc đi từ `uiux-guideline.md` và hình tổng hợp trong
+`Cu_Doi_UI_UX_Design_Spec.docx`:
 
-- Tiêu đề chương: `Column` gồm `BbText.h3()` (tiêu đề, `maxLines: 1` + ellipsis), `SizedBox(BbTokens.sp1)`, rồi `BbText.small()` cho tiến độ `n/15`; padding `EdgeInsets.symmetric(vertical: BbTokens.sp3)` — tức 12dp **mỗi** cạnh, canh trái. **Không** `BbBadge` — xem § Tự cuộn để biết vì sao. Token `BbTokens` sẵn có, **không** hex thô (AC US-1/3.3). Phân biệt với thẻ màn hoàn toàn bằng **typography và việc không có khung thẻ** — header không nằm trong `BbCard`, nên nó đọc ra khác ngay (AC US-1/1.2).
-- Bề rộng nội dung tối đa và `BbTokens.gutter` **giữ nguyên** như `arena_map_screen` đang dùng (AC US-1/3.2).
-- Thẻ màn: **giữ nguyên mọi thông tin** — tên, số sao, trạng thái khoá, dấu "đã bỏ qua" của Unit 1 (AC US-1/2.1, 2.2). Nhưng **cấu trúc thẻ là `[CHANGED]`**: ghim chiều cao, `maxLines: 2` + ellipsis. Giữ thông tin ≠ không đổi code — bản trước ghi "không đổi gì" ở đây trong khi cây file và § Tự cuộn đều ghi `[CHANGED]`, hai chỗ nói ngược nhau.
-- `Semantics` của thẻ đang bọc `label` là tên đầy đủ nhưng **không** `ExcludeSemantics` phần `Text` con (`arena_map_screen.dart:111-113`), nên chữ trong thẻ vẫn lộ ra. Sau khi thêm ellipsis, screen reader sẽ đọc **một nhãn đầy đủ cộng một nhãn bị cắt**. Phải thêm `ExcludeSemantics` quanh nội dung thẻ (AC US-1/3.4).
-- `Semantics` cho tiêu đề chương gồm số chương, tên chương **và** tiến độ, diễn đạt **thành câu** chứ không nối hai `Text` lại (tiến độ `n/15` để trần thì nghĩa phụ thuộc vị trí kề nhau). Kèm **`ExcludeSemantics`** quanh nội dung header — cùng lý do với thẻ màn: `maxLines: 1` + ellipsis sẽ làm lộ thêm một nhãn bị cắt (AC US-1/3.4).
+- Shell: nền `nightIndigo`, panel/header `panelNavy`, tổng sao màu
+  `primaryGold`; không dùng sky/cream.
+- Level layout: grid 4 cột trong từng chapter, một vùng cuộn cấp màn hình; không
+  có trail/zig-zag/cubic connector.
+- Header chapter: tên + tiến độ `n/15`, canh trái, khác node bằng typography và
+  khoảng cách; không phụ thuộc hue.
+- Node giữ đủ số màn, sao, trạng thái khoá và dấu bỏ qua. `current` có gold
+  outline + glow; locked có icon lock; completed có sao; skipped có nhãn/icon.
+- `Semantics` của node là một nhãn đầy đủ gồm màn, tên, sao và trạng thái; nội dung
+  trang trí bên trong bọc `ExcludeSemantics` để không đọc lặp.
+- Mọi kích thước/màu đi qua token đích; không hex thô và không dùng variant coral
+  cũ chỉ vì API tên `primary`.
 
 **Chuỗi ARB mới**: `characterName`; `chapter1Title`..`chapter4Title`; `chapterProgressLabel` (có placeholder n/max); `chapterOtherTitle` (nhóm dự phòng); `dialogueIntro`, `dialogueWin`, `dialogueLose`, `dialogueLoseShort`, `dialogueFinalVictory`. Cả VI và EN, cùng bộ khoá (AC US-1/4.1, US-4/4.1).
 

@@ -3,10 +3,12 @@ artifact_type: design
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: phan-hoi-cu-ban
 source_artifacts:
   - aidlc-docs/specs/phan-hoi-cu-ban/requirements.md
+  - aidlc-docs/foundation/uiux-guideline.md
+  - Cu_Doi_UI_UX_Design_Spec.docx
 ---
 
 # Design: Phản hồi cú bắn
@@ -320,13 +322,22 @@ Không phát rung khi đang kéo ngắm (AC US-4/2.5) — thoả **do cấu trú
 
 ## UI Design Specification
 
-Không có `mockup.html`, không có Figma URL — UI handoff không áp dụng. Ràng buộc UI đi trực tiếp từ `uiux-guideline.md`:
+Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
+`Cu_Doi_UI_UX_Design_Spec.docx`:
 
-- Công tắc rung: `BbToggle` (64×38, `bbTeal` khi bật / `ink300` khi tắt, phát `Semantics.toggled`), đặt **cùng `BbCard`** với Âm thanh và Nhạc nền, ngăn bởi `Divider(height: sp6)` như hai hàng đang có.
-- Tầng hiệu ứng dùng token `ArenaInk` sẵn có; **không thêm hue mới**, không hex thô.
+- Công tắc rung đặt cùng panel `panelNavy` với Âm thanh và Nhạc nền, phát
+  `Semantics.toggled`. Track on/off phải khớp theme tối mới và có tín hiệu vị trí/
+  icon ngoài màu; không giữ `bbTeal` chỉ vì đó là màu code cũ.
+- Tầng hiệu ứng dùng `trajectoryCyan` cho spark/ring/trail, `primaryGold` cho
+  multiplier/score emphasis, `dangerRed` cho blocked/fail và token target hiện có;
+  không hex thô.
+- Tín hiệu `armed` (glow + outline + đổi biểu cảm) luôn nằm trên comic effect.
+- Multiplier là capsule dọc bên phải, `×1…×6`, punch 120–200ms khi tăng; không
+  dùng chữ mờ giữa sân làm nguồn thông tin duy nhất.
 - Âm thanh: chỉ `wallImpact` và `comicImpact` đã có; đi qua cooldown của `game_audio_service`, không dựng đường phát âm riêng (AC US-1/3.2).
 
-- Hàng công tắc rung đặt **sau Nhạc nền, trước Ngôn ngữ** trong cùng `BbCard` (AC US-5/1.1).
+- Hàng công tắc rung đặt **sau Nhạc nền, trước Ngôn ngữ** trong cùng panel settings
+  (AC US-5/1.1).
 
 **Chuỗi ARB mới**: **một** khoá `hapticsLabel`, dùng cho **cả** nhãn nhìn thấy và `semanticLabel`. Đúng quy ước đang có (`soundLabel`, `musicLabel`, `languageLabel`) và đúng cách mọi `BbToggle` hiện tại đang làm — `settings_screen.dart:59-61` và `:67-69` truyền **cùng** một chuỗi cho hai chỗ. Bản trước của design đề xuất thêm khoá `*Semantics` riêng; nó không có tiền lệ nào trong repo và trái AC US-5/2.2 ("theo đúng hợp đồng `BbToggle` hiện tại").
 

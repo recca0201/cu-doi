@@ -2,12 +2,11 @@
 artifact_type: foundation
 document: uiux-guideline
 project: ban_bua_tuong
-status: approved-target
+status: target
 created: 2026-08-05
 updated: 2026-08-09
 source_artifacts:
-  - ../../Cu_Doi_UI_UX_Design_Spec.docx
-  - Cu_Doi_UI_UX_Design_Spec.docx#Hình-tham-chiếu-thiết-kế-tổng-thể-các-màn-hình
+  - Cu_Doi_UI_UX_Design_Spec.docx
   - project-overview-pdr.md
   - lib/core/bb_tokens.dart
   - lib/core/bb_theme.dart

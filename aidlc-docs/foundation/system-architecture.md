@@ -4,7 +4,7 @@ document: system-architecture
 project: ban_bua_tuong
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
   - AGENTS.md
@@ -644,11 +644,12 @@ main() → SharedPreferences.getInstance()
 - **`currentBanks` được truyền xuống painter** để mục tiêu phát sáng theo tầng khi
   số dội tăng. Đây là bất biến sản phẩm số 7, và nó là lý do painter cần biết
   trạng thái cú bắn đang bay thay vì chỉ biết trạng thái bàn.
-- **Vỏ ngoài và sân đấu dùng hai hệ màu khác nhau**: `BbTheme.light()` (cream/sky)
-  cho menu, `ArenaInk` (indigo đêm) cho sân đấu, với hue mục tiêu được neo về
-  `BbTokens` để vẫn nhận ra thương hiệu. Về mặt kiến trúc, điểm đáng ghi là
-  `ArenaInk` lưu `int` chứ không lưu `Color` (ADR-7) và tự khai `brandSources` làm
-  neo cho test.
+- **[Observed] Code hiện tại còn dùng hai hệ màu**: `BbTheme.light()` (cream/sky)
+  cho menu và `ArenaInk` (indigo đêm) cho sân đấu. **[Target 2026-08-09]** UI/UX
+  Design Spec 1.0 đã thay quyết định này bằng một hệ arcade đêm thống nhất. Đây là
+  migration ở tầng trình bày; nó không đổi ranh giới `lib/sim/`, hình học sân hay
+  pipeline solver. `ArenaInk` vẫn lưu `int` thay vì `Color` (ADR-7). Xem
+  `uiux-guideline.md` cho token và lộ trình migration.
 
 ---
 

@@ -3,21 +3,25 @@ artifact_type: tasks
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: giong-va-cau-truc-ngoai-san-dau
 source_artifacts:
   - aidlc-docs/specs/giong-va-cau-truc-ngoai-san-dau/requirements.md
   - aidlc-docs/specs/giong-va-cau-truc-ngoai-san-dau/design.md
+  - aidlc-docs/foundation/uiux-guideline.md
 ---
 
 # Tasks: Giọng và cấu trúc ngoài sân đấu
 
-Thứ tự: luật miền thuần Dart trước (test được không cần widget), rồi port component từ bản
-`ban_bua` cũ, rồi lắp bản đồ, rồi thoại, cuối cùng nối dây và kiểm.
+Thứ tự: luật miền thuần Dart trước (test được không cần widget), rồi dựng component
+grid theo design mới, lắp bản đồ, rồi thoại, cuối cùng nối dây và kiểm.
 
-**Nguồn design**: `C:\repos\ban_bua` — bản `ban_bua` cũ. Design system hai project **giống nhau
-từng byte**, nên không port token nào; port **composition**. Mọi task dưới đây trích `file:line`
-của bản cũ khi có thứ để sao lại.
+**Nguồn design hiện hành**: `Cu_Doi_UI_UX_Design_Spec.docx` và
+`aidlc-docs/foundation/uiux-guideline.md`. `C:\repos\ban_bua` chỉ còn là nguồn
+tham khảo primitive; **không port composition đường mòn**.
+
+> **Supersession 2026-08-09**: Task 5–12 bên dưới mô tả phương án đường mòn cũ và
+> được giữ như lịch sử. Không triển khai chúng. Thực hiện task **12A–12E** thay thế.
 
 **Phụ thuộc Unit 1**: task 6 (dấu đã bỏ qua trên node), task 13 (`targetArenaId` +
 `pushReplacement`), task 14 (`showGuide` đọc seen-set), và ràng buộc badge đặt ngang ở Unit 1
@@ -113,7 +117,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/domain/target_level_test.dart`
   - Expected: PASS.
 
-### 5. Số học offset cuộn
+### 5. [SUPERSEDED — KHÔNG LÀM] Số học offset đường mòn
 
 - [ ] 5.1 Write the failing test
   - Reference: US-3 AC-1.1, US-3 AC-2.1
@@ -135,7 +139,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/map_offset_test.dart`
   - Expected: PASS — kể cả assertion bất biến theo scale.
 
-### 6. Node màn theo trạng thái
+### 6. [SUPERSEDED — KHÔNG LÀM] Node đường mòn theo trạng thái
 
 - [ ] 6.1 Write the failing test
   - Reference: US-1 AC-2.1, US-1 AC-2.2, US-1 AC-2.5
@@ -157,7 +161,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/level_node_test.dart`
   - Expected: PASS.
 
-### 7. Tiêu đề chương
+### 7. [SUPERSEDED — KHÔNG LÀM] Tiêu đề chương kiểu đường mòn
 
 - [ ] 7.1 Write the failing test
   - Reference: US-1 AC-1.2, US-1 AC-3.3, US-1 AC-3.4, US-2 AC-1.3
@@ -178,7 +182,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/chapter_header_test.dart`
   - Expected: PASS ở **cả hai** mức scale.
 
-### 8. Đường mòn uốn lượn
+### 8. [SUPERSEDED — KHÔNG LÀM] Đường mòn uốn lượn
 
 - [ ] 8.1 Write the failing test
   - Reference: US-1 AC-1.3, US-1 AC-3.1, US-1 AC-3.2
@@ -199,7 +203,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/chapter_trail_test.dart`
   - Expected: PASS.
 
-### 9. Đường nối đứt nét
+### 9. [SUPERSEDED — KHÔNG LÀM] Đường nối đứt nét
 
 - [ ] 9.1 Write the failing test
   - Reference: US-1 AC-1.3
@@ -220,7 +224,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/trail_painter_test.dart`
   - Expected: PASS. Sinh ảnh chuẩn bằng `--update-goldens` rồi **kiểm mắt** trước khi commit.
 
-### 10. Lắp bản đồ theo chương
+### 10. [SUPERSEDED — KHÔNG LÀM] Lắp bản đồ theo đường mòn
 
 - [ ] 10.1 Write the failing test
   - Reference: US-1 AC-1.1, US-1 AC-1.5, US-1 AC-2.3, US-1 AC-2.4
@@ -242,7 +246,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/arena_map_chapters_test.dart`
   - Expected: PASS, và `app_smoke_test.dart` sẵn có **vẫn xanh** (nó kiểm được danh sách màn và trạng thái khoá).
 
-### 11. Nối tự cuộn
+### 11. [SUPERSEDED — KHÔNG LÀM] Nối tự cuộn theo extent đường mòn
 
 - [ ] 11.1 Write the failing test
   - Reference: US-3 AC-1.4, US-3 AC-2.1, US-3 AC-2.3
@@ -264,7 +268,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/ui/arena_map_autoscroll_test.dart`
   - Expected: PASS.
 
-### 12. Dùng lại composition đã có mà chưa dùng
+### 12. [SUPERSEDED — KHÔNG LÀM] Port composition `ban_bua`
 
 - [ ] 12.1 Write the failing test
   - Reference: US-1 AC-3.2, US-1 AC-3.3
@@ -284,6 +288,48 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Reference: US-1 AC-3.2, US-1 AC-3.3
   - Command: `flutter test test/ui/arena_map_shell_test.dart`
   - Expected: PASS.
+
+### 12A. Token và shell tối cho màn chọn màn [REPLACEMENT]
+
+- [ ] 12A.1 Viết golden/widget test cho shell 390 × 844: nền `nightIndigo`, header
+  `panelNavy`, Back / “CHỌN MÀN” / tổng sao; không có `sky`, cream card hoặc coral
+  CTA từ composition cũ.
+- [ ] 12A.2 Thêm/ánh xạ token ngữ nghĩa theo `uiux-guideline.md`; không viết hex
+  trong widget và không sửa `lib/sim/`.
+- [ ] 12A.3 Chạy test ở phone, tablet và text scale 2.0; kiểm không overflow.
+
+### 12B. Node level dạng grid [REPLACEMENT]
+
+- [ ] 12B.1 Viết test cho năm trạng thái `locked`, `unlocked`, `current`,
+  `completed`, `skipped`; mỗi node có hit target ≥48dp và một semantic label đầy đủ.
+- [ ] 12B.2 Dựng node tròn/bo tròn với số ở giữa, 0–3 sao, lock icon, gold
+  outline/glow cho current và badge/icon chữ cho skipped. Không dùng màu đơn độc.
+- [ ] 12B.3 Giữ extent node ổn định giữa các state để grid không nhảy.
+
+### 12C. Section chapter và grid 4 cột [REPLACEMENT]
+
+- [ ] 12C.1 Viết test: 4 header, mỗi header có `earned/max`; mỗi chapter có đúng
+  5 node theo `levelId`; chapter sau không lấp ô trống của chapter trước.
+- [ ] 12C.2 Dùng một `CustomScrollView`/sliver tree; mỗi section có header và
+  `SliverGrid` 4 cột. Không dùng scroll lồng, `ChapterTrail` hoặc `TrailPainter`.
+- [ ] 12C.3 Nhóm dự phòng cho arena ngoài `kChapters` vẫn hiện sau chương 4.
+
+### 12D. Tự định vị theo section/grid [REPLACEMENT]
+
+- [ ] 12D.1 Viết test offset cho màn 1, 8 và 20; offset gồm extent header, grid
+  row và khoảng section thật, được clamp và áp trước khung đầu.
+- [ ] 12D.2 `targetArenaId` hợp lệ thắng luật suy ra; giá trị lạ rơi về
+  `targetLevelId`; người mới/đã xong mở đầu danh sách.
+- [ ] 12D.3 Không gọi `animateTo` khi mở; sau khi người chơi cuộn tay, locale/text
+  scale đổi không tự đưa họ về đích.
+
+### 12E. Visual QA màn chọn màn [REPLACEMENT]
+
+- [ ] 12E.1 Golden 390 × 844 phải khớp hierarchy của hình tham chiếu nhưng dùng
+  đúng 4 chapter, không gắn cả 20 màn vào “Chương 1”.
+- [ ] 12E.2 Kiểm current/locked/completed/skipped, tên chapter VI/EN, tổng sao,
+  snackbar màn khoá và route tới màn mở.
+- [ ] 12E.3 Chạy `flutter test` và `flutter analyze`; kiểm mắt golden trước khi kết luận.
 
 ### 13. Điểm giao Unit 1 — định vị sau khi bỏ qua màn
 
@@ -366,7 +412,11 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
 - [ ] 16.3 Write minimal implementation
   - Reference: US-4 AC-3.2, US-4 AC-4.2, US-4 AC-4.3
   - Implementation file: `lib/ui/character_dialogue.dart`
-  - **Một** component cho **mọi** lần thoại xuất hiện. Port vỏ từ `GameplayLevelGuideOverlay` bản cũ (`gameplay_screen.dart:1929-2068`): `ColoredBox(ink900 @ 0.58)` + `GestureDetector` chặn chạm xuyên + `SingleChildScrollView` + `ConstrainedBox(maxWidth: 420)` + `BbCard(cream)` + badge + `BbText.h1` + `BbButton.primary(expand, icon: BbIcons.play)`.
+  - **Một** component cho **mọi** lần thoại xuất hiện. Dùng scrim 70–80%,
+    `GestureDetector` chặn chạm xuyên + `SingleChildScrollView` +
+    `ConstrainedBox(maxWidth: 420)` + panel `panelNavy` + badge + heading trắng +
+    CTA `primaryGold`. Có thể mượn cấu trúc semantics/scroll của
+    `GameplayLevelGuideOverlay` bản cũ, nhưng không port card cream/coral.
   - **Sao nguyên khối `Semantics` ở `:1999-2006` kèm comment** — comment ghi rằng bỏ `explicitChildNodes` làm framework assert và hiện màn đỏ. Đó là loại tri thức mất đi thì phải học lại bằng một lần vỡ.
 - [ ] 16.4 Run test to verify it passes
   - Reference: US-4 AC-3.2, US-4 AC-4.2, US-4 AC-4.3
@@ -455,7 +505,12 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
 - [ ] 20.3 Kiểm trên máy ảo
   - Reference: US-1 AC-3.1, US-3 AC-1.1
   - Command: `flutter build apk --release --target-platform android-x64`
-  - Cài và mở màn chọn màn: 4 chương có tiêu đề và accent riêng, đường mòn uốn lượn với node tròn, tự cuộn tới đúng chỗ đang chơi. Chụp ảnh so với `C:\repos\ban_bua` để xác nhận đã khớp design cũ. **Lưu ý**: dùng release build — debug APK 155 MB không cài được vì `/data` máy ảo chật; release ~19 MB.
+  - Cài và mở màn chọn màn: 4 chương có tiêu đề và tiến độ, grid 4 cột nền navy,
+    node current/locked/completed/skipped đúng state, tự định vị tới chỗ đang chơi.
+    Chụp ảnh ở 390 × 844 và đối chiếu hierarchy với hình trong
+    `Cu_Doi_UI_UX_Design_Spec.docx`; không đối chiếu composition đường mòn của
+    `ban_bua`. **Lưu ý**: dùng release build — debug APK 155 MB không cài được vì
+    `/data` máy ảo chật; release ~19 MB.
 
 ## Next Steps
 

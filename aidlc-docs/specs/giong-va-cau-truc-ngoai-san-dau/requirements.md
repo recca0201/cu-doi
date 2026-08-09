@@ -3,7 +3,7 @@ artifact_type: requirements
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: giong-va-cau-truc-ngoai-san-dau
 source_artifacts:
   - aidlc-docs/requirements/001_remaining-scope_units_decomposition.md
@@ -12,6 +12,7 @@ source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
   - aidlc-docs/foundation/system-architecture.md
   - aidlc-docs/foundation/uiux-guideline.md
+  - Cu_Doi_UI_UX_Design_Spec.docx
   - aidlc-docs/specs/duong-ra-khoi-man-bi/requirements.md
   - lib/ui/screens/arena_map_screen.dart
   - lib/ui/screens/game_screen.dart
@@ -91,6 +92,7 @@ một cho danh sách phẳng, một cho bố cục chương.
 | D2 | **Giữ nguyên** luật mở màn tuyến tính — chương **không** phải một cửa khoá mới | Đã chốt ở Inception (A5b) |
 | D3 | Tên chương và mọi chuỗi mới có ở **cả** `app_vi.arb` và `app_en.arb`, VI mặc định | Đã chốt ở Inception (A8) |
 | D4 | **US-4 chỉ đặc tả hệ thống thoại**: khi nào hiện, ở đâu, không chặn gameplay, song ngữ, dùng mascot sẵn có. **Tên nhân vật và lời thoại cụ thể là việc của Phase 4** | **Đã chốt** với người dùng 2026-08-05 (xác nhận giả định A7) |
+| D5 | Bản đồ dùng **grid node trên nền navy**, 4 cột ở điện thoại; không dùng đường mòn uốn lượn của `ban_bua` | Đã chốt từ UI/UX Design Spec 1.0 ngày 2026-08-09 |
 | A-open | **Tên nhân vật và nội dung từng câu thoại chưa được viết.** Đây là open decision cố ý, không phải sót. Phase 4 SHALL không tự đặt tên rồi coi là đã chốt — xem US-4 AC-1.3 | Mở — cần nội dung trước khi cài US-4 |
 
 ---
@@ -159,6 +161,22 @@ SHALL không viết hex thô hay px ma thuật (`uiux-guideline.md` § Triết l
 
 3.4 WHEN tiêu đề chương và thẻ màn được dựng THEN system SHALL bọc `Semantics` +
 `ExcludeSemantics` cho phần tử tương tác theo checklist `uiux-guideline.md`.
+
+3.5 WHEN các màn trong một chương được dựng trên điện thoại THEN system SHALL dùng
+**grid 4 cột** với node tròn hoặc bo tròn, và SHALL không dùng đường mòn uốn lượn,
+đường cubic hay bố cục zig-zag kế thừa từ `ban_bua`.
+
+3.6 WHEN trạng thái node được dựng THEN system SHALL phân biệt ít nhất `locked`,
+`unlocked`, `current`, `completed` và `skipped` bằng nhiều hơn một kênh:
+outline/glow/icon/chữ/sao, không chỉ bằng hue.
+
+3.7 WHEN màn hình chọn màn được dựng THEN system SHALL dùng nền `nightIndigo`,
+panel/header `panelNavy`, current outline `primaryGold` và chữ tương phản theo
+`uiux-guideline.md`; SHALL không dùng nền sky/cream của thiết kế cũ.
+
+3.8 WHEN một chapter có 5 màn THEN system SHALL giữ node thứ 5 canh theo lưới của
+chapter, không kéo giãn để lấp đủ 4 cột và không trộn node của chapter kế tiếp vào
+cùng section mà không có header phân cách.
 
 **4. Bản địa hoá**
 

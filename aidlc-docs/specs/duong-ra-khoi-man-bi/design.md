@@ -3,10 +3,12 @@ artifact_type: design
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: duong-ra-khoi-man-bi
 source_artifacts:
   - aidlc-docs/specs/duong-ra-khoi-man-bi/requirements.md
+  - aidlc-docs/foundation/uiux-guideline.md
+  - Cu_Doi_UI_UX_Design_Spec.docx
 ---
 
 # Design: Đường ra khỏi màn bí
@@ -337,13 +339,19 @@ Tỉ lệ tương phản của `cream` ở alpha đã chọn trên `bgTop`/`bgBo
 
 ## UI Design Specification
 
-Không có `mockup.html` và không có Figma URL trong requirements — UI handoff không áp dụng cho unit này. Ràng buộc UI đi trực tiếp từ `uiux-guideline.md`:
+Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
+`Cu_Doi_UI_UX_Design_Spec.docx`:
 
-- Nút gợi ý dùng `BbButton` variant `accent`, đặt ở **footer màn chơi** cạnh hint chữ tĩnh đang có (AC US-1/6.4), vùng chạm ≥ `tapMin` 48px, không đè vùng bóng bay (AC US-1/6.1).
+- Nút gợi ý dùng action gold hoặc icon button navy có gold accent tuỳ mật độ footer,
+  đặt ở **footer màn chơi**, vùng chạm ≥48dp và không đè shooter/vùng bóng bay
+  (AC US-1/6.1, 6.4). Không dùng coral/teal từ theme cũ.
 - Trạng thái vô hiệu: `BbButton` khi `onPressed == null` đã tự `Opacity(0.5)` + bỏ bóng — khớp AC US-1/4.2 "vẫn nhìn thấy được".
-- Dấu "đã bỏ qua" trên thẻ màn: `BbBadge` (chữ + hình dạng, không chỉ màu) — AC US-2/5.2.
-- Xác nhận bỏ qua màn (AC US-2/2.1): dùng `showBbDialog` + `BbDialog` — component **đã tồn tại nhưng là code chết** (`uiux-guideline.md` G6). Dùng nó ở đây là dùng đúng component của hệ, không thêm kiểu popup thứ tư.
-- **Giá và số xu còn thiếu** (AC US-1/4.2, US-2/2.4) hiện ở **một `BbBadge` ngay cạnh** nút, không nhét vào nhãn nút — nhãn `BbButton` bọc `FittedBox(scaleDown)` + `maxLines: 1`, nên nhồi thêm chữ vào đó chỉ làm nhãn co lại. Nguồn sự thật của số dư là `progressProvider`; `HintStatus.insufficientCoins` **chỉ** là trạng thái hiển thị dẫn xuất, không phải nguồn thứ hai.
+- Dấu "đã bỏ qua" trên node grid: badge/icon có chữ, không chỉ màu — AC US-2/5.2.
+- Xác nhận bỏ qua dùng dialog `panelNavy`, scrim 70–80%, CTA chính gold và CTA
+  phụ blue; không tạo style popup riêng.
+- Giá và số xu còn thiếu hiện ở badge navy/gold cạnh nút, không nhét vào nhãn CTA.
+  Nguồn số dư vẫn là `progressProvider`; `HintStatus.insufficientCoins` chỉ là
+  trạng thái hiển thị dẫn xuất.
 
 ### Trạng thái lời nhắc đã bỏ qua (AC US-3/3.3)
 
