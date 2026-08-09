@@ -18,14 +18,14 @@ source_artifacts:
 | Review item | Summary |
 | --- | --- |
 | **Goal and approach** | Làm cú bắn *cảm* được qua hai kênh xuất của **một** dòng sự kiện. Điểm móc đã tồn tại: `game_screen._drain` (`game_screen.dart:143-171`) vét `runner.pending` một lần mỗi tick và đã xử `bank`/`blocked`/`broke`. Unit này thêm hai consumer vào đúng chỗ đó — `ComicEffectController` (hình) và `HapticService` (rung) — chứ không dựng đường phát hiện va chạm thứ hai. |
-| **In scope** | Thang cường độ đơn điệu theo số lần dội; cường độ phá mục tiêu theo hệ số BỪA; hiệu ứng kết màn; rung 4 mốc sự kiện với cooldown hai tầng (`levelEnd` miễn); công tắc rung trong Cài đặt; bảo vệ tín hiệu `armed` như điều kiện chấp nhận. **Rung màn giữ nguyên** — chỉ `broke`, không mở sang `bank`. |
-| **Out of scope** | Đổi điểm/sao/`kMaxBanks`/`kMinAimUp`/`kMaxMultiplier`; asset ảnh hoặc âm thanh mới; Flame game loop; sửa khoảng trống accessibility A1–A8; nhân vật có tên (Unit 3); gợi ý/bỏ qua màn (Unit 1). |
+| **In scope** | Thang cường độ theo số lần dội; phá mục tiêu theo hệ số; hiệu ứng kết màn; rung 4 mốc với cooldown; công tắc rung; bảo vệ `armed`; multiplier capsule; reduced-motion tắt effect/punch/camera shake. Camera shake vẫn chỉ do `broke`, không mở sang `bank`. |
+| **Out of scope** | Đổi điểm/sao/`kMaxBanks`/`kMinAimUp`/`kMaxMultiplier`; asset ảnh hoặc âm thanh mới; Flame game loop; accessibility của component không bị unit này chạm tới; nhân vật có tên (Unit 3); gợi ý/bỏ qua màn (Unit 1). |
 
 ## Open Questions
 
 | # | Question | Blocking? | Working assumption |
 | --- | --- | --- | --- |
-| Q1 | Hình thức thị giác cụ thể của tầng hiệu ứng là gì? | **Đã chốt** | **Chùm vạch va đập** — các đoạn thẳng ngắn toả ra từ điểm va chạm, mờ dần theo tuổi. Màu `frame`, không asset mới, không hạt, không chữ mới, **không** đụng tới rung màn. `uiux-guideline.md` G1 và requirements A-open đều giao việc này cho Phase 2 — hoãn tiếp là để hai AC không có biên chấp nhận và `kMaxEffectElements` không quyết được. Chốt luôn, kèm bảng giá trị cụ thể ở § `comic_effect_controller`. |
+| Q1 | Hình thức thị giác cụ thể của tầng hiệu ứng là gì? | **Đã chốt** | **Chùm vạch va đập** — các đoạn thẳng ngắn toả ra từ điểm va chạm, mờ dần theo tuổi. Dùng `trajectoryCyan`, không asset/hạt/chữ mới và không thêm shake từ bank. `uiux-guideline.md` §3.1, §4.4 giao impact cho cyan; bảng giá trị cụ thể nằm ở § `comic_effect_controller`. |
 | Q2 | Rung có cần thêm package? | Không | Không. `HapticFeedback` của `flutter/services.dart` là built-in. **Nhưng** bốn pattern có thật sự cho bốn cảm giác phân biệt được hay không thì phụ thuộc thiết bị và OS — đã chuyển sang § Điều kiện chưa kiểm, không còn là "đã trả lời chắc". |
 | Q3 | Cooldown 60ms áp cho **toàn bộ** rung hay theo từng loại? | **Đã chốt** | **Theo bucket.** Ba sự kiện gameplay dùng chung 60ms; `levelEnd` được **miễn**. Một cooldown chung cho tất cả sẽ **bỏ mất** rung kết màn — xem lý lẽ ở § `haptic_service`. |
 | Q5 | Thiết bị tham chiếu cho mốc 60fps của AC US-3/3.1? | **Đã chốt** | **Android 11+, 4 lõi A53-class, 3 GB RAM** (ví dụ Samsung Galaxy A12). `system-architecture.md` §5.5 xác nhận dự án chưa khai sàn thiết bị/OS nào, nên phải chọn chứ không suy ra được. Máy ảo x86_64 API 35 **không** thay thế được — nó chạy trên CPU desktop. AC này chỉ đóng được sau khi có APK và có máy thật. |
@@ -67,7 +67,9 @@ graph TD
 - **Pattern đang có**: sân đấu là `CustomPainter` + `Ticker`; `_drain` chuyển `ShotEvent` thành `Stamp` và `_shake`; `game_audio_service` có cooldown theo sound với nguồn thời gian **tiêm được**.
 - **Delta**: `_drain` phát cho **hai** consumer mới thay vì tự xử tất; `ComicEffectController` giữ danh sách phần tử hiệu ứng có trần; `HapticService` là bản sao pattern cooldown của audio.
 - **Ranh giới bị ảnh hưởng**: `lib/sim/` **không đổi một dòng** — cả hai kênh chỉ **đọc** `pending`. `ArenaPainter` nhận một field mới và một draw call, chèn vào hợp đồng z-order.
-- **Ràng buộc chịu lực**: tín hiệu `armed` là `[Confirmed]` design law và là "tính năng dễ đọc quan trọng nhất trong game". Hiệu ứng nằm **dưới** lớp mục tiêu là **cần nhưng không đủ** — quầng `armed` là lớp trong suốt, xem § `arena_painter`. Và bật `armed` không được trễ vì hiệu ứng.
+- **Ràng buộc chịu lực**: tín hiệu `armed` là hợp đồng bắt buộc ở guideline §5.2.
+  Hiệu ứng nằm **dưới** lớp mục tiêu là cần nhưng không đủ — quầng `armed` là
+  lớp trong suốt, xem § `arena_painter`. Bật `armed` không được trễ vì hiệu ứng.
 
 ```mermaid
 sequenceDiagram
@@ -138,15 +140,25 @@ class ComicEffectController {
 }
 ```
 
-**Hình thức thị giác đã chốt** (giải quyết Q1 bằng cách chọn, không bằng cách hoãn): **chùm vạch va đập** — `spokeCount` đoạn thẳng ngắn toả ra từ điểm va chạm, dài `spokeLength`, dày `spokeWidth`, mờ dần theo tuổi. Màu `frame`. Không hạt, không chữ mới, không asset mới (D1). Đây đúng là từ vựng "hiệu ứng truyện tranh" mà unit được đặt tên theo.
+**Hình thức thị giác đã chốt**: **chùm vạch va đập** — `spokeCount` đoạn
+thẳng ngắn toả ra từ điểm va chạm, dài `spokeLength`, dày `spokeWidth`, mờ dần
+theo tuổi. Màu `trajectoryCyan` lấy qua token/ArenaInk. Không hạt, chữ hay asset mới.
 
-> **Vì sao vạch toả, không phải vòng tròn.** Bản trước chọn một **vòng xung kích** — đường tròn viền nở ra. Đó là **cùng primitive, cùng hue, dải bán kính chồng nhau** với chính tín hiệu `armed`: vòng viền `armed` là đường tròn viền ở `r × 1.24` ≈ 5.7u dày `fit.u(0.5)` (`arena_painter.dart:236-239`), còn vòng xung kích chạy 3.0–9.5u. Trên một mục tiêu vàng (`frame` **cũng là** `targets[2]`, `uiux-guideline.md:138`), mắt sẽ thấy hai đường tròn vàng đồng tâm. Ràng buộc hạ alpha trong `r × 1.55` chặn được **chồng lấn** nhưng không chặn được **kề cận**: một lần dội vào tường cách mục tiêu armed 10u sinh một vòng vàng kết thúc ngay sát ngoài quầng.
+> **Vì sao vạch toả, không phải vòng tròn.** Vòng xung kích nở ra dùng cùng
+> primitive và dải bán kính với vòng `armed`, nên vẫn dễ lẫn dù khác hue. Chùm
+> đoạn thẳng toả giữ hình dạng khác hẳn; hạ alpha trong `r × 1.55` của target sống
+> là lớp bảo vệ bổ sung, không phải kênh phân biệt duy nhất.
 >
-> Đổi hue không giải quyết được: `deflector` là màu **bề mặt dội thật** (đúng sai lầm đã bị loại ở Unit 1), `cream` là vật liệu bóng và là đường gợi ý của Unit 1, `danger` là vạch đáy và tem "Bắn thẳng à?". Không hue nào trống. **Đổi primitive** thì hue thôi trở thành mắt xích chịu lực — vạch thẳng toả ra không lẫn được với đường tròn, dù cùng màu vàng.
+> Đổi hue một mình không giải quyết được: màu blocker/deflector thuộc hình học sân,
+> `dangerRed` thuộc đáy mở/blocked, gold thuộc multiplier/score. Chọn
+> `trajectoryCyan` đúng vai trò impact và dùng primitive vạch toả khác quầng tròn.
 
 `EffectTier` bỏ `textScale` và `shakeBoost` của các bản trước: `textScale` không có đường nối nào tới `_paintMultiplier`, còn `shakeBoost` xem ghi chú dưới.
 
-> **Vì sao bỏ `shakeBoost`.** Bản trước cho `EffectTier` một mức tăng biên độ rung màn. `_shake` hiện **chỉ** được đặt khi `broke` (`game_screen.dart:166`), và `uiux-guideline.md` A6 ghi đúng chữ: "`_shake` chạy vô điều kiện khi phá mục tiêu" — tức nó là đường **chưa được gate** reduced-motion. Cho `bank` events nuôi nó nghĩa là rung màn sẽ nổ ở **phần lớn** lần dội tường thay vì chỉ khi phá mục tiêu, tức làm **tệ hơn** đúng cái đường A6 đã chỉ ra — trái ràng buộc C7 ("không được làm nó tệ hơn"). Thêm nữa `_shake` là một scalar đơn được đặt `= 1` rồi giảm dần, nên "boost" không có phép hợp thành xác định và có thể vượt trần biên độ mà AC US-2/2.1 **đóng băng**. Chùm vạch tự nó đã tải được thang leo; bỏ `shakeBoost` xoá một lúc: hồi quy reduced-motion, xung đột với hành vi bị đóng băng, và một phép hợp thành không định nghĩa. **Rung màn giữ nguyên: chỉ `broke`, đúng như hôm nay.**
+> **Vì sao bỏ `shakeBoost`.** `_shake` hiện chỉ được đặt khi `broke`. Cho bank
+> events nuôi nó sẽ làm camera rung ở phần lớn lần dội và tạo phép hợp thành không
+> xác định trên một scalar giảm dần. Chùm vạch đã tải thang leo; camera shake vẫn
+> chỉ thuộc `broke`, đồng thời bị tắt hoàn toàn khi reduced motion bật theo §7.
 
 **Một input duy nhất cho mỗi loại sự kiện** — `banksAtEvent` là nguồn có thẩm quyền, `e.bankCount` chỉ dùng để đối chiếu:
 
@@ -164,7 +176,7 @@ class ComicEffectController {
 
 | `level` | duration (s) | spokeCount | spokeLength (u) | spokeWidth (u) | Ghi chú |
 | --- | --- | --- | --- | --- | --- |
-| 0 | — | — | — | — | **Không phát.** AC US-1/2.2 — hệ số không hiện ở ×1 |
+| 0 | — | — | — | — | **Không phát effect.** Capsule multiplier vẫn hiện `×1` |
 | 1 | 0.18 | 3 | 2.0 | 0.30 | |
 | 2 | 0.24 | 4 | 3.0 | 0.40 | |
 | 3 | 0.30 | 5 | 4.0 | 0.50 | |
@@ -177,7 +189,10 @@ class ComicEffectController {
 
 **Trần phần tử**: `kMaxEffectElements = 24`. Suy luận: **chỉ một cú bắn bay tại một thời điểm** — `_fire` return sớm khi `_runner != null` (`game_screen.dart:203-207`) — nên ca đồng thời xấu nhất là một cú ở màn 20: 5 lần dội + 6 mục tiêu vỡ ≈ **11** phần tử trong cửa sổ 0.44s. 24 là dư gấp đôi. Vượt trần thì loại phần tử **cũ nhất**.
 
-**Reduced-motion** (AC US-3/4.1): đọc `MediaQuery.disableAnimationsOf(context)` trong `game_screen.build`, truyền xuống `ComicEffectController`. Ngữ nghĩa gate là **chặn sinh phần tử trong `onEvent`** — không phải zero tham số `EffectTier`, không phải bỏ draw call. Chặn ở nguồn nghĩa là danh sách rỗng, `dirty` không bị kích, và không có phần tử nào tồn tại để rò qua đường khác. `_shake` **không** nằm trong phạm vi gate này vì unit này không mở rộng nó (xem ghi chú `shakeBoost`); khoảng trống A6 vẫn là việc riêng, chưa được duyệt.
+**Reduced-motion** (AC US-3/4.1): đọc `MediaQuery.disableAnimationsOf(context)`
+trong `game_screen.build`, truyền xuống controller và painter. Gate chặn sinh effect
+element, tắt multiplier punch và ép camera-shake offset về 0. Chip số dội,
+multiplier tĩnh và đổi state `armed` vẫn hiện đầy đủ.
 
 ### `lib/core/haptic_service.dart` [NEW]
 
@@ -270,7 +285,10 @@ Hiệu ứng **phủ vùng sân** nằm dưới lớp mục tiêu (AC US-3/1.3, 
 
 **`effects` mặc định `const []`** trong constructor `ArenaPainter`, để golden test của Unit 1 **không phải sửa** — ảnh sinh ra byte-identical khi danh sách rỗng.
 
-**Kiểm hue hai chiều.** (1) **Không dùng `cream`** — Unit 1 dựng lập luận phân biệt đường gợi ý trên việc "cream đứt nét + quầng" là tổ hợp chưa lớp nào dùng. (2) `frame` **trùng hue** với vòng viền `armed`, chip số dội, hệ số và `targets[2]` — nhưng chùm vạch là **primitive khác hẳn** (đoạn thẳng toả, không phải đường tròn), nên hue không còn là kênh chịu lực. Đây là kiểm mà bản trước bỏ sót: nó kiểm `frame` với Unit 1 nhưng không kiểm với vòng `armed`.
+**Kiểm hue hai chiều.** Không dùng `primaryGold` cho impact vì gold thuộc
+multiplier/score và có thể cạnh tranh với `armed`; không dùng `cream` legacy.
+`trajectoryCyan` đúng vai trò impact/trail, còn primitive chùm vạch vẫn khác quầng
+tròn của `armed`.
 
 > ### Z-order KHÔNG bảo vệ được tín hiệu `armed` — đây là chỗ bản trước của design sai
 >
@@ -366,10 +384,10 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Bi rơi khỏi đáy sân | `endShot(exitedBottom)` — dọn phần tử đang sống, không ăn mừng, không rung phá mục tiêu (AC US-1/2.3, US-4/2.4) |
 | Đang kéo để ngắm | Không phát rung (AC US-4/2.5) |
 | Cú bắn mới khi hiệu ứng cũ còn dở | Hiệu ứng cũ bị kết thúc/nhường; cú bắn mới **không** bị hoãn (AC US-3/2.2) |
-| Cú bắn chưa dội lần nào | Không hiện chỉ số hệ số (AC US-1/2.2) |
+| Cú bắn chưa dội lần nào | Hiện capsule `×1`; không punch/spark/celebration |
 | Bi dội vào **mục tiêu** chưa đủ điều kiện | Không tăng bậc cường độ — dội mục tiêu không tính công dội (AC US-1/2.1, PDR §8.4) |
 | Số phần tử hiệu ứng vượt trần | Loại phần tử **cũ nhất**; danh sách không vượt `kMaxEffectElements` (AC US-3/3.5) |
-| Reduced-motion bật | Tầng hình gate bằng `disableAnimationsOf`; chip số dội và HUD **vẫn** truyền đạt số dội và hệ số (AC US-3/4.1, 4.4). Rung **không** bị gate (Q4) |
+| Reduced-motion bật | Không sinh effect, không multiplier punch, camera offset bằng 0; chip số dội, `armed` và multiplier tĩnh vẫn hiện |
 | Không đọc được `hapticsOn` đã lưu | Mặc định **bật**, màn Cài đặt không hỏng (AC US-5/1.5) |
 
 ## Testing Strategy
@@ -379,8 +397,8 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Unit — `ComicEffectController` | Thang **đơn điệu tăng** qua `level` 1..4 ở **mọi** tham số; bước 3→4 lớn hơn bước 2→3; `level == 0` không phát; `level == 5` (bậc chết) dùng lại đúng bậc 4 và **không** leo thêm; `broke` lấy cường độ theo hệ số lúc phá, trần ×5; nhiều `broke` liên tiếp **cộng dồn**, không xoá nhau; `endShot(exitedBottom)` dọn sạch **nhưng** `endShot(banksExhausted)` để phần tử chạy hết tuổi; `blocked` lấy `banksAtEvent` **không** `e.bankCount` (vốn luôn 0); trần 24 phần tử |
 | Unit — `HapticService` | Bốn `HapticEvent` cho bốn pattern **khác nhau**; cooldown 60ms kiểm bằng `now` **tiêm được** (không cần thiết bị); **`levelEnd` phát được ngay sau `targetBroken` cách 16ms** — đây là test bắt được lỗi cooldown chung; `enabled == false` ⇒ không phát; Future bị reject ⇒ không có unhandled async error |
 | Widget — `dirty` flag | Hiệu ứng còn sống sau khi tem cuối hết tuổi ⇒ màn hình **vẫn** repaint; `_load()` ⇒ `clear()` được gọi, không còn phần tử của màn cũ |
-| Widget — reduced-motion | `disableAnimationsOf == true` ⇒ `onEvent` **không sinh** phần tử nào (danh sách rỗng, `dirty` không bị kích); chip số dội và hệ số trên HUD **vẫn** hiện đúng số dội (AC US-3/4.1, 4.4) |
-| Unit — rung màn không hồi quy | `_shake` chỉ được đặt bởi `broke`, **không** bởi `bank` — chốt chống việc mở rộng nó (ràng buộc C7, khoảng trống A6) |
+| Widget — reduced-motion | `disableAnimationsOf == true` ⇒ effect list rỗng, punch tắt, camera offset 0; chip, `armed` và capsule multiplier vẫn đúng |
+| Unit — reduced motion | `_shake` chỉ được đặt bởi `broke`, không bởi `bank`; khi reduced motion bật thì offset camera bằng 0 và effect list rỗng |
 | Unit — `AppSettings` | `hapticsOn` mặc định `true`; save cũ không có khoá ⇒ `true`; `copyWith` giữ ba field kia |
 | Golden — `ArenaPainter` | Hiệu ứng vẽ **dưới** mục tiêu; mục tiêu `armed` (quầng + biểu cảm hoảng + chip) **nhìn rõ** khi hiệu ứng phủ cùng vùng; tem `Bắn thẳng à?` giữ màu `danger` |
 | Widget — `settings_screen` | Công tắc rung cùng nhóm Âm thanh/Nhạc nền; lật ⇒ áp ngay và lưu; mở lại ⇒ khôi phục; `Semantics.toggled` đúng |
@@ -393,9 +411,9 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Decision | Choice | Alternative rejected | Why (one line) |
 | --- | --- | --- | --- |
 | Điểm móc sự kiện | Mở rộng `_drain` sẵn có thành fan-out hai consumer | Mỗi kênh tự phát hiện va chạm; hoặc móc ở tầng sim | Hai đường phát hiện là hai nguồn sự thật và bất biến `armed` bị kiểm hai lần độc lập. Móc ở tầng sim còn phát ~60 lần/giây trong lúc ngắm (preview dùng runner probe riêng) và phá AC US-4/2.5 ngay |
-| Hình thức thị giác | **Chùm vạch va đập** toả từ điểm va chạm, màu `frame` | Vòng xung kích (đường tròn viền); hoặc hoãn sang Phase 4 | Đường tròn là **cùng primitive, cùng hue, dải bán kính chồng** với vòng `armed` ở `r × 1.24` — trên mục tiêu vàng thành hai đường tròn vàng đồng tâm. Hoãn thì hai AC không có biên chấp nhận và `kMaxEffectElements` không quyết được |
+| Hình thức thị giác | **Chùm vạch va đập** toả từ điểm va chạm, `trajectoryCyan` | Vòng xung kích; hoặc gold/frame legacy | Đường tròn dễ lẫn primitive với vòng `armed`; cyan đúng vai trò impact, gold dành cho multiplier/score |
 | Miền thang cường độ | `0 .. kMaxBanks` **bao gồm cả hai đầu**, bậc đỉnh ở `kMaxBanks - 1`, bậc 5 dùng lại bậc 4 | `0 .. kMaxBanks - 1` | `shot_runner.dart:170` emit `bank` với `bankCount == 5` **trước** khi `:140` giết bi, và `_drain` chạy cùng tick — nên bậc 5 **có** xảy ra, ở mọi cú hết ngân sách dội. PDR §8.3 bó `requiredBanks`, **không** bó dòng sự kiện |
-| Rung màn | **Giữ nguyên**: chỉ `broke`, không thêm boost từ `bank` | `EffectTier.shakeBoost` nuôi từ `bank` events | `_shake` là đường **chưa gate** reduced-motion (`uiux-guideline.md` A6); cho `bank` nuôi nó là làm tệ hơn đúng đường đó, trái ràng buộc C7. Và "boost" trên một scalar giảm dần không có phép hợp thành xác định, có thể vượt trần mà AC US-2/2.1 đóng băng |
+| Rung màn | Chỉ `broke`, không thêm boost từ `bank`; tắt khi reduced motion | `EffectTier.shakeBoost` từ bank | Bank shake quá dày và scalar giảm dần không có phép hợp thành; guideline §7 yêu cầu tắt camera shake |
 | Cấu trúc cooldown rung | **Hai tầng**: `HapticEvent → bucketId` + dấu thời gian theo bucket. Ba sự kiện gameplay chia **một** cửa sổ 60ms; `levelEnd` miễn | `Map<HapticEvent, Duration>` như audio; hoặc một cooldown chung cho cả bốn | Per-key như audio cho mỗi sự kiện một timer riêng — mở lại ca ba rung trong một substep. Cooldown chung cho cả bốn thì **bỏ mất** `levelEnd` (16ms < 60ms sau cú `broke` cuối) |
 | Nguồn thời gian cooldown | Tiêm `DateTime Function()` | `DateTime.now()` trực tiếp | Đúng pattern `game_audio_service.dart:47`; đây là thứ biến cooldown thành test được không cần thiết bị |
 | Dependency rung | `HapticFeedback` built-in | Thêm package haptics | Built-in đủ cho 4 mốc và không tốn dependency. Bốn pattern có **thật sự** cho bốn cảm giác phân biệt được thì **chưa kiểm** — xem § Điều kiện chưa kiểm |
@@ -403,7 +421,7 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Discriminator kết thúc cú bắn | `endShot(ShotEndReason)` | `endShot()` không tham số | `_finishShot` chạy khi **bất kỳ** kiểu chết nào; không có discriminator thì nó xoá luôn hiệu ứng của cú thắng, mâu thuẫn AC US-2/1.3 |
 | Provider rung | `ref.read` + `ref.listen`, capture trong `initState` | `ref.watch(settingsProvider)` | Giữ **nhất quán** với `gameAudioProvider`. Lưu ý: lý do gốc ở `providers.dart:78-82` là tránh phá **player pool** của audio — `HapticService` chỉ giữ một timestamp nên rebuild không tốn gì; đây là nhất quán, không phải cùng một lý do |
 | Reduced-motion và rung | Chỉ gate tầng **hình** | Gate cả rung | Rung không phải hoạt ảnh; người tắt animation vì say chuyển động vẫn có thể muốn rung, và rung đã có công tắc riêng |
-| Tương phản hệ số | Nghĩa vụ **không hồi quy** + đo-và-ghi | Đặt mốc 3:1 | Hệ số **đang** ở 2.45:1, dưới cả ngưỡng chữ lớn — "không xuống dưới 3:1" là tiêu chí không thể sai cũng không thể đúng; và làm chữ to hơn không đổi tương phản chút nào |
+| Tương phản hệ số | Đạt **≥3:1**, đo và ghi | Chỉ không hồi quy từ 2.45:1 | 2.45:1 là baseline lỗi thời; target mới yêu cầu chữ gameplay lớn đạt tối thiểu 3:1 |
 
 ## Điều kiện chưa kiểm
 
@@ -415,7 +433,7 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 | Cooldown rung 60ms | **Chưa tune.** Con số khởi điểm (A6b), không phải giá trị đã đo |
 | Trần `kMaxEffectElements = 24` | Giá trị đã chốt theo suy luận một-cú-bắn-một-lúc (~11 phần tử đồng thời), **chưa đo** dưới tải thật |
 | `endShot(exitedBottom)` cắt vạch đang toả giữa lúc mờ dần | Đây đúng chữ AC US-1/2.3 đòi ("kết thúc tầng hiệu ứng của cú đó"), nhưng rơi khỏi đáy sân là kiểu chết **thường gặp nhất** — nên phần lớn cú bắn sẽ bị cắt hiệu ứng thay vì để nó mờ hết. Nếu cầm máy thấy khó chịu, "ngừng sinh phần tử mới nhưng để phần tử đang sống mờ hết" **cũng** thoả ý định của AC (ý định là chặn *ăn mừng*, không phải cắt phản hồi đang chạy). Chỉ biết được khi có máy |
-| Tương phản chỉ số hệ số sau khi US-1 AC-1.2 làm nó rõ hơn | **Chưa đo.** Nếu đổi alpha thì phải đo lại và ghi số vào đây |
+| Tương phản `primaryGold` trên capsule `panelNavy` | **Chưa đo.** Phải đạt ≥3:1 ở state thông tin trước khi chốt golden |
 | Thiếu foundation doc | `codebase-summary.md` và `code-standards.md` **không tồn tại**. Vị trí `comic_effect_controller.dart` (ở `lib/ui/` chứ không `lib/state/`) đặt theo suy luận: nó chỉ giữ state trình bày do `Ticker` lái, cùng tầng với `Stamp`/`_shake` đang sống trong `game_screen` |
 
 ---

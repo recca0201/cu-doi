@@ -3,7 +3,7 @@ artifact_type: tasks
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: phan-hoi-cu-ban
 source_artifacts:
   - aidlc-docs/specs/phan-hoi-cu-ban/requirements.md
@@ -200,7 +200,9 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
   - Files: `test/ui/settings_haptics_test.dart`
   - Add coverage cho hàng công tắc rung.
   - Test file: `test/ui/settings_haptics_test.dart`
-  - Expected assertion: công tắc nằm **sau** Nhạc nền và **trước** Ngôn ngữ trong cùng `BbCard`; lật ⇒ áp ngay và lưu; mở lại màn ⇒ khôi phục; `Semantics.toggled` đúng; vùng chạm ≥ 48px
+  - Expected assertion: công tắc nằm sau Nhạc nền và trước Ngôn ngữ trong cùng
+    panel `panelNavy`; lật ⇒ áp ngay và lưu; mở lại ⇒ khôi phục;
+    `Semantics.toggled` đúng; vùng chạm ≥48dp; state không chỉ dựa vào màu.
 - [ ] 9.2 Run test to verify it fails
   - Reference: US-5 AC-1.1, US-5 AC-1.3, US-5 AC-1.4, US-5 AC-2.2, US-5 AC-2.3
   - Command: `flutter test test/ui/settings_haptics_test.dart`
@@ -240,9 +242,10 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
 - [ ] 11.1 Write the failing test
   - Reference: US-1 AC-1.2, US-2 AC-2.2
   - Files: `test/ui/multiplier_scale_test.dart`
-  - Add coverage cho việc chỉ số hệ số to/đậm dần theo số dội, và **không** hồi quy tương phản.
+  - Add coverage cho capsule `×1…×6`, việc số to/đậm dần theo bank và tương phản target.
   - Test file: `test/ui/multiplier_scale_test.dart`
-  - Expected assertion: cỡ chữ hệ số ở `banks == 4` **lớn hơn** ở `banks == 1`; alpha **không giảm** so với `0x59` hiện tại (làm chữ to hơn không được đánh đổi bằng mờ hơn)
+  - Expected assertion: `banks == 0` vẫn hiện capsule `×1` nhưng không punch; cỡ
+    chữ ở `banks == 4` lớn hơn `banks == 1`; gold trên panel navy đạt ≥3:1.
 - [ ] 11.2 Run test to verify it fails
   - Reference: US-1 AC-1.2, US-2 AC-2.2
   - Command: `flutter test test/ui/multiplier_scale_test.dart`
@@ -250,7 +253,9 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
 - [ ] 11.3 Write minimal implementation
   - Reference: US-1 AC-1.2, US-2 AC-2.2
   - Implementation file: `lib/ui/arena_painter.dart`
-  - `_paintMultiplier` nhận `banks` và tăng cỡ chữ theo bậc. Giữ vị trí z-order hiện tại (**trên** mục tiêu) — đây là đường code riêng, không đi qua `EffectTier`.
+  - `_paintMultiplier` nhận `banks`, dựng capsule dọc `panelNavy` +
+    `primaryGold`, hiện `×1…×6` và punch 120–200ms khi tăng. Giữ nó trên effect và
+    ngoài vùng che target; đây là đường code riêng, không đi qua `EffectTier`.
 - [ ] 11.4 Run test to verify it passes
   - Reference: US-1 AC-1.2, US-2 AC-2.2
   - Command: `flutter test test/ui/multiplier_scale_test.dart`
@@ -258,7 +263,8 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
 - [ ] 11.5 Đo và ghi tương phản
   - Reference: US-2 AC-2.2
   - Files: `aidlc-docs/specs/phan-hoi-cu-ban/design.md`
-  - Đo tỉ lệ tương phản của hệ số ở alpha đã chọn trên `bgTop`/`bgBottom`, ghi số vào § Điều kiện chưa kiểm. Mốc hiện tại là **2.45:1** — nghĩa vụ là không hồi quy, không phải đạt 3:1.
+  - Đo `primaryGold` trên capsule `panelNavy` ở state default/pressed/reduced
+    motion, ghi số vào § Điều kiện chưa kiểm; mọi state thông tin đạt ≥3:1.
 
 ### 12. Vẽ chùm vạch va đập
 
@@ -267,7 +273,9 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
   - Files: `test/ui/arena_painter_effects_test.dart`
   - Add coverage golden cho tầng hiệu ứng vẽ đúng và **không** đổi gì khi rỗng.
   - Test file: `test/ui/arena_painter_effects_test.dart`
-  - Expected assertion: `effects` rỗng ⇒ golden **byte-identical** với ảnh không có field này (nhờ default `const []`); `effects` non-rỗng ⇒ vạch toả màu `frame` xuất hiện tại điểm va chạm
+  - Expected assertion: `effects` rỗng ⇒ golden byte-identical với ảnh không có
+    field này; `effects` non-rỗng ⇒ vạch toả `trajectoryCyan` xuất hiện đúng điểm
+    va chạm và không che target/armed.
 - [ ] 12.2 Run test to verify it fails
   - Reference: US-1 AC-1.4, US-3 AC-1.2
   - Command: `flutter test test/ui/arena_painter_effects_test.dart`
@@ -356,14 +364,16 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
   - Command: `flutter test test/ui/game_screen_feedback_test.dart`
   - Expected: PASS.
 
-### 16. Reduced-motion và không hồi quy rung màn
+### 16. Reduced-motion và camera shake
 
 - [ ] 16.1 Write the failing test
   - Reference: US-3 AC-4.1, US-3 AC-4.2, US-3 AC-4.3, US-3 AC-4.4
   - Files: `test/ui/game_screen_reduced_motion_test.dart`
-  - Add coverage cho gate reduced-motion và cho việc rung màn **không** mở rộng.
+  - Add coverage cho gate reduced-motion, multiplier tĩnh và camera shake.
   - Test file: `test/ui/game_screen_reduced_motion_test.dart`
-  - Expected assertion: `disableAnimationsOf == true` ⇒ `onEvent` **không sinh** phần tử nào và `dirty` không bị kích bởi hiệu ứng; chip số dội và hệ số HUD **vẫn** hiện đúng số dội; `_shake` được đặt **chỉ** bởi `broke`, **không** bởi `bank`
+  - Expected assertion: `disableAnimationsOf == true` ⇒ `onEvent` không sinh
+    effect, multiplier không punch, camera offset bằng 0; chip số dội, `armed` và
+    capsule hệ số vẫn hiện. Khi animation bật, `_shake` chỉ do `broke`, không do bank.
 - [ ] 16.2 Run test to verify it fails
   - Reference: US-3 AC-4.1, US-3 AC-4.2, US-3 AC-4.3, US-3 AC-4.4
   - Command: `flutter test test/ui/game_screen_reduced_motion_test.dart`
@@ -371,7 +381,9 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
 - [ ] 16.3 Write minimal implementation
   - Reference: US-3 AC-4.1, US-3 AC-4.2, US-3 AC-4.3, US-3 AC-4.4
   - Implementation file: `lib/ui/screens/game_screen.dart`, `lib/ui/comic_effect_controller.dart`
-  - Đọc `MediaQuery.disableAnimationsOf(context)` trong `build`, truyền xuống controller; gate là **chặn sinh phần tử** trong `onEvent`. **Không** đụng `_shake`.
+  - Đọc `MediaQuery.disableAnimationsOf(context)` trong `build`, truyền xuống
+    controller và painter; chặn sinh effect, tắt punch và ép camera-shake offset
+    về 0. Không thay đổi luật sự kiện hoặc simulation.
 - [ ] 16.4 Run test to verify it passes
   - Reference: US-3 AC-4.1, US-3 AC-4.2, US-3 AC-4.3, US-3 AC-4.4
   - Command: `flutter test test/ui/game_screen_reduced_motion_test.dart`

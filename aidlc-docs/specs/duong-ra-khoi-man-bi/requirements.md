@@ -3,7 +3,7 @@ artifact_type: requirements
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: duong-ra-khoi-man-bi
 source_artifacts:
   - aidlc-docs/requirements/001_remaining-scope_units_decomposition.md
@@ -75,7 +75,7 @@ cùng một lần ghi — nếu trừ xu thành công mà ghi dấu thất bại
 | D2 | Bỏ qua màn tính là hoàn thành **0 sao**: mở màn sau, không ghi sao, không ghi điểm cao, không thu xu | Đã chốt ở Inception (A2) |
 | D3 | Bộ đếm thua **lưu cùng tiến trình**, không phải biến tạm theo phiên | Đã chốt ở Inception (A9) |
 | D4 | Mọi chuỗi mới có ở **cả** `app_vi.arb` và `app_en.arb`, VI mặc định | Đã chốt ở Inception (A8) |
-| D5 | **Gợi ý trả phí được phép vẽ trọn lời giải**, dù luật `[Confirmed]` ở `uiux-guideline.md` § Preview ngắm cấm "hiện lời giải đầy đủ". Người dùng đã được nêu xung đột này ở Inception và vẫn chọn phương án đó, lý do: hint **tốn xu và do người chơi chủ động bấm**, nên là đánh đổi có giá chứ không phải thông tin miễn phí ép vào mắt. Luật giữ **nguyên** cho preview ngắm thụ động (US-1 AC-3.4) | Đã chốt ở Inception (`001` § Xung đột thiết kế) |
+| D5 | **Gợi ý trả phí được phép vẽ trọn lời giải**, dù `uiux-guideline.md` §2.4, §4.4 và §5.6 giới hạn preview ngắm ở hai đoạn. Người dùng đã được nêu xung đột này ở Inception và vẫn chọn phương án đó, lý do: hint **tốn xu và do người chơi chủ động bấm**, nên là đánh đổi có giá chứ không phải thông tin miễn phí ép vào mắt. Luật giữ **nguyên** cho preview ngắm thụ động (US-1 AC-3.4) | Đã chốt ở Inception (`001` § Xung đột thiết kế) |
 | D6 | **Gợi ý tính bằng phép quét góc chạy trong Dart tại runtime**, không bake sẵn dữ liệu lời giải. Lý do: AC-2.2 đòi giải **trạng thái sân hiện tại**, còn dữ liệu bake chỉ phủ được sân đầy lúc mở màn — nên nhánh bake không đáp ứng được yêu cầu. `ShotRunner` là Dart thuần và tất định (C6), nên port phép quét là khả thi; `tools/solver/sim.js` vốn là bản port của cùng mô phỏng đó | **Đã chốt** 2026-08-05 |
 | D7 | **Mỗi lần bấm gợi ý trừ 50 xu**, không có trần theo lượt vào màn. Sân đổi sau mỗi cú bắn nên mỗi gợi ý là một lời giải khác — tính tiền theo lần là nhất quán với D1 và không cần thêm cơ chế đếm | **Đã chốt** 2026-08-05 |
 | D8 | **"Cú giải được" = một cú bắn hợp lệ phá được tối thiểu một mục tiêu còn lại.** Không đảm bảo cú đó nằm trên đường dẫn tới thắng màn — bảo đảm mạnh hơn đòi vét cả cây trạng thái, vượt xa giá 50 xu và vượt xa ngân sách của unit | **Đã chốt** 2026-08-05 |
@@ -132,9 +132,10 @@ THEN system SHALL chạy bất đồng bộ kèm phản hồi "đang tính" thay
 
 **3. Hiển thị và giới hạn của gợi ý**
 
-3.1 WHILE gợi ý đang hiện THEN system SHALL vẽ đường gợi ý **khác biệt rõ** với vệt ma của
-cú bắn trước (`cream` alpha `0x24`) và với preview ngắm (`frame` alpha `0x8A`/`0x3D`), để
-người chơi không nhầm ba lớp đường với nhau.
+3.1 WHILE gợi ý đang hiện THEN system SHALL vẽ đường gợi ý **khác biệt rõ bằng ít
+nhất hai kênh** với vệt ma và preview ngắm, ví dụ màu semantic + cadence nét hoặc
+marker điểm dội. Requirements SHALL không khoá màu legacy/alpha thô; design chọn
+token theo `uiux-guideline.md` §3.1 và kiểm bằng golden.
 
 3.2 WHILE gợi ý đang hiện THEN system SHALL giữ đường gợi ý trên màn hình cho tới khi người
 chơi bắn cú tiếp theo.
@@ -144,7 +145,7 @@ chơi vẫn phải tự kéo và tự thả.
 
 3.4 WHILE gợi ý đang hiện THEN system SHALL giữ nguyên luật preview ngắm hiện tại — preview
 thụ động vẫn **chỉ hiện hai đoạn đầu** quỹ đạo và vẫn bị ẩn khi bóng đang bay
-(`uiux-guideline.md` § Preview ngắm, luật `[Confirmed]`).
+(`uiux-guideline.md` §4.4 và §5.6).
 
 3.5 WHILE gợi ý đang hiện THEN system SHALL không che tín hiệu `armed` của mục tiêu: mục
 tiêu và biểu cảm SHALL được vẽ **trên** đường gợi ý.
@@ -179,10 +180,10 @@ số lần mua trong một lượt (D7).
 **6. UI và bản địa hoá**
 
 6.1 WHEN nút gợi ý được đặt lên HUD hoặc footer màn chơi THEN system SHALL giữ vùng chạm tối
-thiểu **48px** (`BbTokens.tapMin`) và SHALL không che sân đấu ở vùng bóng bay.
+thiểu **48dp** và SHALL không che sân đấu ở vùng bóng bay hoặc bệ phóng.
 
 6.2 WHEN nút gợi ý được thêm THEN system SHALL bọc `Semantics` + `ExcludeSemantics` với
-`label`, `button`, `enabled` theo checklist `uiux-guideline.md` § Checklist bắt buộc cho UI mới.
+`label`, `button`, `enabled` theo `uiux-guideline.md` §8.
 
 6.3 WHEN bất kỳ chuỗi mới nào được thêm cho tính năng này THEN system SHALL có bản dịch ở
 **cả** `app_vi.arb` và `app_en.arb`, với VI là mặc định.
@@ -293,9 +294,9 @@ tiêu chí là chốt chống hồi quy, không phải việc mới.)
 hoàn thành thật, để người chơi biết mình còn sao chưa lấy ở đó.
 
 5.2 WHEN dấu "đã bỏ qua" được hiện THEN system SHALL không truyền đạt trạng thái đó **chỉ
-bằng màu** — SHALL kèm hình dạng, icon hoặc chữ (`uiux-guideline.md` § Checklist).
+bằng màu** — SHALL kèm hình dạng, icon hoặc chữ (`uiux-guideline.md` §3.1 và §8).
 
-5.3 WHEN dấu "đã bỏ qua" được hiện THEN system SHALL hiện nó **trên chính thẻ màn đó**, sao cho
+5.3 WHEN dấu "đã bỏ qua" được hiện THEN system SHALL hiện nó **trên chính item/node màn đó**, sao cho
 dấu vẫn đúng chỗ khi bố cục bản đồ đổi sang nhóm theo chương ở Unit 3 (ràng buộc C7).
 
 5.4 WHEN chuỗi cho dấu "đã bỏ qua" và cho luồng bỏ qua màn được thêm THEN system SHALL có

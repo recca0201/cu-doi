@@ -18,7 +18,7 @@ source_artifacts:
 | Review item | Summary |
 | --- | --- |
 | **Goal and approach** | Cho người chơi đường ra khỏi màn không giải được, và biến xu thành tài nguyên tiêu được. Ba thay đổi chịu lực: (1) `LevelResult` nhận hai field mới `skipped` + `losses`, đọc null-tolerant; (2) `ProgressRepository.save` đổi từ `Future<void>` sang `Future<bool>` để giao dịch trừ-xu **quan sát được thành/thất bại**; (3) `lib/sim/hint_finder.dart` mới — phép quét góc Dart thuần chạy `ShotRunner` tới khi bi chết, trong isolate. |
-| **In scope** | Mua gợi ý 50 xu vẽ trọn đường carom; bỏ qua màn 150 xu; bộ đếm thua theo màn bền qua lần mở app; lời nhắc ở mốc thua 2 và 3; dấu "đã bỏ qua" trên thẻ màn; tương thích ngược save cũ. |
+| **In scope** | Mua gợi ý 50 xu vẽ trọn đường carom; bỏ qua màn 150 xu; bộ đếm thua theo màn bền qua lần mở app; lời nhắc ở mốc thua 2 và 3; dấu "đã bỏ qua" tái dùng trên item/node màn; tương thích ngược save cũ. |
 | **Out of scope** | Nhóm chương / tiến độ sao theo chương / auto-scroll (Unit 3); hiệu ứng + haptics (Unit 2); đổi cách **thu** xu; mọi thay đổi lên `lib/sim/` làm đổi luật chơi. |
 
 ## Open Questions
@@ -123,7 +123,7 @@ lib/
     ├── arena_painter.dart            [CHANGED]  lớp đường gợi ý
     └── screens/
         ├── game_screen.dart          [CHANGED]  nút gợi ý, lời nhắc + bỏ qua màn ở overlay kết quả
-        └── arena_map_screen.dart     [CHANGED]  dấu "đã bỏ qua" trên thẻ màn
+        └── arena_map_screen.dart     [CHANGED]  dấu "đã bỏ qua" trên item/node màn
 lib/l10n/
 ├── app_vi.arb                        [CHANGED]  chuỗi mới, VI mặc định
 └── app_en.arb                        [CHANGED]  cùng bộ khoá
@@ -305,37 +305,35 @@ nền → (rung) → khung → khối chắn → vạch chéo → vệt ma → [
 
 Gợi ý nằm **trên** vệt ma và **dưới** vệt bay, nên cú đang bay vẫn đọc rõ hơn đường gợi ý tĩnh, và mục tiêu + biểu cảm luôn ở trên cả hai (AC US-1/3.5).
 
-**Phân biệt bằng hai kênh, không chỉ màu** (AC US-1/3.1). Không hue nào trong `ArenaInk` còn trống, nên kênh thứ hai phải là **kiểu nét**, và đó là chỗ duy nhất còn ngân sách:
+**Phân biệt bằng ít nhất hai kênh, không chỉ màu** (AC US-1/3.1). Hệ đích đã
+chuyển bóng, trail và impact sang `trajectoryCyan`; vì vậy gợi ý không được tiếp
+tục dựa vào `cream` của palette cũ. Chọn tổ hợp sau:
 
-| Lớp | Hue | Kiểu nét | Đã dùng |
-| --- | --- | --- | --- |
-| Tường, nòng súng, hệ số, chip armed | `frame` | liền | có |
-| Preview ngắm | `frame` | **đứt nét**, không quầng | có |
-| Vạch chéo phản xạ | `deflector` | **liền full-alpha** `fit.u(1.1)` + quầng `0x38` | có |
-| Vạch đáy, tem "Bắn thẳng à?" | `danger` | đứt nét | có |
-| Bóng, vệt bay | `cream` | liền đặc | có |
-| Vệt ma | `cream` `0x24` | liền mảnh, không quầng | có |
-| **Đường gợi ý** | **`cream`** | **đứt nét + quầng** | **trống** |
-
-Gợi ý dùng **`cream` đứt nét kèm quầng ngoài** — `cream` là đúng vật liệu của bóng, và đường gợi ý *chính là* đường bóng sẽ đi, nên hue này là tín hiệu trung thực. "Đứt nét + quầng" là tổ hợp **không lớp nào khác đang dùng**: khác vệt ma ở **hai** kênh (kiểu nét đứt-vs-liền **và** quầng), khác preview ngắm ở **hai** kênh (hue `cream`-vs-`frame` **và** quầng — preview không có quầng). Hue một mình sẽ là mắt xích yếu nhất của lập luận: `cream` (`0xFFF6E9`) và `frame` (`0xFFC93C`) đều là màu ấm sáng trên nền tím sẫm, và preview vẽ ở `0x8A`/`0x3D` nên ở alpha thấp khoảng cách hue còn hẹp thêm.
-
-**Đặc tả nét bằng số** — golden test không viết được nếu nét chỉ tả bằng lời, và cadence đứt nét là một mặt trùng chưa đóng:
-
-| Thông số | Giá trị | Phải khác cái gì |
+| Lớp | Token đích | Kiểu nét / marker |
 | --- | --- | --- |
-| Quầng ngoài | `cream` alpha **`0x4D`**, dày `fit.u(2.4)` | Vệt ma là `cream` **`0x24`** — `0x4D` hơn gấp đôi, đủ tách |
-| Lõi | `cream` alpha **`0xE0`**, dày `fit.u(0.7)` | Sáng hơn hẳn lớp mềm của vệt bay (`0x59`) |
-| Dash / gap | `fit.u(1.4)` / `fit.u(1.2)` | Preview ngắm `fit.u(2.2)/1.8`; vạch đáy `danger` `fit.u(2.4)/2.0`. Cadence gợi ý mảnh và dày nhịp hơn rõ rệt cả hai |
+| Preview ngắm | `trajectoryCyan` | dotted, tối đa hai đoạn, đoạn hai nhạt hơn |
+| Vệt ma | `trajectoryCyan` opacity thấp | liền mảnh, không marker |
+| Bóng / trail | `trajectoryCyan` | liền sáng, có core |
+| Vạch đáy | `dangerRed` | nét đứt, không waypoint |
+| **Đường gợi ý trả phí** | **`primaryGold`** | **nét đứt + vòng waypoint tại từng điểm dội** |
 
-Dùng lại helper **`_dashed(canvas, pts, paint, dash, gap)`** đã có (`arena_painter.dart:455`) — nó nhận đúng dạng polyline của `hintPath`, đừng viết routine đứt nét thứ hai. Nó reset pha dash ở **từng đoạn**, nên dash luôn bắt đầu gọn tại mỗi đỉnh — hợp với một đường mà các đỉnh chính là điểm dội.
+`primaryGold` nói đây là thông tin đã mua/chủ động, còn vòng waypoint làm đường
+vẫn phân biệt được khi không nhận ra màu. Không dùng `secondaryBlue` vì quá gần
+`trajectoryCyan`, và không dùng màu của blocker/deflector vì đường gợi ý sẽ bị đọc
+nhầm thành hình học sân.
 
-> **Gợi ý và vệt bay không bao giờ cùng khung — và điều này đang chịu lực.** Vệt bay **cũng** là `cream`, và `_paintTrail` (`arena_painter.dart:200-219`) vốn đã vẽ nó thành cặp lõi-cộng-quầng (`cream 0x59` `fit.u(0.55)` dưới `cream` đặc `fit.u(0.95)`). Nên "quầng" **không** phải một cấu trúc chưa dùng trong hue `cream`; nó chỉ trống khi **kết hợp với đứt nét**. Phân biệt vẫn hợp lệ, nhưng nó đứng được **chỉ vì `clearOnShot` chạy đúng lúc bắn**, nên hai lớp không bao giờ render cùng một khung. Nếu sau này ai làm gợi ý tồn tại xuyên lúc bi bay — một tính năng "mình ngắm đúng chưa?" rất dễ nghĩ ra — thì `cream` đứt+quầng nằm dưới `cream` liền+quầng sẽ không đọc được, và lý do nó từng an toàn đã mất.
+Độ dày, dash/gap và kích thước waypoint đi qua token hoặc hằng số có tên trong
+`ArenaInk`; không ghi alpha/hex trực tiếp trong painter. Dùng lại helper `_dashed`
+cho polyline và thêm helper waypoint riêng. Golden phải phủ cả ba lớp cùng lúc:
+hint + ghost + target; target và tín hiệu `armed` luôn nằm trên hint.
 
-> **Vì sao không phải `deflector`**: bản trước của design chọn `deflector` nét liền `fit.u(0.7)`. Đó là **sai nặng hơn** cái nó định sửa — `arena_painter.dart:177-184` vẽ chính các vạch chéo phản xạ bằng `deflector` **nét liền full-alpha** `fit.u(1.1)`, và 6 trong 20 màn có vạch chéo. Trên những màn đó, đường gợi ý trả phí gần như không phân biệt được với một **bề mặt dội thật**. Với một tính năng có việc là dạy hình học carom, để đường dạy đọc ra như một cái tường là thất bại tệ hơn trùng hue với `frame`.
+Gợi ý bị xoá khi người chơi bắn, nên không cạnh tranh với trail đang bay. Nếu vòng
+đời này đổi trong tương lai, phải thiết kế lại thay vì dựa vào việc hai lớp tình cờ
+không cùng xuất hiện.
 
-Tỉ lệ tương phản của `cream` ở alpha đã chọn trên `bgTop`/`bgBottom` **phải được đo và ghi lại** trước khi chốt, theo checklist "mọi cặp chữ/nền mới phải được đo, không phải ước lượng". (`cream` đặc trên `bgTop` đã đo ≈ 16.8:1, nên chỉ cần đo mức alpha thực dùng.)
-
-**Accessibility**: `uiux-guideline.md` A8 đã ghi sân đấu không phát `Semantics` nào. Thêm một tính năng **trả phí** thuần thị giác làm rộng khoảng trống đó, đúng ở tính năng có mục đích cứu người chơi đang tắc. Unit này SHALL phát một `Semantics` announcement khi gợi ý hiện ("đã hiện đường gợi ý") — mức tối thiểu, không phải mô tả hình học đầy đủ.
+**Accessibility**: khi gợi ý hiện, phát live announcement “Đã hiện đường gợi ý”.
+Đây là mức tối thiểu theo `uiux-guideline.md` §8; mô tả hình học đầy đủ cho screen
+reader nằm ngoài phạm vi unit.
 
 ## UI Design Specification
 
@@ -345,10 +343,14 @@ Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
 - Nút gợi ý dùng action gold hoặc icon button navy có gold accent tuỳ mật độ footer,
   đặt ở **footer màn chơi**, vùng chạm ≥48dp và không đè shooter/vùng bóng bay
   (AC US-1/6.1, 6.4). Không dùng coral/teal từ theme cũ.
-- Trạng thái vô hiệu: `BbButton` khi `onPressed == null` đã tự `Opacity(0.5)` + bỏ bóng — khớp AC US-1/4.2 "vẫn nhìn thấy được".
+- Trạng thái vô hiệu phải theo §4.1: giảm saturation khoảng 70%, opacity 55%, bỏ
+  glow nhưng vẫn giữ giá và lý do thiếu xu đọc được; không mặc định component cũ
+  đã khớp target nếu chưa có golden.
 - Dấu "đã bỏ qua" trên node grid: badge/icon có chữ, không chỉ màu — AC US-2/5.2.
 - Xác nhận bỏ qua dùng dialog `panelNavy`, scrim 70–80%, CTA chính gold và CTA
   phụ blue; không tạo style popup riêng.
+- Trên màn thua, **Thử lại** giữ `primaryGold`; gợi ý/bỏ qua dùng secondary/utility
+  treatment nên không nổi bật hơn đường tiếp tục chơi (AC US-3/3.2).
 - Giá và số xu còn thiếu hiện ở badge navy/gold cạnh nút, không nhét vào nhãn CTA.
   Nguồn số dư vẫn là `progressProvider`; `HintStatus.insufficientCoins` chỉ là
   trạng thái hiển thị dẫn xuất.
@@ -373,7 +375,7 @@ Lời nhắc bị bỏ qua **không** được lưu xuống tiến trình — n�
 | `skipArenaInsufficientCoins` | thiếu xu, placeholder số còn thiếu (AC US-2/2.4) |
 | `skipArenaConfirmTitle` / `skipArenaConfirmBody` / `skipArenaConfirmCta` | dialog xác nhận (AC US-2/2.1) |
 | `skipArenaWriteFailed` | ghi thất bại (AC US-2/2.3) |
-| `arenaSkippedBadge` | dấu "đã bỏ qua" trên thẻ màn (AC US-2/5.1) |
+| `arenaSkippedBadge` | dấu "đã bỏ qua" trên item/node màn (AC US-2/5.1) |
 | `stuckReminderHint` | nhắc ở lần thua thứ 2 (AC US-3/2.1) |
 | `stuckReminderHintAndSkip` | nhắc ở lần thua thứ 3 (AC US-3/2.2) |
 | `stuckReminderRetryCta` | lựa chọn thử lại, không kém nổi bật hơn (AC US-3/3.2) |
@@ -425,8 +427,8 @@ Không có bước migration. Không đổi tên khoá `progress_v1` — đổi 
 | Unit — `lib/sim/hint_finder.dart` | Tìm được cú phá ≥1 mục tiêu ở sân đầy và ở sân đã vơi; trả `null` khi không có cú nào; mọi cú trả về tôn trọng `kMinAimUp`; **không mutate `alive` của caller** (chạy quét rồi assert list gốc y nguyên — đây là cái bẫy `ShotRunner` ở `system-architecture.md` §4.2.4); kết quả **tất định** khi gọi hai lần cùng snapshot; không import Flutter |
 | Unit — `PlayerProgress` | `withCoinsSpent` không xuống dưới 0; `withSkipped` mở màn kế tiếp với 0 sao; `totalStars` **không** đổi khi có màn bỏ qua; thắng lại màn bỏ qua thì bỏ dấu; parse save cũ thiếu hai field mới |
 | Unit — `ProgressController` | `save` trả `false` ⇒ state **không** commit và xu không bị trừ (cả hai đường tiêu xu); `SpendResult` phân biệt được `insufficientCoins` với `writeFailed`; bấm hai lần liên tiếp chỉ trừ xu **một** lần; thắng màn reset bộ đếm thua **và** bỏ dấu `skipped` (qua `withResult`); bỏ qua màn reset bộ đếm thua; `record` **vẫn** commit-rồi-save (không hồi quy sang commit-sau-save) |
-| Golden / z-order | Một golden test cho `ArenaPainter` khẳng định đường gợi ý nằm **trên** vệt ma và **dưới** vệt bay, và mục tiêu vẽ trên cả hai. `uiux-guideline.md` G8 ghi repo **chưa có golden test nào**, nên nếu không thêm ở đây thì hồi quy z-order do Unit 2 gây ra sẽ **không có gì bắt được** |
-| Widget | Nút gợi ý vô hiệu khi thiếu xu; đường gợi ý mất sau khi bắn; lựa chọn bỏ qua chỉ hiện ở lần thua thứ 3 và không hiện với màn đã hoàn thành; lời nhắc ở lần thua 2 và 3; dấu "đã bỏ qua" trên thẻ màn |
+| Golden / z-order | Một golden test cho `ArenaPainter` khẳng định đường gợi ý nằm **trên** vệt ma và **dưới** vệt bay, và mục tiêu vẽ trên cả hai. Kiểm mắt golden theo `uiux-guideline.md` §10.3 và §11 để bắt hồi quy z-order do Unit 2 |
+| Widget | Nút gợi ý vô hiệu khi thiếu xu; đường gợi ý mất sau khi bắn; lựa chọn bỏ qua chỉ hiện ở lần thua thứ 3 và không hiện với màn đã hoàn thành; lời nhắc ở lần thua 2 và 3; dấu "đã bỏ qua" trên item/node màn |
 | Integration | Vòng lưu–đọc qua `SharedPreferences` mock: bỏ qua màn → restart → dấu và bộ đếm còn nguyên |
 | Không có E2E | Chưa có hạ tầng E2E trong repo; `flutter test` là mức cao nhất hiện có |
 
@@ -434,7 +436,7 @@ Không có bước migration. Không đổi tên khoá `progress_v1` — đổi 
 
 | Decision | Choice | Alternative rejected | Why (one line) |
 | --- | --- | --- | --- |
-| Vẽ trọn lời giải dù luật `[Confirmed]` cấm | **Cho phép**, giới hạn ở gợi ý **trả phí** | Giữ luật tuyệt đối, gợi ý chỉ vẽ vài đoạn | Người dùng đã được nêu xung đột ở Inception và vẫn chọn: hint **tốn xu và do người chơi chủ động bấm** nên là đánh đổi có giá, không phải thông tin miễn phí. Luật `uiux-guideline.md` § Preview ngắm **giữ nguyên** cho preview thụ động (AC US-1/3.4). Ghi ra đây vì nếu không, người đọc sau sẽ thấy design vi phạm nguồn sự thật thiết kế mà không có dấu vết cho phép — requirements D5 |
+| Vẽ trọn lời giải dù preview thường chỉ có hai đoạn | **Cho phép**, giới hạn ở gợi ý **trả phí** | Giữ luật tuyệt đối, gợi ý chỉ vẽ vài đoạn | Người dùng đã được nêu xung đột ở Inception và vẫn chọn: hint **tốn xu và do người chơi chủ động bấm** nên là đánh đổi có giá. `uiux-guideline.md` §2.4, §4.4 và §5.6 vẫn giữ nguyên cho preview thụ động — requirements D5 |
 | Nguồn đường carom | Quét góc Dart tại runtime (`hint_finder.dart`) | Bake sẵn lời giải vào `arenas.dart` | AC-2.2 đòi giải **trạng thái sân hiện tại**; dữ liệu bake chỉ phủ được sân đầy lúc mở màn |
 | Nền của phép quét | `ShotRunner` chạy tới khi bi chết, phát hiện phá qua sự kiện `broke` | `previewPath()`; hoặc viết lại mô phỏng riêng | `previewPath` cắt ở `maxBanks` đỉnh và **bỏ hết** sự kiện `broke` — không nói được cú đó có phá gì không, mà đó chính là tiêu chí chọn. Mô phỏng riêng thì thành nguồn sự thật thứ hai |
 | Độ trung thực của đường vẽ | Cùng **luật**, không cùng từng pixel | Cam kết khớp bit-for-bit cú bắn thật | Substep cuối mỗi khung của `ShotRunner` là phần dư tính từ `dt` của `Ticker`; quét ở `dt` cố định không tái tạo đúng biên đó. Cam kết mạnh hơn là cam kết sai |
@@ -443,7 +445,7 @@ Không có bước migration. Không đổi tên khoá `progress_v1` — đổi 
 | Hợp đồng `save` | `Future<bool>` | Giữ `Future<void>`; hoặc throw lên UI | Giữ `void` thì AC-2.3 không có trigger kiểm được; throw thì phá ý định "never throw" của `US-017 AC-1.1` |
 | Phạm vi commit-sau-save | **Chỉ** hai đường tiêu xu; `record`/`reset` giữ commit-rồi-save | Áp cho mọi phép ghi | `system-architecture.md` §3.2 chọn "mất một lần ghi còn hơn dialog lỗi giữa game". Đảo nó cho `record` nghĩa là máy ghi prefs lỗi dai dẳng sẽ **không bao giờ ghi nổi màn đã thắng** — với tiêu xu thì đánh đổi ngược lại mới đúng |
 | Kiểu trả về phép tiêu xu | `SpendResult` ba nhánh | `bool` | Requirements đòi ba kết cục khác nhau; `bool` trộn "thiếu xu" với "ghi lỗi" và UI không tách ra được |
-| Màu đường gợi ý | `cream` **đứt nét + quầng** | `frame` alpha cao; hoặc `deflector` nét liền | `frame` đã là khung + nòng súng + hệ số + preview + chip armed. `deflector` nét liền **là chính cách vẽ vạch chéo phản xạ** (`arena_painter.dart:177-184`), có ở 6/20 màn — đường dạy carom đọc ra như một bề mặt dội là tệ hơn trùng hue. "Đứt nét + quầng" là tổ hợp duy nhất còn trống |
+| Vật liệu đường gợi ý | `primaryGold` **đứt nét + waypoint** | `trajectoryCyan`; hoặc màu blocker/deflector | Cyan đã thuộc bóng/trail/preview; màu hình học sân làm đường dạy bị đọc nhầm thành bề mặt dội. Gold + waypoint phân biệt bằng hai kênh và đúng vai trò thông tin trả phí |
 | Ngân sách thời gian quét | Deadline **trong** isolate qua `Stopwatch` | Huỷ `compute()` rồi thử lại với ít mẫu hơn | `compute()` không có kill handle — "huỷ" chỉ là thôi `await` trong khi isolate vẫn đốt CPU, rồi spawn isolate thứ hai **chạy song song**. Làm trường hợp chậm tệ hơn |
 | Khoá trạng thái "đã mua gợi ý" | Theo `arenaId` | Theo vòng đời widget (`resetForNewEntry` lúc mount) | Sang màn kế chạy `setState` trên **cùng** State (`game_screen.dart:464-467`) nên không remount — hàm reset gắn mount không bao giờ chạy, và gợi ý trả phí rò sang màn sau kèm đường vẽ sai |
 | Định vị bản đồ sau bỏ qua màn | Hoãn sang Unit 3, chỉ truyền `targetArenaId` | Cài auto-scroll ngay trong Unit 1 | Unit 3 dựng lại `arena_map_screen` thành chương và sở hữu auto-scroll — cài lên `ListView` phẳng hôm nay là việc bỏ đi |
@@ -462,7 +464,7 @@ Nêu ra để Phase 3/4 không đọc các con số dưới đây như đã đo:
 | `flutter analyze` | **Sạch** — 0 issue (chạy 2026-08-05, lần biên dịch đầu tiên của repo) |
 | `flutter test` | **16/16 pass** (chạy trên host, không cần thiết bị) |
 | Ngân sách độ trễ quét 2s, `samples = 361` | **Chưa đo trên thiết bị.** Lý do Q2 viện dẫn (`tools/solver` quét 361 góc) là đo trên Node ở máy dev, không phải điện thoại tầm thấp. Mỗi mẫu là một lần chạy tới khi bi chết — hàng nghìn substep, mỗi substep kiểm toàn bộ segment |
-| Tương phản `cream` ở alpha lõi `0xE0` và quầng `0x4D` trên `bgTop`/`bgBottom` | **Chưa đo.** Checklist đòi đo, không cho ước lượng. `cream` **đặc** trên `bgTop` đã đo ≈ 16.8:1, nên chỉ còn đo hai mức alpha đã chọn |
+| Golden hint trên nền arena đích | **Chưa kiểm.** Phải kiểm ở 390 × 844 với hint + ghost + target armed; không chốt bằng so sánh palette cũ |
 | Chi phí spawn isolate mỗi lần mua gợi ý | Chưa đo. D7 không đặt trần số lần mua nên đây là chi phí lặp trên đường nóng |
 | Thiếu foundation doc | `codebase-summary.md` và `code-standards.md` **không tồn tại**. Vị trí `lib/domain/economy.dart` và `lib/state/hint_controller.dart` đặt theo **suy luận tương tự**, không theo quy ước đã ghi. Nên sinh `code-standards.md` trước unit kế tiếp |
 

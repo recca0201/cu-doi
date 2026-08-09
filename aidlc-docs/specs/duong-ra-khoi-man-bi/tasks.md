@@ -3,7 +3,7 @@ artifact_type: tasks
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: duong-ra-khoi-man-bi
 source_artifacts:
   - aidlc-docs/specs/duong-ra-khoi-man-bi/requirements.md
@@ -275,15 +275,20 @@ phép quét gợi ý, rồi UI, cuối cùng nối dây. Mọi lệnh kiểm ch�
 - [ ] 12.3 Write minimal implementation
   - Reference: US-1 AC-3.1, US-1 AC-3.2, US-1 AC-3.5
   - Implementation file: `lib/ui/arena_painter.dart`
-  - Thêm `hintPath`; vẽ giữa `_paintGhost` và `_paintTrail`. Quầng `cream 0x4D` dày `fit.u(2.4)`, lõi `cream 0xE0` dày `fit.u(0.7)`, dash/gap `fit.u(1.4)`/`fit.u(1.2)`. Dùng lại `_dashed` (`arena_painter.dart:455`), **không** viết routine đứt nét thứ hai.
+  - Thêm `hintPath`; vẽ giữa `_paintGhost` và `_paintTrail`. Dùng
+    `primaryGold` qua token/ArenaInk, nét đứt và vòng waypoint tại mỗi điểm dội;
+    không ghi hex/alpha thô trong painter. Dùng lại `_dashed`
+    (`arena_painter.dart:455`), không viết routine đứt nét thứ hai.
 - [ ] 12.4 Run test to verify it passes
   - Reference: US-1 AC-3.1, US-1 AC-3.2, US-1 AC-3.5
   - Command: `flutter test test/ui/arena_painter_hint_test.dart`
-  - Expected: PASS. Đây là golden test **đầu tiên** của repo (`uiux-guideline.md` G8) — sinh ảnh chuẩn bằng `--update-goldens` rồi kiểm mắt trước khi commit.
-- [ ] 12.5 Đo tương phản và ghi lại
+  - Expected: PASS. Sinh ảnh chuẩn bằng `--update-goldens`, rồi kiểm mắt ở 390 ×
+    844 trước khi commit theo `uiux-guideline.md` §10.3 và §11.
+- [ ] 12.5 Kiểm token và khả năng phân biệt
   - Reference: US-1 AC-3.1
   - Files: `aidlc-docs/specs/duong-ra-khoi-man-bi/design.md`
-  - Tính tỉ lệ tương phản của `cream` ở alpha `0xE0` và `0x4D` trên `bgTop`/`bgBottom`, ghi số đo vào § Điều kiện chưa kiểm. Checklist đòi **đo**, không cho ước lượng.
+  - Xác nhận painter chỉ đọc token semantic, không có hex/alpha legacy; golden phải
+    phân biệt hint với preview và ghost bằng cả màu lẫn marker/cadence.
 
 ### 13. Nút gợi ý trên màn chơi
 
@@ -292,7 +297,7 @@ phép quét gợi ý, rồi UI, cuối cùng nối dây. Mọi lệnh kiểm ch�
   - Files: `test/ui/game_screen_hint_test.dart`
   - Add coverage cho nút gợi ý: hiện ở footer, vô hiệu khi thiếu xu, không tự ngắm hộ, không thay hint chữ tĩnh.
   - Test file: `test/ui/game_screen_hint_test.dart`
-  - Expected assertion: xu < 50 ⇒ nút vô hiệu nhưng **tìm thấy được** và badge hiện số còn thiếu; bấm nút vô hiệu ⇒ xu không đổi, vẫn ở màn chơi; hint chữ `ArenaSpec.hint` **vẫn** hiện; vùng chạm ≥ 48px; `Semantics` có label + `button` + `enabled`; hướng ngắm **không** đổi sau khi gợi ý hiện
+  - Expected assertion: xu < 50 ⇒ nút vô hiệu nhưng **tìm thấy được** và badge hiện số còn thiếu; bấm nút vô hiệu ⇒ xu không đổi, vẫn ở màn chơi; hint chữ `ArenaSpec.hint` **vẫn** hiện; vùng chạm ≥ 48dp; `Semantics` có label + `button` + `enabled`; hướng ngắm **không** đổi sau khi gợi ý hiện
 - [ ] 13.2 Run test to verify it fails
   - Reference: US-1 AC-3.3, US-1 AC-3.4, US-1 AC-6.1, US-1 AC-6.2, US-1 AC-6.4
   - Command: `flutter test test/ui/game_screen_hint_test.dart`
@@ -300,7 +305,9 @@ phép quét gợi ý, rồi UI, cuối cùng nối dây. Mọi lệnh kiểm ch�
 - [ ] 13.3 Write minimal implementation
   - Reference: US-1 AC-3.3, US-1 AC-3.4, US-1 AC-6.1, US-1 AC-6.2, US-1 AC-6.4
   - Implementation file: `lib/ui/screens/game_screen.dart`
-  - `BbButton` variant `accent` ở footer cạnh hint chữ, kèm `BbBadge` giá / số xu còn thiếu. Nối `hintPath` vào `ArenaPainter`. Giữ nguyên luật preview ngắm hai đoạn.
+  - Dùng action gold hoặc icon button navy có gold accent ở footer, kèm badge
+    navy/gold cho giá và số xu còn thiếu. Không dùng variant `accent` nếu nó còn
+    ánh xạ coral. Nối `hintPath` vào `ArenaPainter`; preview ngắm vẫn chỉ hai đoạn.
 - [ ] 13.4 Run test to verify it passes
   - Reference: US-1 AC-3.3, US-1 AC-3.4, US-1 AC-6.1, US-1 AC-6.2, US-1 AC-6.4
   - Command: `flutter test test/ui/game_screen_hint_test.dart`
@@ -388,15 +395,16 @@ phép quét gợi ý, rồi UI, cuối cùng nối dây. Mọi lệnh kiểm ch�
   - Files: `test/ui/arena_map_skipped_test.dart`
   - Add coverage cho dấu phân biệt màn bỏ qua với màn thắng thật.
   - Test file: `test/ui/arena_map_skipped_test.dart`
-  - Expected assertion: màn `skipped` ⇒ có badge **chữ** trên đúng thẻ màn đó; màn thắng thật ⇒ không có badge; trạng thái không truyền đạt **chỉ** bằng màu
+  - Expected assertion: màn `skipped` ⇒ có badge chữ trên đúng item/node; màn thắng thật ⇒ không có badge; trạng thái không truyền đạt chỉ bằng màu
 - [ ] 17.2 Run test to verify it fails
   - Reference: US-2 AC-5.1, US-2 AC-5.2, US-2 AC-5.3
   - Command: `flutter test test/ui/arena_map_skipped_test.dart`
-  - Expected: FAIL vì thẻ màn chưa có dấu.
+  - Expected: FAIL vì item/node màn chưa có dấu.
 - [ ] 17.3 Write minimal implementation
   - Reference: US-2 AC-5.1, US-2 AC-5.2, US-2 AC-5.3
   - Implementation file: `lib/ui/screens/arena_map_screen.dart`
-  - Thêm `BbBadge` vào thẻ màn khi `isSkipped(arena.id)`. Đặt trên chính thẻ màn để Unit 3 dựng lại bố cục theo chương vẫn dùng được.
+  - Tách skipped indicator tái sử dụng và đặt trên item/node khi
+    `isSkipped(arena.id)`, để Unit 3 dùng lại trong grid mà không viết lần hai.
   - **Đặt badge trong `Row`, cạnh cột sao — KHÔNG trong `Column`.** Ràng buộc từ Unit 3: nó ghim chiều cao thẻ để tính offset tự cuộn bằng số học, nên badge tốn **0** chiều cao dọc. Đặt vào `Column` làm thẻ đã-bỏ-qua cao hơn thẻ thường, tức thẻ có hai chiều cao nội tại và phép tính offset của Unit 3 sai.
 - [ ] 17.4 Run test to verify it passes
   - Reference: US-2 AC-5.1, US-2 AC-5.2, US-2 AC-5.3

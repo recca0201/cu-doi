@@ -61,7 +61,7 @@ trạng thái "đã xem thoại" ở US-4 AC-3.4.
 ## Phụ thuộc lên Unit 1
 
 **Unit này phải đi sau `duong-ra-khoi-man-bi`.** Lý do không phải luật chơi mà là công việc:
-Unit 1 thêm dấu "đã bỏ qua" lên thẻ màn (US-2 AC-5.1..5.3), Unit 3 dựng lại toàn bộ
+Unit 1 thêm dấu "đã bỏ qua" tái sử dụng được trên item/node màn (US-2 AC-5.1..5.3), Unit 3 dựng lại toàn bộ
 `arena_map_screen` thành 4 chương. Làm ngược lại thì dấu "đã bỏ qua" phải viết **hai lần** —
 một cho danh sách phẳng, một cho bố cục chương.
 
@@ -73,16 +73,16 @@ một cho danh sách phẳng, một cho bố cục chương.
 
 | # | Ràng buộc | Nguồn |
 |---|---|---|
-| C1 | `arena_map_screen` là `ListView.separated` phẳng, `itemCount: kArenas.length`, mỗi dòng một `BbCard`, padding `gutter` ngang / `sp3` dọc. Comment trong file ghi rõ nó cố ý phẳng **khi game chỉ có ba màn** — tiền đề đó đã hết đúng | `arena_map_screen.dart`, `uiux-guideline.md` § Bố cục bốn màn |
+| C1 | `arena_map_screen` hiện là `ListView.separated` phẳng, `itemCount: kArenas.length`, mỗi dòng một `BbCard`. Đây chỉ là baseline code; target đã đổi thành grid 4 cột theo D5 | `arena_map_screen.dart`, `uiux-guideline.md` §6.2 |
 | C2 | Luật mở màn: `completedMax` = màn xa nhất có `stars >= 1`, `unlockedMax = completedMax + 1`. Unit 1 mở rộng điều kiện này bằng dấu "đã bỏ qua" — Unit 3 **đọc** kết quả, không định nghĩa lại | `player_progress.dart:27-37` |
 | C3 | `totalStars` = tổng `stars` của mọi màn. Unit 1 AC-3.2 cố tình giữ tổng này **sạch** (màn bỏ qua đóng góp 0 sao), nên tiến độ sao theo chương không cần biết gì về bỏ qua màn | `player_progress.dart:20`, Unit 1 US-2 AC-3.2 |
 | C4 | `kArenas` có 20 phần tử với `id` 1..20 và `name`/`nameEn` mỗi màn. **Không có field chương nào** — nhóm chương phải được định nghĩa mới | `arenas.dart`, `arena.dart` |
-| C5 | Chạm màn đã khoá hiện phản hồi bằng `SnackBar` (`arenaLockedHint`) và không điều hướng | `arena_map_screen.dart`, `uiux-guideline.md` § Bản đồ tương tác |
-| C6 | Overlay hướng dẫn và overlay kết quả trong `game_screen` **tự dựng** bằng `Container` màu, không dùng `BbDialog`/`showBbDialog` (hai thứ này là code chết). Repo hiện có **ba kiểu popup song song** — khoảng trống G7 | `uiux-guideline.md` G6, G7 |
-| C7 | Mascot `assets/images/mascot/ban_bua_mascot_v2.png` **đã khai báo trong `pubspec.yaml` nhưng không có mã nào tham chiếu** — khoảng trống G5 | `pubspec.yaml`, `uiux-guideline.md` G5 |
-| C8 | Biểu cảm mục tiêu đang làm việc kể chuyện: `uiux-guideline.md` gọi khuôn mặt là "CHÍNH LÀ lời giải thích luật". Nhân vật có tên là **bước tiếp của thứ đã tồn tại**, không phải hệ thống mới dựng từ đầu | `uiux-guideline.md` § Mục tiêu |
-| C9 | Cả 4 màn vỏ ngoài dùng `BoxConstraints(maxWidth: BbTokens.screenMax)` = 440, **không** gọi `contentMaxWidth` — nhánh tablet chưa được kích hoạt ở đâu | `uiux-guideline.md` § Hệ thống layout |
-| C10 | `LevelResult.fromJson` đọc `j['stars'] as int` — **không chịu null**. Field mới cho trạng thái "đã xem thoại" (US-4 AC-3.4) phải đọc bằng `as T?` kèm mặc định, nếu không save cũ **crash khi parse**. Đây là chỗ duy nhất unit này ghi tiến trình, nên cũng là chỗ duy nhất có thể làm mất tiến trình người chơi | `player_progress.dart:8-9`, Unit 1 C2 |
+| C5 | Chạm màn đã khoá hiện phản hồi bằng `SnackBar` (`arenaLockedHint`) và không điều hướng; target thêm shake ngắn + tooltip/snackbar | `arena_map_screen.dart`, `uiux-guideline.md` §6.2 |
+| C6 | Overlay hướng dẫn và kết quả hiện tự dựng bằng `Container`. Unit không tạo popup thứ tư, nhưng mọi phần nó chạm tới phải migrate sang panel navy/scrim/hierarchy CTA đích | `game_screen.dart`, `uiux-guideline.md` §4.2, §6.8–6.10 |
+| C7 | Mascot `assets/images/mascot/ban_bua_mascot_v2.png` đã khai báo trong `pubspec.yaml` nhưng chưa được dùng | `pubspec.yaml` |
+| C8 | Biểu cảm target đang là một kênh bắt buộc của tín hiệu `armed`; nhân vật có tên bổ sung giọng kể, không thay tín hiệu gameplay | `uiux-guideline.md` §4.3, §5.2 |
+| C9 | Shell hiện dùng `BbTokens.screenMax = 440`; target giữ maxWidth 440dp cho nội dung ngoài sân và kiểm phone/tablet/text scale | `uiux-guideline.md` §8 |
+| C10 | Trạng thái “đã xem thoại” không thuộc `PlayerProgress`; lưu ở khoá riêng `dialogue_seen_v1`. Thiếu khoá hoặc entry enum lạ ⇒ seen-set rỗng/bỏ qua entry, không ảnh hưởng `progress_v1` | `dialogue_seen_repository.dart` mới, design Q3 |
 
 ## Quyết định và giả định
 
@@ -121,7 +121,7 @@ phân chia của PDR §6:
 - Chương 4 — Vật cản chéo: màn 16-20
 
 1.2 WHEN mỗi chương được hiện THEN system SHALL hiện tiêu đề chương gồm số chương và tên chương,
-phân biệt rõ với thẻ màn.
+phân biệt rõ với node màn.
 
 1.3 WHEN các màn trong một chương được hiện THEN system SHALL giữ nguyên thứ tự tăng theo `levelId`.
 
@@ -132,20 +132,21 @@ nhiều chỗ (ràng buộc C4).
 1.5 IF `kArenas` có màn không thuộc chương nào đã định nghĩa THEN system SHALL vẫn hiện màn đó
 và SHALL không làm màn hình chọn màn hỏng.
 
-**2. Giữ nguyên hành vi thẻ màn**
+**2. Giữ nguyên hành vi, đổi composition thành node**
 
-2.1 WHEN thẻ màn được hiện THEN system SHALL giữ nguyên mọi thông tin thẻ hiện có: tên màn, số
-sao đã lấy, trạng thái chưa mở.
+2.1 WHEN node màn được hiện THEN system SHALL hiện số màn, 0–3 sao và trạng thái
+mở/khoá/current/skipped. Tên màn đầy đủ SHALL có trong semantic label; không bắt
+buộc hiển thị trực tiếp trong node grid 4 cột.
 
-2.2 WHEN thẻ màn được hiện THEN system SHALL giữ nguyên dấu "đã bỏ qua" do Unit 1 US-2 AC-5.1
+2.2 WHEN node màn được hiện THEN system SHALL giữ nguyên dấu "đã bỏ qua" do Unit 1 US-2 AC-5.1
 định nghĩa, và SHALL không làm mất phân biệt giữa "thắng thật" và "đã bỏ qua".
 
 2.3 WHEN trạng thái mở/khoá của một màn được tính THEN system SHALL dùng đúng luật tuyến tính
 hiện tại và SHALL **không** thêm điều kiện khoá theo chương (D2).
 
-2.4 WHEN người chơi chạm một thẻ màn đã mở THEN system SHALL vào màn đó, y như hành vi hiện tại.
+2.4 WHEN người chơi chạm một node màn đã mở THEN system SHALL vào màn đó, y như hành vi hiện tại.
 
-2.5 IF người chơi chạm một thẻ màn chưa mở THEN system SHALL giữ nguyên phản hồi hiện có
+2.5 IF người chơi chạm một node màn chưa mở THEN system SHALL giữ nguyên phản hồi hiện có
 (`arenaLockedHint`) và SHALL không vào màn (ràng buộc C5).
 
 **3. Bố cục và thao tác**
@@ -154,13 +155,14 @@ hiện tại và SHALL **không** thêm điều kiện khoá theo chương (D2).
 trong **một** vùng cuộn, và SHALL không lồng vùng cuộn trong vùng cuộn.
 
 3.2 WHEN màn hình chọn màn được hiện trên điện thoại THEN system SHALL giữ bề rộng nội dung tối
-đa **440px** (`BbTokens.screenMax`) và vùng chạm thẻ màn tối thiểu **48px** (`BbTokens.tapMin`).
+đa **440dp** và vùng chạm node tối thiểu **48dp**.
 
-3.3 WHEN tiêu đề chương được hiện THEN system SHALL dùng token của `BbTokens`/`BbText` sẵn có và
-SHALL không viết hex thô hay px ma thuật (`uiux-guideline.md` § Triết lý thiết kế nguyên tắc 3).
+3.3 WHEN tiêu đề chương được hiện THEN system SHALL dùng token semantic và typography
+đích; SHALL không viết hex thô hoặc giữ màu legacy dưới tên variant cũ
+(`uiux-guideline.md` §3.1–3.4).
 
-3.4 WHEN tiêu đề chương và thẻ màn được dựng THEN system SHALL bọc `Semantics` +
-`ExcludeSemantics` cho phần tử tương tác theo checklist `uiux-guideline.md`.
+3.4 WHEN tiêu đề chương và node màn được dựng THEN system SHALL bọc `Semantics` +
+`ExcludeSemantics` cho phần tử tương tác theo `uiux-guideline.md` §8.
 
 3.5 WHEN các màn trong một chương được dựng trên điện thoại THEN system SHALL dùng
 **grid 4 cột** với node tròn hoặc bo tròn, và SHALL không dùng đường mòn uốn lượn,
@@ -236,7 +238,7 @@ bất cứ gì vào tiến trình.
 không phải cuộn qua các chương đã xong mỗi lần mở màn hình này
 
 **Priority**: Low
-**Business Value**: Ở chương 4, người chơi phải cuộn qua 15 thẻ màn đã xong để tới chỗ cần chơi —
+**Business Value**: Ở chương 4, người chơi phải cuộn qua 15 node đã xong để tới chỗ cần chơi —
 mỗi lần mở màn hình. Chi phí nhỏ, nhưng nó là ma sát lặp lại đúng ở đoạn cuối game, nơi người
 chơi đã bỏ nhiều công nhất.
 **Dependencies**: US-1
@@ -265,8 +267,8 @@ trí ban đầu.
 2.2 IF `unlockedMax` trỏ tới màn không tồn tại trong `kArenas` THEN system SHALL mở ở đầu danh
 sách và SHALL không lỗi.
 
-2.3 WHEN việc tự cuộn được cài THEN system SHALL gate mọi hoạt ảnh cuộn bằng
-`MediaQuery.disableAnimationsOf(context)` theo checklist `uiux-guideline.md`.
+2.3 WHEN màn hình mở THEN system SHALL áp vị trí ban đầu trước khung đầu và SHALL
+không dùng hoạt ảnh cuộn. Vì không có animation nên reduced motion không cần nhánh riêng.
 
 ---
 
@@ -325,8 +327,9 @@ tục thử lại** SHALL vẫn không kém nổi bật hơn (Unit 1 US-3 AC-3.2
 3.3 WHEN người chơi đã xem một đoạn thoại một lần THEN system SHALL không bắt xem lại đoạn đó ở
 lần sau, **trừ** thoại kết quả màn.
 
-3.4 WHEN trạng thái "đã xem đoạn thoại nào" được lưu THEN system SHALL bền qua lần mở app, và
-SHALL đọc được từ save cũ không có field này bằng cách coi là **chưa xem đoạn nào** (ràng buộc C10).
+3.4 WHEN trạng thái "đã xem đoạn thoại nào" được lưu THEN system SHALL bền qua lần
+mở app trong khoá `dialogue_seen_v1`; save cũ thiếu khoá ⇒ chưa xem đoạn nào, entry
+enum lạ ⇒ bỏ qua, và `progress_v1` không bị sửa (ràng buộc C10).
 
 3.5 WHEN thoại nhân vật được hiện THEN system SHALL không che tín hiệu `armed` của mục tiêu và
 SHALL không che sân đấu trong lúc chơi.
@@ -337,14 +340,11 @@ SHALL không che sân đấu trong lúc chơi.
 `app_en.arb`, với VI là mặc định, và giọng nhân vật SHALL giữ được ở cả hai ngôn ngữ chứ không
 chỉ dịch nghĩa.
 
-4.2 WHEN thoại được trình bày THEN system SHALL dùng **một component thoại duy nhất** cho mọi lần
-nhân vật nói, nhúng vào các overlay **đã tồn tại** ở AC-2.1 và AC-2.2, và SHALL **không tạo widget
-popup hay cơ chế overlay mới nào**.
-
-> Baseline của ràng buộc C6, liệt kê ra để tiêu chí kiểm được: repo đang có **ba** kiểu song song —
-> (1) `showDialog` + `BbCard` cho dialog luật ở menu, (2) `Container` phủ màu cho overlay hướng dẫn
-> và overlay kết quả trong sân, (3) `BbDialog`/`showBbDialog` hiện là **code chết**. "Không thêm kiểu
-> thứ tư" nghĩa là không thêm vào danh sách này.
+4.2 WHEN thoại được trình bày THEN system SHALL dùng **một component thoại duy nhất**
+cho mọi lần nhân vật nói, nhúng vào overlay hướng dẫn/kết quả hiện có và SHALL không
+tạo cơ chế overlay mới. Component dùng `panelNavy`, chữ white/muted, scrim 70–80%
+khi là modal. Variant modal dùng CTA gold/blue; variant nhúng trong kết quả không
+thêm CTA gold cạnh tranh với Thử lại/Tiếp theo (`uiux-guideline.md` §4.2, §6.8–6.10).
 
 4.3 WHEN thoại nhân vật được dựng THEN system SHALL đọc được bởi screen reader và SHALL tôn trọng
 `MediaQuery.textScaler` — đây là widget thật, không phải chữ vẽ trong `ArenaPainter`.
@@ -355,14 +355,12 @@ popup hay cơ chế overlay mới nào**.
 
 - **Đổi luật mở màn.** Chương không phải cửa khoá (D2). Unit 3 đọc kết quả của luật, không định
   nghĩa lại nó.
-- **Ghi bất cứ gì vào tiến trình.** Unit này chỉ đọc — ngoại lệ duy nhất là trạng thái "đã xem
-  thoại" ở US-4 AC-3.4.
+- **Ghi vào `PlayerProgress`/`progress_v1`.** Unit chỉ đọc tiến trình gameplay.
+  Seen-set thoại ở US-4 AC-3.4 dùng khoá riêng `dialogue_seen_v1`.
 - **Dấu "đã bỏ qua" và toàn bộ luồng gợi ý/bỏ qua màn** — thuộc Unit 1. Unit 3 chỉ có nghĩa vụ
   không làm mất nó (US-1 AC-2.2).
-- **Chuẩn hoá ba kiểu popup (G7) và hồi sinh các component chết (G6)** — Unit 3 chỉ có nghĩa vụ
-  **không thêm kiểu thứ tư** (US-4 AC-4.2). Dọn G6/G7 là việc riêng, chưa được duyệt.
-- **Nhánh tablet của `contentMaxWidth`** (ràng buộc C9) — chưa kích hoạt ở đâu, và unit này không
-  kích hoạt nó.
+- **Chuẩn hoá popup không bị unit này chạm tới.** Overlay hướng dẫn/kết quả và
+  component thoại do unit chạm tới vẫn phải đạt target tối mới.
 - **Viết nội dung tên và lời thoại nhân vật** — cố ý để mở (A-open); đây là đầu vào cho Phase 4,
   không phải sản phẩm của Phase 1.
 - **Rung tay và công tắc rung** (`004/US-001`, `004/US-002`) — cùng story artifact với US-4 nhưng

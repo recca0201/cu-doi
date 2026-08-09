@@ -3,7 +3,7 @@ artifact_type: story-artifact
 phase: inception
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 intent: haptics-and-characters
 source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
@@ -20,7 +20,8 @@ Hai mục cuối trong danh sách "trong phạm vi, chưa làm" của PDR §9: *
 cả hai đều nhỏ — nên gom vào một artifact.
 
 Điểm chung đáng chú ý: game đã có sẵn **khuôn mặt biểu cảm trên mục tiêu** đang làm
-việc kể chuyện (`uiux-guideline.md` gọi khuôn mặt là "CHÍNH LÀ lời giải thích luật")
+việc kể chuyện (`uiux-guideline.md` §4.3 và §5.2 coi đổi biểu cảm là một kênh bắt
+buộc của tín hiệu `armed`)
 và một mascot trong `assets/images/mascot/`. Nhân vật có tên là bước tiếp của thứ đã
 tồn tại, không phải một hệ thống mới dựng từ đầu.
 
@@ -168,6 +169,11 @@ mục tiêu và không che sân đấu trong lúc chơi.
 3.5 WHEN bất kỳ lời thoại nào được thêm THEN system SHALL có bản dịch ở **cả**
 `app_vi.arb` và `app_en.arb`, với VI là mặc định, và giọng nhân vật SHALL giữ được ở
 cả hai ngôn ngữ chứ không chỉ dịch nghĩa.
+
+3.6 WHEN thoại được trình bày trong hướng dẫn hoặc kết quả THEN system SHALL dùng
+panel `panelNavy`, chữ trắng/muted và scrim tối khi là modal. Hướng dẫn modal dùng
+CTA gold/blue; thoại nhúng trong kết quả SHALL không cạnh tranh với CTA chính
+Thử lại/Tiếp theo. Không dựng card trắng/coral hoặc một kiểu popup thứ tư.
 
 ## Dependency Notes
 

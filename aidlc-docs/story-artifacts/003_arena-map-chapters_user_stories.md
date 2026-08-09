@@ -3,7 +3,7 @@ artifact_type: story-artifact
 phase: inception
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 intent: arena-map-chapters
 source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
@@ -31,6 +31,7 @@ bị khoá theo cụm.
 |---|---|---|
 | A5a | 4 chương đúng tên và đúng phân chia trong PDR §6, mỗi chương 5 màn (1-5, 6-10, 11-15, 16-20) | AC-1.1 |
 | A5b | **Giữ nguyên** luật mở màn tuyến tính — chương không phải một cửa khoá mới | AC-1.5 |
+| A5c | Bản đồ dùng **grid 4 cột** trên điện thoại, mỗi chương là một section; không dùng đường mòn uốn lượn | AC-2.1, AC-2.2 |
 | A8 | Tên chương có ở **cả** `app_vi.arb` và `app_en.arb` | AC-1.6 |
 
 ## User stories
@@ -59,13 +60,14 @@ chương theo đúng phân chia của PDR §6:
 - Chương 4 — Vật cản chéo: màn 16-20
 
 1.2 WHEN mỗi chương được hiện THEN system SHALL hiện tiêu đề chương gồm số chương
-và tên chương, phân biệt rõ với thẻ màn.
+và tên chương, phân biệt rõ với node màn.
 
 1.3 WHEN các màn trong một chương được hiện THEN system SHALL giữ nguyên thứ tự
 tăng theo `levelId`.
 
-1.4 WHEN thẻ màn được hiện THEN system SHALL giữ nguyên mọi thông tin thẻ hiện có:
-tên màn, số sao đã lấy, trạng thái chưa mở.
+1.4 WHEN node màn được hiện THEN system SHALL hiện số màn, 0–3 sao và trạng thái
+mở/khoá/current/skipped. Tên màn đầy đủ SHALL nằm trong semantic label; không bắt
+buộc nhét tên dài vào node grid hẹp.
 
 1.5 WHEN trạng thái mở/khoá của một màn được tính THEN system SHALL dùng đúng luật
 tuyến tính hiện tại (`unlockedMax = completedMax + 1`) và SHALL **không** thêm điều
@@ -76,18 +78,22 @@ kiện khoá theo chương.
 
 **2. Bố cục và thao tác**
 
-2.1 WHEN danh sách chương dài hơn màn hình THEN system SHALL cho cuộn mượt qua toàn
-bộ 4 chương trong **một** vùng cuộn, không lồng vùng cuộn trong vùng cuộn.
+2.1 WHEN màn hình chọn màn được dựng trên điện thoại THEN system SHALL dùng một vùng
+cuộn chứa bốn section chương, mỗi section là **grid 4 cột**; SHALL không dùng đường
+mòn, connector cubic hoặc bố cục zig-zag.
 
 2.2 WHEN màn hình chọn màn được hiện trên điện thoại THEN system SHALL giữ bề rộng
-nội dung tối đa **440px** (`screenMax`) và vùng chạm thẻ màn tối thiểu **48px**
-(`tapMin`).
+nội dung tối đa **440dp** và vùng chạm node tối thiểu **48dp**.
 
-2.3 WHEN người chơi chạm một thẻ màn đã mở THEN system SHALL vào màn đó, y như hành
+2.3 WHEN người chơi chạm một node màn đã mở THEN system SHALL vào màn đó, y như hành
 vi hiện tại.
 
-2.4 IF người chơi chạm một thẻ màn chưa mở THEN system SHALL giữ nguyên phản hồi
+2.4 IF người chơi chạm một node màn chưa mở THEN system SHALL giữ nguyên phản hồi
 hiện có (`arenaLockedHint`) và không vào màn.
+
+2.5 WHEN shell và node được vẽ THEN system SHALL dùng `nightIndigo`/`panelNavy`,
+`primaryGold` cho current và sao, cùng icon/outline/chữ để phân biệt trạng thái;
+SHALL không dùng nền sky/cream hoặc coral/teal như vai trò mới.
 
 ---
 
@@ -129,7 +135,7 @@ chưa có sao nào và SHALL không làm màn hình chọn màn hỏng.
 chơi, so that tôi không phải cuộn qua các chương đã xong mỗi lần mở màn hình này
 
 **Priority**: Low
-**Business Value**: Ở chương 4, người chơi phải cuộn qua 15 thẻ màn đã xong để tới
+**Business Value**: Ở chương 4, người chơi phải cuộn qua 15 node đã xong để tới
 chỗ cần chơi — mỗi lần mở màn hình. Chi phí nhỏ, nhưng nó là ma sát lặp lại đúng ở
 đoạn cuối game, nơi người chơi đã bỏ nhiều công nhất.
 **Dependencies**: US-001

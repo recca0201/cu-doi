@@ -3,7 +3,7 @@ artifact_type: story-artifact
 phase: inception
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 intent: hint-and-skip-level
 source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
@@ -23,14 +23,14 @@ và PDR §11 đặt nó là việc thứ 3 sau playtest. Nhóm story này cho `N
 
 ### Xung đột thiết kế đã được người dùng quyết định
 
-`uiux-guideline.md` §"Preview ngắm" và PDR §5 đặt luật `[Confirmed]`: preview
+`uiux-guideline.md` §2.4, §4.4 và §5.6 đặt luật bắt buộc: preview
 **không bao giờ hiện lời giải đầy đủ**, vì game tiền nhiệm tô sáng mọi bong bóng
 sẽ nổ và "điều đó xoá gần hết kỹ năng ngắm".
 
 Gợi ý trong US-001 **vẽ trọn đường carom của một cú giải được** — tức là đúng thứ
 luật trên tránh. Người dùng đã được nêu xung đột này và vẫn chọn phương án đó, với
 lý do: hint **tốn xu và do người chơi chủ động bấm**, nên nó là một đánh đổi có
-giá, không phải thông tin miễn phí ép vào mắt người chơi. Luật `[Confirmed]` vẫn
+giá, không phải thông tin miễn phí ép vào mắt người chơi. Luật này vẫn
 giữ nguyên cho **preview ngắm thụ động** (AC-1.5).
 
 ### Giả định đang chờ playtest xác nhận
@@ -82,7 +82,7 @@ tính điểm, sao, hệ số BỪA **y như một cú bắn bình thường** �
 
 1.5 WHILE gợi ý đang hiện THEN system SHALL giữ nguyên luật preview ngắm hiện tại:
 preview thụ động vẫn **chỉ hiện hai đoạn đầu** quỹ đạo và vẫn bị ẩn khi bóng đang
-bay (`uiux-guideline.md` §"Preview ngắm", luật `[Confirmed]`).
+bay (`uiux-guideline.md` §4.4 và §5.6).
 
 **2. Không đủ xu**
 
@@ -109,7 +109,7 @@ SHALL không trừ xu và cho người chơi biết gợi ý không dùng đư�
 có bản dịch ở **cả** `app_vi.arb` và `app_en.arb`, với VI là ngôn ngữ mặc định.
 
 3.5 WHEN nút gợi ý được đặt lên HUD màn chơi THEN system SHALL giữ vùng chạm tối
-thiểu **48px** (`tapMin`) và không che sân đấu ở vùng bóng bay.
+thiểu **48dp** và không che sân đấu ở vùng bóng bay hoặc bệ phóng.
 
 3.6 WHEN xu bị trừ cho bất kỳ giao dịch nào THEN system SHALL không bao giờ để số dư
 xuống dưới **0**, kể cả khi hai giao dịch xảy ra sát nhau.

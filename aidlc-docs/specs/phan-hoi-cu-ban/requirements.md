@@ -3,7 +3,7 @@ artifact_type: requirements
 phase: construction
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 unit: phan-hoi-cu-ban
 source_artifacts:
   - aidlc-docs/requirements/001_remaining-scope_units_decomposition.md
@@ -61,14 +61,14 @@ hay ba con số cân bằng toàn cục.
 
 | # | Ràng buộc | Nguồn |
 |---|---|---|
-| C1 | `comic_effect_controller.dart` của `ban_bua` (1.070 dòng) **chưa có trong repo này**. Nó gắn vào `popped`/`isCrit`/`isRage`/`isWild` — ba khái niệm của game ghép-3 đã bị App Store từ chối. PDR §11 yêu cầu **thiết kế lại quanh số lần dội trước**, rồi mới port | PDR §11, `uiux-guideline.md` G1 |
-| C2 | Sân đấu được **vẽ** bằng `CustomPainter` + `Ticker`, không phải ghép widget. Thứ tự vẽ trong `paint()` là **hợp đồng z-order**: `nền → (rung) → khung → khối chắn → vạch chéo → vệt ma → vệt bay → mục tiêu → preview → súng → bóng → hệ số → tem` | `arena_painter.dart` |
+| C1 | `comic_effect_controller.dart` của `ban_bua` (1.070 dòng) **chưa có trong repo này**. Nó gắn vào `popped`/`isCrit`/`isRage`/`isWild` — ba khái niệm của game ghép-3 đã bị App Store từ chối. PDR §11 yêu cầu **thiết kế lại quanh số lần dội trước**, rồi mới port | PDR §11, `uiux-guideline.md` §2.3 và §10.3 |
+| C2 | Sân đấu được **vẽ** bằng `CustomPainter` + `Ticker`, không phải ghép widget. Code hiện tại có z-order riêng; implementation mới phải đạt hợp đồng đích ở `uiux-guideline.md` §5.1, trong đó effect không che target/armed/HUD | `arena_painter.dart`, `uiux-guideline.md` §5.1 |
 | C3 | Rung màn hiện có: giảm dần `dt × 4.5` từ 1.0, dịch canvas theo `sin(shake × 47)`/`cos(shake × 61)` — **tất định, không dùng `Random` trong pass vẽ** | `arena_painter.dart` § Rung màn |
 | C4 | `game_audio_service.dart` đã có 9 `GameSound` (gồm `wallImpact`, `blockedGap`, `comicImpact`, `politeClap`) và **cơ chế cooldown theo từng sound** với `DateTime Function() now` **tiêm được** — nên cooldown là thứ test được, không phải thứ chỉ cầm máy mới biết | `game_audio_service.dart:48,87,158` |
 | C5 | `AppSettings` đọc bằng `_prefs.getBool('x') ?? true` — thêm `hapticsOn` là **tương thích ngược sẵn**, không cần migration | `settings_repository.dart` |
 | C6 | `BbToggle` (64×38, `bbTeal` khi bật / `ink300` khi tắt, phát `Semantics.toggled`) đã tồn tại và đang được `settings_screen` dùng cho Âm thanh / Nhạc nền | `bb_widgets.dart`, `settings_screen.dart` |
-| C7 | Rung màn **chưa được gate bởi reduced-motion** — `_shake` chạy vô điều kiện. Đây là khoảng trống A6 đã biết của `uiux-guideline.md`, và tầng hiệu ứng mới không được làm nó tệ hơn | `uiux-guideline.md` A6 |
-| C8 | Chữ trong sân đấu **không tuân theo `MediaQuery.textScaler`** (khoảng trống A3), và hệ số `BỪA ×N` ở alpha `0x59` cho tương phản ≈ **2.45:1** — **dưới cả ngưỡng 3:1**. Đây là chữ mang thông tin sống | `uiux-guideline.md` A2, A3 |
+| C7 | Rung màn **chưa được gate bởi reduced-motion** — `_shake` chạy vô điều kiện. Target mới yêu cầu tắt camera shake và giảm particle khi reduced motion bật | `arena_painter.dart`, `uiux-guideline.md` §7 |
+| C8 | Chữ trong sân đấu hiện chưa theo `MediaQuery.textScaler`, và hệ số `BỪA ×N` ở alpha `0x59` chỉ đạt khoảng **2.45:1**. Target mới yêu cầu chữ gameplay nhận text scale riêng và chữ lớn đạt ít nhất 3:1 | `arena_painter.dart`, `uiux-guideline.md` §8 |
 | C9 | Chưa có dependency haptics nào trong `pubspec.yaml`. `HapticFeedback` của `flutter/services.dart` là API **built-in**, không cần thêm package | `pubspec.yaml` |
 
 ## Quyết định và giả định
@@ -80,7 +80,7 @@ hay ba con số cân bằng toàn cục.
 | D3 | Haptics có **toggle riêng** trong Cài đặt, mặc định **bật**, theo đúng pattern `soundOn`/`musicOn` | Đã chốt ở Inception (A6) |
 | D4 | Cooldown rung **60ms** — con số **khởi điểm để tune khi cầm máy thật**, không phải giá trị đã đo | Giả định Inception (A6b), giữ nguyên |
 | D5 | Mọi chuỗi mới có ở **cả** `app_vi.arb` và `app_en.arb`, VI mặc định | Đã chốt ở Inception (A8) |
-| A-open | **Hình thức thị giác cụ thể của tầng hiệu ứng chưa ai chọn** — `uiux-guideline.md` § Giả định ghi rõ người dùng đã hoãn quyết định này. US-1 và US-2 đặc tả **thang cường độ và bất biến**, không đặc tả hình. Chọn hình là việc của Phase 2 | Mở — cần quyết ở design |
+| D6 | Hình thức thị giác là **chùm vạch va đập** tại điểm chạm, dùng `trajectoryCyan`; multiplier/score emphasis dùng `primaryGold`. Không dùng vòng tròn đồng tâm có thể lẫn với quầng `armed` | Đã chốt ở Phase 2 và đồng bộ với `uiux-guideline.md` §3.1, §4.4 |
 
 ---
 
@@ -136,8 +136,9 @@ Phase 2 (A-open).
 2.1 WHEN bi dội vào **mục tiêu** mà chưa đủ số lần dội THEN system SHALL không tăng cường độ
 hiệu ứng leo thang, vì dội vào mục tiêu **không tính công dội** (PDR §8.4).
 
-2.2 IF cú bắn chưa dội lần nào THEN system SHALL không hiện chỉ số hệ số — giữ đúng luật hiện
-tại: con số không bao giờ nằm chình ình ở ×1 như đồ trang trí.
+2.2 IF cú bắn chưa dội lần nào THEN system SHALL vẫn hiện capsule hệ số ở `×1`,
+nhưng SHALL không phát punch, spark hay hiệu ứng ăn mừng. Capsule là thông tin HUD
+thường trực theo `uiux-guideline.md` §4.4; effect level 0 vẫn rỗng.
 
 2.3 WHEN bi rơi ra khỏi đáy sân THEN system SHALL kết thúc tầng hiệu ứng của cú đó và **không**
 phát hiệu ứng ăn mừng, vì cú đó đã mất.
@@ -183,12 +184,16 @@ khác biệt với hiệu ứng phá mục tiêu thường.
 2.1 WHEN mục tiêu bị phá THEN system SHALL giữ nguyên rung màn tất định hiện tại (giảm dần
 `dt × 4.5`, dịch canvas theo `sin`/`cos`) và SHALL **không** dùng `Random` trong pass vẽ.
 
-2.2 WHEN cú bắn thẳng bị chặn THEN system SHALL giữ tem `Bắn thẳng à?` màu `danger` đúng như
-hiện tại và SHALL **không** làm dịu nó thành phản hồi trung tính (`uiux-guideline.md`, luật
-`[Confirmed]`).
+2.2 WHEN cú bắn thẳng bị chặn THEN system SHALL giữ tem `Bắn thẳng à?` dùng
+`dangerRed` và SHALL **không** làm dịu nó thành phản hồi trung tính
+(`uiux-guideline.md` §3.1 và §6.5).
 
 2.3 WHEN vệt ma của cú bắn trước đang trên màn hình THEN system SHALL giữ nó lại sau khi hiệu
-ứng kết thúc (`uiux-guideline.md`, luật `[Confirmed]`).
+ứng kết thúc (`uiux-guideline.md` §5.1 và §10.1).
+
+2.5 WHEN hiệu ứng va chạm và multiplier được vẽ THEN system SHALL dùng
+`trajectoryCyan` cho chùm vạch/spark và `primaryGold` cho multiplier/score; SHALL
+không dùng tên màu legacy hoặc hex thô trong painter/widget mới.
 
 2.4 WHEN hiệu ứng phá mục tiêu được phát THEN system SHALL dùng âm thanh sẵn có và SHALL không
 yêu cầu asset mới.
@@ -201,7 +206,7 @@ yêu cầu asset mới.
 nào đã phá được, so that tầng ăn mừng không lấy đi thứ đang dạy tôi chơi
 
 **Priority**: High
-**Business Value**: PDR §5 và `uiux-guideline.md` cùng đánh dấu `[Confirmed]`: quầng sáng +
+**Business Value**: PDR §5 và `uiux-guideline.md` §4.3, §5.2 cùng xác định quầng sáng +
 đổi biểu cảm khi mục tiêu `armed` là **tính năng dễ đọc quan trọng nhất trong game**, và bất
 kỳ thay đổi làm mờ hoặc trễ nó là **hồi quy sản phẩm**. Tầng hiệu ứng là thứ có nguy cơ cao
 nhất phá luật này.
@@ -256,24 +261,18 @@ chốt ở Phase 2 cùng với hình thức thị giác (A-open) — Phase 1 ch�
 **4. Accessibility — không làm tệ hơn khoảng trống đã biết**
 
 4.1 WHEN hoạt ảnh mới nào được thêm THEN system SHALL gate bằng
-`MediaQuery.disableAnimationsOf(context)` theo checklist `uiux-guideline.md`.
+`MediaQuery.disableAnimationsOf(context)` theo `uiux-guideline.md` §7.
 
-4.2 WHEN tầng hiệu ứng được thêm THEN system SHALL không làm tương phản của tín hiệu `armed` và
-của chỉ số hệ số **xấu hơn** mức hiện tại (hệ số ≈ **2.45:1**, ràng buộc C8), và IF US-1 AC-1.2
-thay đổi alpha hoặc màu của chỉ số hệ số THEN system SHALL **đo lại** tỉ lệ tương phản và ghi số
-đo vào `design.md`. Sửa khoảng trống A2 lên 3:1 nằm **ngoài phạm vi** unit này.
+4.2 WHEN multiplier mới được dựng THEN system SHALL đạt tương phản tối thiểu
+**3:1** như chữ gameplay lớn, dùng `primaryGold` trên capsule `panelNavy` và
+outline/shadow khi cần; kết quả đo SHALL được ghi vào `design.md`.
 
-> Lý do không đặt mốc 3:1 ở đây: hệ số **đang** ở 2.45:1, dưới cả ngưỡng chữ lớn — nên "không đẩy
-> xuống dưới 3:1" là tiêu chí không thể sai và cũng không thể đúng. Thêm nữa, làm chữ **to hơn**
-> không đổi tỉ lệ tương phản chút nào, chỉ đổi **alpha** mới đổi. Đây là nghĩa vụ không-hồi-quy
-> kèm đo-và-ghi, không phải một mục tiêu tương phản.
+4.3 WHEN cường độ hiệu ứng được dùng làm tín hiệu THEN system SHALL không để nó là **kênh duy
+nhất** truyền đạt trạng thái `armed` — quầng, biểu cảm và chip số dội vẫn là nguồn chính thức.
 
 4.4 WHEN người chơi bật reduced-motion THEN system SHALL vẫn truyền đạt số lần dội và hệ số hiện
 tại qua kênh **tĩnh** (chip số dội trên mục tiêu và chỉ số trên HUD), để tắt hoạt ảnh không làm
 mất thông tin luật.
-
-4.3 WHEN cường độ hiệu ứng được dùng làm tín hiệu THEN system SHALL không để nó là **kênh duy
-nhất** truyền đạt trạng thái `armed` — quầng, biểu cảm và chip số dội vẫn là nguồn chính thức.
 
 ---
 
@@ -392,8 +391,9 @@ SHALL đọc thành công và coi rung là **bật**, giữ nguyên `soundOn`, `
   `kMaxMultiplier`). Đổi một trong ba là toàn bộ 20 màn vô hiệu, phải chạy lại `node campaign.js`.
 - **Asset ảnh hoặc âm thanh mới** (D1).
 - **Flame game loop** (D2).
-- **Sửa các khoảng trống accessibility A1–A8** của `uiux-guideline.md`. Unit này chỉ có nghĩa vụ
-  **không làm tệ hơn** (US-3 mục 4); sửa chúng chưa được duyệt và là việc riêng.
+- **Sửa mọi khoảng trống accessibility ngoài phần bị unit này chạm tới.** Unit này
+  phải đạt target mới cho multiplier, reduced motion và semantics liên quan; các
+  màn/component không liên quan vẫn ngoài phạm vi.
 - **Nhân vật có tên và thoại** (`004/US-003`) — thuộc Unit 3 (`giong-va-cau-truc-ngoai-san-dau`).
 - **Gợi ý, bỏ qua màn, xu** — thuộc Unit 1 (`duong-ra-khoi-man-bi`).
 

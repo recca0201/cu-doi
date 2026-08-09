@@ -3,7 +3,7 @@ artifact_type: story-artifact
 phase: inception
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 intent: comic-effects-by-bank-count
 source_artifacts:
   - aidlc-docs/foundation/project-overview-pdr.md
@@ -69,8 +69,10 @@ cường độ hiệu ứng leo thang, vì dội vào mục tiêu **không tính
 
 **2. Không phát khi không có gì để ăn mừng**
 
-2.1 IF cú bắn chưa dội lần nào THEN system SHALL không hiện chỉ số hệ số — giữ đúng
-luật hiện tại: con số không bao giờ nằm chình ình ở ×1 như đồ trang trí.
+2.1 IF cú bắn chưa dội lần nào THEN system SHALL vẫn hiện capsule hệ số ở `×1` như
+trạng thái nghỉ, nhưng SHALL không phát punch, spark hay hiệu ứng ăn mừng. Số hệ số
+luôn đọc được; chỉ phần ăn mừng bắt đầu sau một lần dội hợp lệ
+(`uiux-guideline.md` §4.4 và §6.3).
 
 2.2 WHEN bi rơi ra khỏi đáy sân THEN system SHALL kết thúc tầng hiệu ứng của cú đó
 và **không** phát hiệu ứng ăn mừng, vì cú đó đã mất.
@@ -111,15 +113,20 @@ mục tiêu sau xoá hiệu ứng của mục tiêu trước.
 (giảm dần `dt × 4.5`, dịch canvas theo `sin`/`cos`) và **không** dùng `Random`
 trong pass vẽ.
 
-2.2 WHEN cú bắn thẳng bị chặn THEN system SHALL giữ tem `Bắn thẳng à?` màu `danger`
+2.2 WHEN cú bắn thẳng bị chặn THEN system SHALL giữ tem `Bắn thẳng à?` dùng vai trò
+`dangerRed`
 đúng như hiện tại và **không** làm dịu nó thành phản hồi trung tính
-(`uiux-guideline.md`, luật `[Confirmed]`).
+(`uiux-guideline.md` §3.1 và §6.5).
 
 2.3 WHEN hiệu ứng phá mục tiêu được phát THEN system SHALL dùng âm thanh sẵn có và
 không yêu cầu asset mới.
 
 2.4 WHEN vệt ma của cú bắn trước đang trên màn hình THEN system SHALL giữ nó lại
-sau khi hiệu ứng kết thúc (`uiux-guideline.md`, luật `[Confirmed]`).
+sau khi hiệu ứng kết thúc (`uiux-guideline.md` §5.1 và §10.1).
+
+2.5 WHEN màu của hiệu ứng mới được chọn THEN system SHALL dùng token ngữ nghĩa:
+`trajectoryCyan` cho spark/impact/trail và `primaryGold` cho multiplier/score,
+không dùng `frame`, `cream` hoặc hex thô như tên vai trò triển khai mới.
 
 ---
 
@@ -129,8 +136,8 @@ sau khi hiệu ứng kết thúc (`uiux-guideline.md`, luật `[Confirmed]`).
 mục tiêu nào đã phá được, so that tầng ăn mừng không lấy đi thứ đang dạy tôi chơi
 
 **Priority**: High
-**Business Value**: PDR §5 và `uiux-guideline.md` §"Mục tiêu" cùng đánh dấu
-`[Confirmed]`: quầng sáng + đổi biểu cảm khi mục tiêu `armed` là **tính năng dễ đọc
+**Business Value**: PDR §5 và `uiux-guideline.md` §4.3, §5.2 đều xác định
+quầng sáng + đổi biểu cảm khi mục tiêu `armed` là **tính năng dễ đọc
 quan trọng nhất trong game**, và bất kỳ thay đổi làm mờ hoặc trễ nó là **hồi quy
 sản phẩm**. Tầng hiệu ứng là thứ có nguy cơ cao nhất phá luật này, nên nó cần một
 story riêng chứ không phải một dòng ghi chú.

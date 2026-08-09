@@ -3,7 +3,7 @@ artifact_type: unit-decomposition
 phase: inception
 status: draft
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 intent: remaining-scope
 artifact_id: 001
 source_artifacts:
@@ -35,9 +35,9 @@ là "Bỏ qua màn đang tắc bằng xu" trong artifact 001.
   `ShotRunner`: dội tường, phá mục tiêu, bắn thẳng bị chặn, kết màn. Chúng cùng bị
   một bất biến ràng buộc (không được làm mờ tín hiệu `armed`). Tách chúng ra hai unit
   là buộc một người đi qua cùng chỗ móc sự kiện hai lần.
-- **Unit 1 là unit duy nhất ghi state mới vào tiến trình.** Nó thêm dấu "đã bỏ qua",
-  bộ đếm thua, và biến xu thành tài nguyên tiêu được — cả ba phải nhất quán trong
-  cùng một giao dịch, nên chúng thuộc cùng một ranh giới.
+- **Unit 1 là unit duy nhất ghi state gameplay/economy vào `PlayerProgress`.** Nó
+  thêm dấu bỏ qua, bộ đếm thua và giao dịch xu. Unit 3 chỉ ghi seen-set thoại vào
+  khoá riêng `dialogue_seen_v1`; lỗi khoá đó không làm mất sao/xu/mở màn.
 - **Rủi ro cao nhất được xếp trước.** Unit 1 chạm vào suy luận mở màn và schema tiến
   trình đã lưu; đó là chỗ sai thì mất tiến trình người chơi.
 - **Cả 3 unit nằm sau mốc playtest** của PDR §11. Đây là quyết định của PDR, không
@@ -53,7 +53,7 @@ là "Bỏ qua màn đang tắc bằng xu" trong artifact 001.
 |----------|------|----------------|--------------|----------------|-----------|
 | 1 | Đường ra khỏi màn bí | `001/US-001`, `001/US-002`, `001/US-003` | None | **High** | PDR §10 gọi đây là bắt buộc, không phải tuỳ chọn. Rủi ro cao nhất: đổi suy luận mở màn và schema tiến trình đã lưu |
 | 2 | Phản hồi cú bắn | `002/US-001`, `002/US-002`, `002/US-003`, `004/US-001`, `004/US-002` | None | Medium | Rủi ro là hồi quy tính dễ đọc và tụt khung hình, không phải mất dữ liệu. Độc lập hoàn toàn với Unit 1 |
-| 3 | Giọng và cấu trúc ngoài sân đấu | `003/US-001`, `003/US-002`, `003/US-003`, `004/US-003` | Unit 1 | Low | Chỉ đọc tiến trình, không ghi. Xếp sau Unit 1 để `arena_map_screen` được dựng lại **một lần** |
+| 3 | Giọng và cấu trúc ngoài sân đấu | `003/US-001`, `003/US-002`, `003/US-003`, `004/US-003` | Unit 1 | Low | Chỉ đọc `PlayerProgress`; seen-set thoại lưu ở khoá riêng. Xếp sau Unit 1 để `arena_map_screen` được dựng lại **một lần** |
 
 ### Prioritization Criteria
 
@@ -141,8 +141,8 @@ lại của game.
 **Vì sao đây là một ranh giới**: ba story này chia nhau **một biên giao dịch**. Trừ
 xu, ghi dấu "đã bỏ qua", và tăng bộ đếm thua đều phải nhất quán trong cùng một lần
 ghi tiến trình — nếu trừ xu thành công mà ghi dấu thất bại, người chơi mất xu và vẫn
-tắc. Đây cũng là unit duy nhất trong cả ba **ghi** state mới; hai unit còn lại chỉ
-đọc.
+tắc. Đây là unit duy nhất ghi state gameplay/economy; Unit 3 chỉ ghi seen-set
+thoại không ảnh hưởng tiến trình chơi.
 
 **Rủi ro cụ thể cần canh**:
 - Suy luận mở màn hiện dựa trên sao (`stars >= 1`). Đổi sai là người chơi mất quyền
@@ -174,6 +174,8 @@ là con số điểm.
 - Tầng hiệu ứng leo thang theo số lần dội, thiết kế lại quanh bank count thay vì
   `popped`/`isCrit`/`isRage` của game tiền nhiệm
 - Cường độ hiệu ứng phá mục tiêu bám theo hệ số BỪA tại thời điểm phá
+- Capsule multiplier luôn đọc được từ `×1…×6`; bank 0 không phát hiệu ứng ăn mừng
+- Spark/impact/trail dùng `trajectoryCyan`, multiplier/score dùng `primaryGold`
 - Rung tay trên cùng bộ sự kiện: dội, phá mục tiêu, bắn thẳng bị chặn, kết màn
 - Công tắc rung trong Cài đặt, mặc định bật, lưu cùng `AppSettings`
 - Bảo vệ tín hiệu `armed` và giữ 60fps — điều kiện chấp nhận, không phải việc dọn sau
@@ -188,14 +190,14 @@ là con số điểm.
 **Vì sao gộp hai artifact vào một unit**: hình ảnh và rung tay là **hai kênh xuất của
 cùng một dòng sự kiện**. Cả hai kích hoạt tại đúng những mốc giống nhau trong
 `ShotRunner` (dội tường / phá mục tiêu / bắn thẳng bị chặn / kết màn), cả hai đều cần
-cùng một cơ chế cooldown để không dày quá, và cả hai chịu cùng một bất biến `[Confirmed]`
+cùng một cơ chế cooldown để không dày quá, và cả hai chịu cùng hợp đồng sân đấu bắt buộc
 là không được che tín hiệu `armed`. Chia chúng thành hai unit khiến cùng một người
 móc vào cùng những mốc đó hai lần, và tệ hơn: bất biến `armed` sẽ được kiểm hai lần
 độc lập thay vì một lần trọn vẹn.
 
 **Rủi ro cụ thể cần canh**:
-- Hồi quy tính dễ đọc: `uiux-guideline.md` gọi tín hiệu `armed` là "tính năng dễ đọc
-  quan trọng nhất trong game" và mọi thay đổi làm mờ nó là **hồi quy sản phẩm**.
+- Hồi quy tính dễ đọc: `uiux-guideline.md` §4.3, §5.2 bắt buộc tín hiệu `armed`
+  bật ngay và nằm trên effect; làm mờ hoặc làm trễ nó là hồi quy sản phẩm.
 - Tụt khung ở màn 20 (6 mục tiêu, hệ số tới ×6).
 - `lib/sim/` phải giữ nguyên: không import Flutter, không đổi `kMaxBanks` /
   `kMinAimUp` / `kMaxMultiplier` (PDR §8.1, §8.7).
@@ -223,6 +225,7 @@ thay vì là một danh sách 20 dòng cùng vài con số.
 
 **Scope**:
 - Nhóm 20 màn thành 4 chương theo đúng PDR §6, giữ nguyên luật mở màn tuyến tính
+- Dựng level select thành grid 4 cột trên shell arcade đêm; không dùng đường mòn
 - Tiến độ sao theo từng chương (trên tối đa 15 sao mỗi chương)
 - Mở màn hình chọn màn ở đúng chỗ người chơi đang chơi
 - Một nhân vật có tên nói ở overlay hướng dẫn, màn hình kết quả, và kết chiến dịch
@@ -237,8 +240,8 @@ thay vì là một danh sách 20 dòng cùng vài con số.
 **Vì sao gộp — và đây là ranh giới yếu nhất trong ba unit**: chương và nhân vật khác
 nhau về từ vựng (điều hướng vs. kể chuyện), nên đây không phải một bounded context
 sạch như Unit 1 hay Unit 2. Cái chúng thật sự chia nhau: **cùng nằm ngoài sân đấu,
-chỉ đọc tiến trình không ghi, cùng tầng màn hình, cùng đòi chuỗi song ngữ mới, cùng
-hồ sơ rủi ro thấp.** `004/US-003` một mình chỉ có 1 story — tách ra thì vi phạm mức
+chỉ đọc `PlayerProgress`, cùng tầng màn hình, cùng đòi chuỗi song ngữ mới, cùng hồ
+sơ rủi ro thấp.** Seen-set thoại nằm ở khoá riêng. `004/US-003` một mình chỉ có 1 story — tách ra thì vi phạm mức
 tối thiểu 2-4 story và tạo một unit không xứng một lượt giao. Với 1 người làm, gộp là
 lựa chọn đúng; nếu team lớn lên, đây là unit nên tách trước tiên.
 
