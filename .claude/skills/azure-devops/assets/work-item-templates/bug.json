@@ -1,0 +1,52 @@
+{
+  "workItemType": "Bug",
+  "fields": [
+    {
+      "op": "add",
+      "path": "/fields/System.Title",
+      "value": "[Component] Brief description of the bug"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.TCM.ReproSteps",
+      "value": "<div><b>Steps to Reproduce:</b><br/><ol><li>[Step 1]</li><li>[Step 2]</li><li>[Step 3]</li></ol><br/><b>Expected Result:</b><br/>[What should happen]<br/><br/><b>Actual Result:</b><br/>[What actually happens]<br/><br/><b>Environment:</b><br/><ul><li>OS: [Operating System]</li><li>Browser: [Browser and version]</li><li>Version: [Application version]</li></ul></div>"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.Severity",
+      "value": "3 - Medium",
+      "comment": "1 - Critical, 2 - High, 3 - Medium, 4 - Low"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.Priority",
+      "value": 2,
+      "comment": "1=High, 2=Medium, 3=Low, 4=Very Low"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.IterationPath",
+      "value": "ProjectName\\Sprint X",
+      "comment": "Replace with actual iteration path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.AreaPath",
+      "value": "ProjectName\\Component",
+      "comment": "Replace with actual area path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Scheduling.OriginalEstimate",
+      "value": null,
+      "comment": "Estimated hours to fix"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.Tags",
+      "value": "bug; needs-investigation",
+      "comment": "Semicolon-separated tags"
+    }
+  ],
+  "notes": "This template creates a bug with structured reproduction steps. Include screenshots or logs as attachments after creation."
+}

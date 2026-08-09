@@ -1,0 +1,187 @@
+{
+  "skill_name": "aidlc-requirements-engineering",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're building a mobile banking app. Write user stories for push notifications — specifically when a transaction hits the account. Users should be able to opt in and out.",
+      "expected_output": "Well-structured EARS-Lite user stories with hierarchical numbering (1.1 format), priority field, 'As a [persona]' headers, and coverage of the opt-out edge case. Save to aidlc-docs/story-artifacts/ after user approval.",
+      "files": [],
+      "expectations": [
+        "Output uses EARS-Lite format with WHEN/IF/WHILE + SHALL keywords (not plain bullet points)",
+        "Output contains hierarchical EARS-Lite numbering in the form X.X (e.g., 1.1, 1.2)",
+        "Output contains a Priority field with High, Medium, or Low value",
+        "Output contains a user story header in 'As a [persona], I want [goal], so that [benefit]' format",
+        "Output covers the opt-out or disable notifications scenario (edge case)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add export to the admin dashboard",
+      "expected_output": "Skill should choose clarification-first behavior, ask the missing export questions, and wait instead of pretending the artifact is final.",
+      "files": [],
+      "expectations": [
+        "Output raises clarifying questions BEFORE presenting user stories",
+        "Output mentions at least one export format option (CSV, PDF, Excel, JSON, or similar)",
+        "Output asks about delivery mode such as on-demand vs scheduled or equivalent",
+        "Output does not present a finalized user-story artifact before the ambiguity is resolved",
+        "Question options are concrete rather than vague"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm building a SaaS project management tool. I need user stories for the onboarding flow — creating an account, setting up the first project, and inviting team members.",
+      "expected_output": "Multiple user stories covering account creation, first project setup, and team invitation as separate user-visible outcomes, with EARS-Lite acceptance criteria and sequencing notes where useful.",
+      "files": [],
+      "expectations": [
+        "Output contains at least 3 distinct user stories (US-001, US-002, US-003 or similar numbering)",
+        "At least one story addresses account creation or registration",
+        "At least one story addresses first project setup or project creation",
+        "At least one story addresses team invitation or adding team members",
+        "Output uses EARS-Lite format with WHEN/IF/WHILE + SHALL keywords",
+        "All stories include a Priority field",
+        "Stories are split by user-visible value rather than frontend/backend layers",
+        "Output includes dependency notes or equivalent sequencing guidance if order matters"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use the attached foundation docs. Create user stories for an offline inspection checklist with photo attachments and sync recovery for field visits.",
+      "expected_output": "Stories should reuse foundation personas exactly, incorporate offline-first and image-size constraints, and reference existing UX components when they improve clarity.",
+      "files": [
+        "evals/fixtures/foundation/project-overview-pdr.md",
+        "evals/fixtures/foundation/system-architecture.md",
+        "evals/fixtures/foundation/codebase-summary.md",
+        "evals/fixtures/foundation/code-standards.md",
+        "evals/fixtures/foundation/uiux-guideline.md"
+      ],
+      "expectations": [
+        "Output reuses the exact persona names from the attached project overview rather than inventing new ones",
+        "Acceptance criteria mention offline behavior or sync recovery consistent with the attached architecture docs",
+        "Acceptance criteria mention the 10MB image limit or an equivalent attached technical constraint",
+        "Output references an existing UI component from the attached UX guideline only where relevant",
+        "Output uses EARS-Lite format with hierarchical numbering"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use the attached foundation docs. Write user stories for a public marketing landing page and a customer referral program.",
+      "expected_output": "Skill should notice the request conflicts with the attached product scope and flag it before generating in-scope stories.",
+      "files": [
+        "evals/fixtures/foundation/project-overview-pdr.md",
+        "evals/fixtures/foundation/system-architecture.md"
+      ],
+      "expectations": [
+        "Output explicitly flags the request as outside or beyond the attached product scope",
+        "Output offers a path forward such as clarifying whether the scope should be expanded",
+        "Output does not silently present the request as if it were already in scope"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I need a rough draft for admin audit export. Make reasonable assumptions and proceed.",
+      "expected_output": "Skill should not generate under unresolved assumptions. It should ask for the missing actor, export format, schedule/delivery mode, scope, or success criteria before writing stories.",
+      "files": [],
+      "expectations": [
+        "Output raises clarifying questions BEFORE presenting user stories",
+        "Output treats 'make reasonable assumptions' as insufficient when unresolved decisions are missing",
+        "Output asks about at least one missing decision such as actor, export format, delivery mode, scope, or success criteria",
+        "Output does not present a finalized user-story artifact before the ambiguity is resolved",
+        "Output does not use an artifact section as a substitute for clarification"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Write user stories for shipment document upload with validation for an Operations User uploading PDF shipping documents from a shipment detail page. Use --template checklist.",
+      "expected_output": "Skill should generate user stories using the checklist template, with normal user story metadata and categorized checklist acceptance criteria.",
+      "files": [],
+      "expectations": [
+        "Output uses the checklist template instead of hierarchical EARS-Lite sections or a Given/When/Then table",
+        "Each story keeps the normal User Story line and Priority field rather than turning story metadata into bullets",
+        "Acceptance Criteria are written as Markdown checklist items with - [ ]",
+        "Acceptance Criteria use the shallowest useful trace ID depth, such as 1, 1.1, or 1.1.1 depending on grouping complexity",
+        "Checklist criteria are grouped under numbered category headings by default and scenario subheadings only when useful",
+        "Acceptance criteria remain testable and include at least one validation or error scenario",
+        "Output does not use a Markdown table for acceptance criteria"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Write user stories for commodity lookup from the booking screen for a Booking Agent selecting a commodity code during shipment booking. Use --template given-when-then-table.",
+      "expected_output": "Skill should generate user stories with acceptance criteria grouped by numbered Feature headings and Markdown tables using No., Scenario, Given, When, and Then columns.",
+      "files": [],
+      "expectations": [
+        "Output uses the given-when-then-table template",
+        "Acceptance Criteria are grouped under numbered Feature headings such as Feature 1",
+        "Acceptance Criteria are formatted as Markdown tables with columns No., Scenario, Given, When, and Then",
+        "No. values use feature-prefixed numbering such as 1.1, 1.2, and 2.1",
+        "Each table row includes a concise scenario name in the Scenario column",
+        "Given cells describe screen, state, or preconditions",
+        "When cells describe user actions or system triggers",
+        "Then cells describe visible results or system behavior",
+        "The table includes at least one negative path or empty-result scenario"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Create and save standalone Inception user stories for shipment exception triage from an operations queue for Operations Users triaging exception status, assignee, priority, and resolution notes. Use --template checklist. This is a story-artifacts output, not a spec-driven requirements.md.",
+      "expected_output": "Skill should scaffold the standalone story artifact with the requirements-engineering wrapper, use the shared checklist story-block format, save under aidlc-docs/story-artifacts/, run the Product Owner review gate before user handoff, and avoid spec-driven requirements wrapper sections or Phase 2 next-step text.",
+      "files": [],
+      "expectations": [
+        "A story artifact file is created under aidlc-docs/story-artifacts/ with a three-digit prefix and suffix _user_stories.md",
+        "The assistant presents the saved artifact path as the working draft for feedback and future updates",
+        "Output includes a '## Overview' section before '## User stories'",
+        "Output uses checklist acceptance criteria with Markdown - [ ] items and stable IDs such as 1.1 or 2.1",
+        "Output keeps normal story metadata such as User Story and Priority outside the checklist items",
+        "Output includes standalone story-artifact sections only when useful, such as User stories or Dependency Notes",
+        "After the first complete saved draft, output indicates Product Owner review ran with a PASS, FIX_BEFORE_USER_REVIEW, or NEEDS_USER_DECISION verdict, or explicitly states delegated subagent review was unavailable and an inline review checklist was used instead",
+        "Product Owner review is review-only: the response does not claim the subagent edited the artifact directly, and clear blocking fixes are applied by the parent before user handoff",
+        "The assistant does not ask the user for artifact feedback until the Product Owner review gate has passed or a required user decision is surfaced",
+        "Output does not include a '# Requirements:' heading",
+        "Output does not include spec metadata fields such as Unit, Created, or User Stories at the document top",
+        "Output does not include a 'Next Steps' section instructing the user to proceed to Phase 2 design"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Add user stories for an external feedback survey feature.",
+      "expected_output": "Skill should clarify all artifact-shaping survey decisions before generating or saving stories, including trigger moments, cooldown or frequency, disable behavior, and privacy or telemetry boundaries.",
+      "files": [],
+      "expectations": [
+        "Output raises clarifying questions BEFORE presenting or saving user stories",
+        "Output asks which moments or events should trigger the survey",
+        "Output asks about at least two of: frequency/cooldown, disable or opt-out behavior, privacy/telemetry/data boundaries",
+        "Output marks recommended options with (Recommended)",
+        "Output does not present a finalized user-story artifact before these decisions are resolved",
+        "Output does not hide unresolved survey behavior behind generic configurable wording; open values are either asked about or absent, not papered over"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "This workspace's .mtv-aidlc/extension-config.json is attached; note it sets aidlcDocsPath to docs/aidlc. Create and save user stories for password reset via emailed link for registered customers. In scope: requesting a reset from the login screen, receiving a time-limited link by email that expires after 30 minutes, setting a new password that meets the existing password policy, and invalidating old sessions after a successful reset. Out of scope: SMS reset and security questions. Use --template default.",
+      "expected_output": "Skill should honor the configured aidlcDocsPath: the artifact is scaffolded and saved under docs/aidlc/story-artifacts/, not a hardcoded aidlc-docs/ root, with compliant frontmatter.",
+      "files": [
+        "evals/fixtures/workspace-config/extension-config.json"
+      ],
+      "expectations": [
+        "The story artifact is created under docs/aidlc/story-artifacts/ (the configured aidlcDocsPath), not under aidlc-docs/",
+        "The saved path presented to the user matches the configured docs root",
+        "The artifact frontmatter includes intent and source_artifacts keys",
+        "Output uses EARS-Lite format with hierarchical numbering and Priority fields",
+        "Acceptance criteria cover the 30-minute link expiry and session invalidation behaviors"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "We're cleaning up our old backlog. Normalize these three Jira tickets into a story artifact:\n\nPROJ-101 'Export orders to CSV': Users need to export their orders. Should be user friendly and fast.\nPROJ-102 'Order export permissions': Only managers can export. Other roles get an error message.\nPROJ-103 'CSV export backend endpoint': Build a /api/orders/export endpoint that returns text/csv.",
+      "expected_output": "Skill should treat this as brownfield import: map tickets to user-visible stories, fold the backend-endpoint ticket into the export story instead of keeping a technical-layer story, preserve Jira IDs in Related Jira fields, and flag or clarify the untestable 'user friendly and fast' wording instead of inventing metrics.",
+      "files": [],
+      "expectations": [
+        "Source ticket IDs (PROJ-101, PROJ-102, PROJ-103) are preserved in Related Jira fields or an explicit ticket-to-story mapping",
+        "PROJ-103 is merged into the user-visible export story rather than kept as a separate backend/technical-layer story",
+        "The vague 'user friendly and fast' wording is clarified with the user or explicitly surfaced as an open decision, not silently replaced with invented metrics",
+        "No source ticket is dropped silently: every ticket is mapped to a story, merged, or flagged",
+        "Manager-only access and the error for other roles from PROJ-102 appear as acceptance criteria"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "node .mtv-aidlc/hooks/aidlc-context-inject.cjs --github-json",
+        "powershell": "node .mtv-aidlc/hooks/aidlc-context-inject.cjs --github-json",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

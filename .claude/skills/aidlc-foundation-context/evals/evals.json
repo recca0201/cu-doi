@@ -1,0 +1,239 @@
+{
+  "skill_name": "aidlc-foundation-context",
+  "note": "Cases 4-6 were added alongside the Step 0 input gate and have not been run yet. Cases 5 and 6 exist to catch over-asking and stalling — the two failure modes a clarification gate introduces. In eval runs the agent has no interactive channel, so dispatch prompts should tell it to write the questions it WOULD ask (via AskUserQuestion) to an output file, following the convention in aidlc-requirements-engineering-workspace.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just started a new Next.js + TypeScript project called 'ClaudeKit Dashboard'. It's a greenfield project — nothing in the repo yet except package.json and a basic README. I need the full foundation documentation: product overview, system architecture, codebase summary, code standards, and UI/UX guideline. The product is an internal dashboard for tracking GitHub Copilot usage metrics across our engineering teams. Key users are engineering managers and the IT admin. Generate all five foundation documents and save them to aidlc-docs/foundation/.",
+      "expected_output": "Input gate runs first: purpose, users, and stack are given, so the remaining material unknowns are asked — design system source (no brand input given), deployment target, MVP scope boundary, accessibility bar. Questions come with concrete grounded options and a defer choice, and nothing is generated in the same response. After answers (or deferral), five documents in aidlc-docs/foundation/ with every fact marked Observed/Confirmed/Assumed, an Assumptions & Open Inputs section wherever values were assumed, no content duplication, and cross-references used.",
+      "assertions": [
+        {
+          "name": "asks-before-generating",
+          "description": "Clarifying questions are raised before any foundation document is written; the same response does not also generate documents",
+          "type": "content_check"
+        },
+        {
+          "name": "asks-about-design-system-source",
+          "description": "Because no brand/design input was provided, the design system source is asked about rather than invented",
+          "type": "content_check"
+        },
+        {
+          "name": "does-not-ask-what-was-given",
+          "description": "Does not re-ask the stack (Next.js + TypeScript), product purpose, or primary users — all stated in the prompt",
+          "type": "content_check"
+        },
+        {
+          "name": "options-are-concrete",
+          "description": "Question options are specific and grounded (e.g. named design systems, named hosting targets), not abstract prompts like 'what are the personas?'",
+          "type": "content_check"
+        },
+        {
+          "name": "defer-option-offered",
+          "description": "At least one question offers a defer choice so the user can hand a decision back and continue",
+          "type": "content_check"
+        },
+        {
+          "name": "all-five-docs-created",
+          "description": "All 5 foundation documents exist in aidlc-docs/foundation/ once inputs are resolved",
+          "type": "file_exists",
+          "files": [
+            "aidlc-docs/foundation/project-overview-pdr.md",
+            "aidlc-docs/foundation/system-architecture.md",
+            "aidlc-docs/foundation/codebase-summary.md",
+            "aidlc-docs/foundation/code-standards.md",
+            "aidlc-docs/foundation/uiux-guideline.md"
+          ]
+        },
+        {
+          "name": "assumptions-section-present-where-assumed",
+          "description": "Any document containing an assumed value carries an 'Assumptions & Open Inputs' section listing it",
+          "type": "content_check"
+        },
+        {
+          "name": "greenfield-codebase-marked-planned",
+          "description": "codebase-summary.md uses Planned language for agreed structure, and Assumed for values the user deferred",
+          "type": "content_check"
+        },
+        {
+          "name": "c4-diagrams-in-architecture",
+          "description": "system-architecture.md contains mermaid C4 diagrams built only from confirmed containers and actors",
+          "type": "content_check"
+        },
+        {
+          "name": "cross-references-present",
+          "description": "At least one cross-reference link (./doc.md#anchor) appears in the generated documents",
+          "type": "content_check"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have an existing brownfield Python + FastAPI backend project at /tmp/sample-api-project. The project is a REST API for a mobile banking app — handles authentication, account management, and transaction history. I just need the codebase summary and code standards documents (not the full set). The project uses Python 3.11, FastAPI, SQLAlchemy, and pytest. Generate codebase-summary.md and code-standards.md and save to aidlc-docs/foundation/.",
+      "expected_output": "Near-zero clarification: both requested documents are observable from the repo, so the run reads the code (repomix) rather than asking. At most one short question if the codebase style is genuinely self-contradictory with no linter config, or about a convention that exists nowhere (commit format, coverage target). Then codebase-summary.md (Python-specific, facts traceable to the repo) and code-standards.md (Python/FastAPI sections, NOT TypeScript/React) with any newly introduced rule marked Assumed.",
+      "assertions": [
+        {
+          "name": "does-not-ask-observable-facts",
+          "description": "Does not ask the user about directory structure, dependencies, scripts, or configs — these are read from the repo",
+          "type": "content_check"
+        },
+        {
+          "name": "two-docs-created",
+          "description": "codebase-summary.md and code-standards.md exist in aidlc-docs/foundation/",
+          "type": "file_exists",
+          "files": [
+            "aidlc-docs/foundation/codebase-summary.md",
+            "aidlc-docs/foundation/code-standards.md"
+          ]
+        },
+        {
+          "name": "python-not-typescript",
+          "description": "code-standards.md mentions Python/FastAPI patterns and does NOT have React/Next.js as primary sections",
+          "type": "content_check"
+        },
+        {
+          "name": "no-architecture-rationale-in-codebase",
+          "description": "codebase-summary.md does not contain architecture WHY/rationale (belongs in system-architecture.md)",
+          "type": "content_check"
+        },
+        {
+          "name": "introduced-rules-marked-assumed",
+          "description": "Any standard not already established by the codebase or its configs is marked Assumed rather than stated as settled",
+          "type": "content_check"
+        },
+        {
+          "name": "good-bad-examples-in-standards",
+          "description": "code-standards.md includes at least one good vs bad code example",
+          "type": "content_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Please generate just the system architecture document for my React Native mobile app project. The app is called 'PocketHealth' — a brownfield personal health tracking app for iOS and Android. It uses React Native 0.73, TypeScript, Redux Toolkit for state management, and connects to a Node.js backend. Save to aidlc-docs/foundation/system-architecture.md.",
+      "expected_output": "Asks only where the code is silent: deployment/distribution target, backend integration boundaries, and the NFR bar (health data implies security/privacy expectations worth confirming). Stack is given, so it is not re-asked. Then system-architecture.md (450-650 lines) with C4 mermaid diagrams containing only confirmed containers and actors, tech rationale that is confirmed rather than reverse-engineered, and an Assumptions & Open Inputs section for anything deferred.",
+      "assertions": [
+        {
+          "name": "asks-only-unobservable-inputs",
+          "description": "Questions cover deployment, integrations, or NFR expectations — not the stack, which the prompt states",
+          "type": "content_check"
+        },
+        {
+          "name": "architecture-doc-created",
+          "description": "system-architecture.md exists in aidlc-docs/foundation/",
+          "type": "file_exists",
+          "files": ["aidlc-docs/foundation/system-architecture.md"]
+        },
+        {
+          "name": "architecture-within-length",
+          "description": "system-architecture.md is between 450-650 lines (guideline)",
+          "type": "line_count_range",
+          "file": "aidlc-docs/foundation/system-architecture.md",
+          "min": 400,
+          "max": 750
+        },
+        {
+          "name": "c4-diagrams-present",
+          "description": "Document contains mermaid diagram blocks for C4 model",
+          "type": "content_check"
+        },
+        {
+          "name": "no-invented-rationale",
+          "description": "Technology rationale is confirmed or marked Assumed — no confident WHY narrative fabricated for an unexplained choice",
+          "type": "content_check"
+        },
+        {
+          "name": "no-full-configs-in-architecture",
+          "description": "system-architecture.md does not contain full config file contents (tsconfig, package.json, etc.)",
+          "type": "content_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Set up foundation docs for my new project please.",
+      "expected_output": "The floor test fails on essentially everything: no product purpose, no users, no stack, no design input, no indication of which documents are wanted. The run asks — starting with product intent and which documents are needed — and writes nothing. Zero foundation documents should exist after this response.",
+      "assertions": [
+        {
+          "name": "no-documents-written",
+          "description": "No file is created in aidlc-docs/foundation/ in response to a request with no usable input",
+          "type": "content_check"
+        },
+        {
+          "name": "asks-product-intent-first",
+          "description": "The first clarification batch covers product intent (purpose, users, objective, scope) — the widest-blast-radius unknowns",
+          "type": "content_check"
+        },
+        {
+          "name": "no-invented-personas",
+          "description": "No persona, business objective, colour palette, or dependency list is asserted anywhere in the response",
+          "type": "content_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Greenfield project 'ForgeOps', an internal deployment console. Stack is decided: Go 1.22 + chi router on the backend, Vue 3 + Vite + our existing MTI Design System tokens on the frontend, Postgres 16, deployed to our on-prem Kubernetes cluster. Users are our 12 platform engineers (they trigger and monitor deploys) and 3 SREs (they audit deploy history). MVP is deploy trigger + live log streaming + history; RBAC and cost reporting are explicitly out. WCAG 2.1 AA is our standard. Generate the product overview and the system architecture doc into aidlc-docs/foundation/.",
+      "expected_output": "Guard against over-asking: every floor input for both requested documents is supplied in the prompt, so the gate should clear with no questions (or at most one genuinely open item) and go straight to generating both documents. An interrogation here means the materiality test is not being applied.",
+      "assertions": [
+        {
+          "name": "generates-without-interrogation",
+          "description": "At most one clarifying question is raised; the run proceeds to generate both documents",
+          "type": "content_check"
+        },
+        {
+          "name": "does-not-re-ask-supplied-facts",
+          "description": "Stack, users, MVP boundary, deployment target, design system, and a11y bar are not asked about — all are stated",
+          "type": "content_check"
+        },
+        {
+          "name": "two-docs-created",
+          "description": "project-overview-pdr.md and system-architecture.md exist in aidlc-docs/foundation/",
+          "type": "file_exists",
+          "files": [
+            "aidlc-docs/foundation/project-overview-pdr.md",
+            "aidlc-docs/foundation/system-architecture.md"
+          ]
+        },
+        {
+          "name": "facts-marked-confirmed",
+          "description": "Supplied facts are treated as Confirmed rather than hedged as assumptions",
+          "type": "content_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "New greenfield repo, internal tool for our finance team to reconcile vendor invoices. I don't have time to answer a bunch of questions — just make reasonable assumptions and generate all five foundation docs. I'll correct them after.",
+      "expected_output": "Explicit deferral: the run proceeds without a clarification round, generating all five documents with assumed values clearly marked Assumed and collected in each document's Assumptions & Open Inputs section, plus a consolidated list surfaced to the user. No stalling, and no assumption presented as a settled decision.",
+      "assertions": [
+        {
+          "name": "no-stall",
+          "description": "The run proceeds to generate rather than insisting on answers after an explicit deferral",
+          "type": "content_check"
+        },
+        {
+          "name": "five-docs-created",
+          "description": "All five foundation documents are created",
+          "type": "file_exists",
+          "files": [
+            "aidlc-docs/foundation/project-overview-pdr.md",
+            "aidlc-docs/foundation/system-architecture.md",
+            "aidlc-docs/foundation/codebase-summary.md",
+            "aidlc-docs/foundation/code-standards.md",
+            "aidlc-docs/foundation/uiux-guideline.md"
+          ]
+        },
+        {
+          "name": "assumptions-marked-not-settled",
+          "description": "Assumed values are labelled Assumed in place and listed in each document's Assumptions & Open Inputs section",
+          "type": "content_check"
+        },
+        {
+          "name": "consolidated-assumption-list-surfaced",
+          "description": "The response surfaces the union of assumptions to the user so they know what to correct",
+          "type": "content_check"
+        }
+      ]
+    }
+  ]
+}

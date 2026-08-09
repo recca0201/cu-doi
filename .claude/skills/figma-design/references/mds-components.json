@@ -1,0 +1,735 @@
+{
+  "_source": "apps/magenta/packages/react/src/components",
+  "_package": "@ocean-network-express/magenta-react",
+  "_component_count": 46,
+  "components": [
+    {
+      "component": "Accordion",
+      "import": "import { Accordion } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "arrowPosition": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "component": "Autocomplete",
+      "import": "import { Autocomplete } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Breadcrumb",
+      "import": "import { Breadcrumb } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Button",
+      "import": "import { Button } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "primary",
+          "secondary",
+          "neutral",
+          "danger"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "2xl",
+          "responsive"
+        ],
+        "variant": [
+          "fill",
+          "outline",
+          "ghost"
+        ]
+      }
+    },
+    {
+      "component": "Carousel",
+      "import": "import { Carousel } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "align": [
+          "start",
+          "center",
+          "end"
+        ],
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ]
+      }
+    },
+    {
+      "component": "Dialog",
+      "import": "import { Dialog } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "maxWidth": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "xs"
+        ]
+      }
+    },
+    {
+      "component": "Divider",
+      "import": "import { Divider } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "direction": [
+          "horizontal",
+          "vertical"
+        ]
+      }
+    },
+    {
+      "component": "Image",
+      "import": "import { Image } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "borderRadius": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "full"
+        ]
+      }
+    },
+    {
+      "component": "Indicator",
+      "import": "import { Indicator } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "neutral",
+          "primary",
+          "secondary",
+          "blue",
+          "green",
+          "orange",
+          "red",
+          "purple",
+          "royal"
+        ],
+        "size": [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "variant": [
+          "bold",
+          "light"
+        ]
+      }
+    },
+    {
+      "component": "Input",
+      "import": "import { Input } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Link",
+      "import": "import { Link } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "red",
+          "secondary"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "underline": [
+          "always",
+          "hover"
+        ]
+      }
+    },
+    {
+      "component": "List",
+      "import": "import { List } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Menu",
+      "import": "import { Menu } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Pagination",
+      "import": "import { Pagination } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "type": [
+          "navigable",
+          "editable"
+        ]
+      }
+    },
+    {
+      "component": "Progress",
+      "import": "import { Progress } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "primary",
+          "green",
+          "red"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Resizeable",
+      "import": "import { Resizeable } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "type": [
+          "pointer",
+          "keyboard",
+          "reset"
+        ]
+      }
+    },
+    {
+      "component": "Select",
+      "import": "import { Select } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "renderValueType": [
+          "text",
+          "tag"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ],
+        "variant": [
+          "default",
+          "ghost"
+        ]
+      }
+    },
+    {
+      "component": "Spinner",
+      "import": "import { Spinner } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "2xl",
+          "3xl",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Stepper",
+      "import": "import { Stepper } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "iconType": [
+          "number",
+          "icon"
+        ],
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Tag",
+      "import": "import { Tag } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "neutral",
+          "primary",
+          "secondary",
+          "blue",
+          "green",
+          "orange",
+          "red",
+          "purple",
+          "royal"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "variant": [
+          "light",
+          "bold"
+        ]
+      }
+    },
+    {
+      "component": "Text",
+      "import": "import { Text } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      }
+    },
+    {
+      "component": "Textarea",
+      "import": "import { Textarea } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Timeline",
+      "import": "import { Timeline } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Toggle",
+      "import": "import { Toggle } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "left",
+          "right"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "Wrapper",
+      "import": "import { Wrapper } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "AutocompleteInput",
+      "import": "import { AutocompleteInput } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "ButtonGroup",
+      "import": "import { ButtonGroup } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "CarouselControl",
+      "import": "import { CarouselControl } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "variant": [
+          "light",
+          "dark"
+        ]
+      }
+    },
+    {
+      "component": "FeedbackMessage",
+      "import": "import { FeedbackMessage } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "IconButton",
+      "import": "import { IconButton } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "color": [
+          "primary",
+          "secondary",
+          "neutral",
+          "danger"
+        ],
+        "size": [
+          "xs",
+          "2xs",
+          "3xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "2xl",
+          "responsive"
+        ],
+        "variant": [
+          "fill",
+          "outline",
+          "ghost"
+        ]
+      }
+    },
+    {
+      "component": "ListEmpty",
+      "import": "import { ListEmpty } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "ListItem",
+      "import": "import { ListItem } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "alignItems": [
+          "center",
+          "flex-start"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "ListSubheader",
+      "import": "import { ListSubheader } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "NumberInput",
+      "import": "import { NumberInput } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ]
+      }
+    },
+    {
+      "component": "SearchInput",
+      "import": "import { SearchInput } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "inline",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "StepConnector",
+      "import": "import { StepConnector } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ],
+        "position": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "component": "StepIcon",
+      "import": "import { StepIcon } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "iconType": [
+          "number",
+          "icon"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "TableCell",
+      "import": "import { TableCell } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "divider": [
+          "full",
+          "half",
+          "none",
+          "haft"
+        ]
+      }
+    },
+    {
+      "component": "TagsInput",
+      "import": "import { TagsInput } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "labelAlignment": [
+          "top",
+          "left"
+        ],
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "state": [
+          "error",
+          "warning",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "TimelineConnector",
+      "import": "import { TimelineConnector } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "orientation": [
+          "horizontal",
+          "vertical"
+        ],
+        "position": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "component": "TimelineIcon",
+      "import": "import { TimelineIcon } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "TreeView",
+      "import": "import { TreeView } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ],
+        "variant": [
+          "default",
+          "branch-line"
+        ]
+      }
+    },
+    {
+      "component": "NonModalDialog",
+      "import": "import { NonModalDialog } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "maxWidth": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "xs"
+        ]
+      }
+    },
+    {
+      "component": "TabListGroup",
+      "import": "import { TabListGroup } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "TabListItem",
+      "import": "import { TabListItem } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "size": [
+          "sm",
+          "md",
+          "lg",
+          "responsive"
+        ]
+      }
+    },
+    {
+      "component": "NonModalDialogBase",
+      "import": "import { NonModalDialogBase } from '@ocean-network-express/magenta-react'",
+      "props": {
+        "maxWidth": [
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "xs"
+        ]
+      }
+    }
+  ]
+}

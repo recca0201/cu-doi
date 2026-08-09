@@ -1,0 +1,72 @@
+{
+  "@@locale": "vi",
+
+  "appTitle": "Bắn Bừa",
+  "menuTagline": "Bắn thẳng không tính. Dội tường mới ăn.",
+  "playCta": "Chơi ngay",
+  "arenaSelectCta": "Chọn màn",
+  "settingsCta": "Cài đặt",
+  "howToCta": "Luật chơi",
+  "bestScoreLabel": "Điểm cao nhất",
+  "coinsLabel": "Xu",
+
+  "arenaHeading": "Màn {id} · {name}",
+  "@arenaHeading": {
+    "placeholders": {
+      "id": { "type": "int" },
+      "name": { "type": "String" }
+    }
+  },
+
+  "shotsLeft": "Còn {count} cú bắn",
+  "@shotsLeft": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "scoreLabel": "điểm",
+
+  "multiplier": "BỪA ×{value}",
+  "@multiplier": {
+    "placeholders": { "value": { "type": "int" } }
+  },
+
+  "stampBank": "DỘI!",
+  "stampBlocked": "Bắn thẳng à?",
+
+  "resultWin": "Dọn sạch!",
+  "resultLose": "Hết cú bắn",
+  "resultScore": "{score} điểm",
+  "@resultScore": {
+    "placeholders": { "score": { "type": "int" } }
+  },
+
+  "retryCta": "Bắn lại",
+  "nextArenaCta": "Màn sau",
+  "menuCta": "Về menu",
+  "backCta": "Quay lại",
+  "gotItCta": "Hiểu rồi, bắn thôi!",
+
+  "arenaSelectTitle": "Chọn màn",
+  "arenaLocked": "Chưa mở",
+  "arenaStars": "{earned}/{total} sao",
+  "@arenaStars": {
+    "placeholders": {
+      "earned": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "arenaLockedHint": "Xong màn trước đã rồi mới tới màn này nha!",
+
+  "howToTitle": "Luật chơi",
+  "howToRule1": "Bắn trúng trực tiếp thì KHÔNG phá được gì. Con số trên mỗi mục tiêu là số lần bi phải dội tường trước đã.",
+  "howToRule2": "Bi không dừng khi va chạm — nó dội tiếp. Một cú có thể ăn nhiều mục tiêu.",
+  "howToRule3": "Càng dội càng nhân điểm. Nhưng đáy sân không có tường: bi rơi xuống là mất.",
+  "howToRule4": "Khi bi đang bay, mục tiêu nào sáng lên là mục tiêu đã phá được.",
+
+  "settingsTitle": "Cài đặt",
+  "soundLabel": "Âm thanh",
+  "musicLabel": "Nhạc nền",
+  "languageLabel": "Ngôn ngữ",
+  "resetProgressCta": "Xoá tiến trình",
+  "resetProgressDone": "Đã xoá tiến trình."
+}

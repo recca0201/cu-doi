@@ -1,0 +1,191 @@
+{
+  "skill_name": "figma-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Read the Figma design at https://www.figma.com/design/wjxRCZwqAjTsqSuflZHEQQ/Unicorn--Global--About-us---Media-room?node-id=4812-38472 and produce a complete design spec for this section — all colors, typography, spacing, layout, components and their variants. I need this spec to be detailed enough that another developer can implement the UI accurately without looking at Figma.",
+      "expected_output": "Runs figma_client.py with the full URL (node-scoped fetch), then extract_spec.py to produce a detailed Markdown spec covering: color tokens with hex values, typography styles with font/size/weight/line-height, spacing/padding values, component list with variants and layout properties, and frame dimensions.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e1-a1",
+          "name": "Contains real hex color values",
+          "description": "Output contains at least 3 hex color values in #rrggbb format (not placeholder)"
+        },
+        {
+          "id": "e1-a2",
+          "name": "Contains typography table",
+          "description": "Output includes a typography section listing font sizes (px) and font weights"
+        },
+        {
+          "id": "e1-a3",
+          "name": "Contains layout/spacing values",
+          "description": "Output mentions padding or gap with numeric px values"
+        },
+        {
+          "id": "e1-a4",
+          "name": "Scoped to the target node",
+          "description": "Spec is scoped to the specified node/section, not a generic file overview"
+        },
+        {
+          "id": "e1-a5",
+          "name": "Output is Markdown spec, not raw JSON",
+          "description": "Final output presented to user is human-readable Markdown, not raw API JSON"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have a Figma file key wjxRCZwqAjTsqSuflZHEQQ. Extract all the color tokens and typography styles from this file so I can set up our Tailwind config.",
+      "expected_output": "Runs figma_client.py with --file flag for the full file, then extract_spec.py, and outputs either a tailwind.config.js or a clearly structured list of color tokens (with hex values) and typography scale (font sizes, weights, line heights) ready to paste into a Tailwind config.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e2-a1",
+          "name": "Contains real hex color tokens",
+          "description": "Output lists actual hex color values from the Figma file (not generic placeholders)"
+        },
+        {
+          "id": "e2-a2",
+          "name": "Contains typography scale",
+          "description": "Output includes font sizes and font weights from the Figma file"
+        },
+        {
+          "id": "e2-a3",
+          "name": "Tailwind-ready format",
+          "description": "Output contains a tailwind.config.js snippet or clearly structured token list usable in Tailwind"
+        },
+        {
+          "id": "e2-a4",
+          "name": "Covers multiple color groups",
+          "description": "Color tokens span multiple semantic groups (e.g. primary, secondary, neutral)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Here's our Figma design: https://www.figma.com/design/wjxRCZwqAjTsqSuflZHEQQ/Unicorn--Global--About-us---Media-room — what components are defined in this file? List them with their variants, layout direction, and dimensions.",
+      "expected_output": "Fetches the full file, extracts all COMPONENT and COMPONENT_SET nodes, and presents a structured list showing each component's name, variant properties (e.g. Property 1=Default|Hover), layout mode (row/column), padding, gap, and bounding box dimensions.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e3-a1",
+          "name": "Lists multiple real components",
+          "description": "Output names at least 3 actual components from the file (not generic/invented names)"
+        },
+        {
+          "id": "e3-a2",
+          "name": "Shows variant properties",
+          "description": "Output includes variant information for at least one component (e.g. Default/Hover)"
+        },
+        {
+          "id": "e3-a3",
+          "name": "Shows dimensions",
+          "description": "Output includes width and/or height values for components"
+        },
+        {
+          "id": "e3-a4",
+          "name": "Shows layout direction",
+          "description": "Output mentions layout direction (row, column, horizontal, vertical, or auto-layout)"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use this Figma node to prepare a handoff for implementation: https://www.figma.com/design/wjxRCZwqAjTsqSuflZHEQQ/Unicorn--Global--About-us---Media-room?node-id=4812-38472. After extracting the spec, tell me whether the preview is a single screen or a board of multiple states, and if it is a board, extract/read child frame previews before summarizing the screens.",
+      "expected_output": "Runs figma_client.py with --with-spec-md, reads figma-spec.md, reads the generated preview image, records a Visual Extraction Decision with preview_path, visual_classification, screen_count_observed, child_extraction_decision, and reason, and runs --child-images plus reads child images if the preview is multi-screen, component-board, dense, or unclear.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e4-a1",
+          "name": "Reads generated preview image",
+          "description": "Output explicitly identifies the preview image path that was read, or states that no preview image was found."
+        },
+        {
+          "id": "e4-a2",
+          "name": "Includes visual extraction decision",
+          "description": "Output includes visual_classification, screen_count_observed, child_extraction_decision, and reason fields or equivalent labeled statements."
+        },
+        {
+          "id": "e4-a3",
+          "name": "Handles complex or unclear previews",
+          "description": "If the preview is classified as multi-screen-board, component-board, dense, or unclear, output attempts --child-images or clearly documents why child images could not be retrieved."
+        },
+        {
+          "id": "e4-a4",
+          "name": "Does not use image as token source",
+          "description": "Output uses figma-spec.md/figma-spec.json for tokens and measurements, while using images only for visual scope and state coverage."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Extract this Figma node for a UI handoff and write the spec to temp/figma_us-001/figma-spec.json: https://www.figma.com/design/1DiG6soTZz1ylv6X53Ivo0/-SRM1---Design--Mock-Sprint?node-id=3421-195626&m=dev . Use --with-spec-md.",
+      "expected_output": "Runs figma_client.py exactly once for this node with --output temp/figma_us-001/figma-spec.json --with-spec-md, waits for completion using the reliability contract (blocking-with-long-timeout or --detach then poll --status), and reports artifacts only under temp/figma_us-001/. Does NOT read figma_client.py to hand-roll a second inline extraction script, does NOT start a second run, and does NOT scatter figma-spec.md into a different scope directory.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e5-a1",
+          "name": "Single extraction invocation",
+          "description": "The transcript shows figma_client.py invoked exactly once for extraction (retries only after an explicit FAILED status), never a duplicate concurrent run."
+        },
+        {
+          "id": "e5-a2",
+          "name": "No hand-rolled extraction script",
+          "description": "The agent does not read figma_client.py in order to write its own inline Python extraction; it uses the CLI and its output."
+        },
+        {
+          "id": "e5-a3",
+          "name": "Artifacts only in requested directory",
+          "description": "figma-spec.json and figma-spec.md are produced under temp/figma_us-001/ (the --output path), not in an auto-derived scope directory."
+        },
+        {
+          "id": "e5-a4",
+          "name": "Uses the reliability contract to wait",
+          "description": "The agent waits via a blocking long-timeout run or --detach + poll --status, rather than treating silence or an early-returning terminal as failure."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "You are running in an environment whose terminal often returns before a long command finishes and shows no output. Extract this Figma node to temp/figma_wl/figma-spec.json with a markdown spec: https://www.figma.com/design/1DiG6soTZz1ylv6X53Ivo0/-SRM1---Design--Mock-Sprint?node-id=3421-195626&m=dev",
+      "expected_output": "Recognizes the harness returns early, starts extraction with --detach (or run_in_background), then polls figma_client.py --status <run_dir> until it reports COMPLETE or FAILED. Never re-runs the extraction on a returned-but-empty terminal and never concludes failure from missing output alone.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e6-a1",
+          "name": "Chooses detach/background mode",
+          "description": "For an early-returning harness, the agent starts the run with --detach (or backgrounds it) instead of a plain blocking call it cannot wait on."
+        },
+        {
+          "id": "e6-a2",
+          "name": "Polls status instead of re-running",
+          "description": "The agent polls --status (or the status file) to determine completion; it does not launch a second extraction when the first terminal returns empty."
+        },
+        {
+          "id": "e6-a3",
+          "name": "Does not declare false failure",
+          "description": "The agent does not report failure based on silence or a missing mid-run artifact; only a FAILED status or concrete error counts."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Extract the design tokens from Figma file key ABC123INVALID using a node URL https://www.figma.com/design/ABC123INVALID/Test?node-id=1-1 (assume the configured token is invalid or a View/Collab seat).",
+      "expected_output": "Runs the extraction, receives a 403/429, and surfaces the actionable message from the script (invalid token / missing scope / View-Collab seat gets ~6 requests per month / PATs expire after 90 days). Does not enter a retry storm and does not hand-roll an alternative extraction.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "e7-a1",
+          "name": "Surfaces actionable credential/seat guidance",
+          "description": "The agent reports the specific cause (invalid token, missing scope, or View/Collab seat limit) rather than an opaque failure."
+        },
+        {
+          "id": "e7-a2",
+          "name": "No retry storm or improvisation",
+          "description": "The agent does not repeatedly re-run the failing command or read figma_client.py to build a workaround; it stops and reports."
+        }
+      ]
+    }
+  ]
+}

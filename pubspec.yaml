@@ -1,0 +1,62 @@
+name: ban_bua_tuong
+description: "Bắn Bừa — Cú Dội: game bắn dội tường. Trúng thẳng không tính."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.3.3
+
+  # Reused verbatim from ban_bua for lib/core/game_audio_service.dart. Pulls in
+  # `flame` transitively, but no Flame game loop is used — rendering is a plain
+  # CustomPainter driven by a Ticker, which is what the prototype validated.
+  flame_audio: ^2.12.1
+
+  # Deliberately NOT here yet, unlike ban_bua:
+  #   firebase_core / cloud_firestore / firebase_auth — progress is local-only
+  #     until the loop is settled. lib/data/firestore_progress_repository.dart
+  #     from ban_bua drops in behind ProgressRepository when wanted.
+  #   google_mobile_ads — ads sat outside the PDR's MVP scope and would be
+  #     tuning noise while the core loop is still being judged.
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+# Regenerate with: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  ios: true
+  android: false
+  image_path: "assets/icon/app_icon.png"
+  remove_alpha_ios: true # App Store rejects an icon with an alpha channel.
+  image_path_ios_dark_transparent: "assets/icon/app_icon_dark.png"
+  image_path_ios_tinted_grayscale: "assets/icon/app_icon_tinted.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+  licenses:
+    - assets/fonts/OFL-Baloo2.txt
+    - assets/fonts/OFL-Nunito.txt
+  fonts:
+    - family: Baloo2
+      fonts:
+        - asset: assets/fonts/Baloo2-Variable.ttf
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Variable.ttf
+
+  assets:
+    - assets/audio/
+    - assets/images/mascot/

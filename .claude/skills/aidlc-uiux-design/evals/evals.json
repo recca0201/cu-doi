@@ -1,0 +1,220 @@
+{
+  "skill_name": "aidlc-uiux-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create `aidlc-docs/specs/tariff-filter/mockup.html` from requirements that include this Figma URL: https://www.figma.com/design/wjxRCZwqAjTsqSuflZHEQQ/Unicorn--Global--About-us---Media-room?node-id=4812-38472. The Figma node may be a board with several dialog states, so make sure the implementation mockup represents every implementation-relevant visual state directly in HTML.",
+      "expected_output": "Invokes figma-design, waits for figma-spec.json and figma-spec.md, reads the main preview image, records a Visual Extraction Decision with single-screen/multi-screen-board/component-board/unclear classification, runs --child-images and reads child images if the preview is multi-screen, component-board, dense, or unclear, then writes mockup.html with lean provenance metadata, preview paths, consolidated visible data-state sections for relevant states, and merged-state notes for near-duplicates.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "u1-a1",
+          "name": "Figma handoff completed before HTML drafting",
+          "description": "Output or generated mockup shows figma-design was invoked and figma-spec.md/figma-spec.json were used before writing mockup.html, unless a concrete failure is documented."
+        },
+        {
+          "id": "u1-a2",
+          "name": "Main preview image reviewed",
+          "description": "Output or generated spec references the main preview image path and summarizes what the preview shows."
+        },
+        {
+          "id": "u1-a3",
+          "name": "Complex previews trigger child extraction",
+          "description": "For multi-screen-board, component-board, dense, or unclear previews, output attempts --child-images and includes child preview paths, or documents incomplete visual handoff and asks for/records a decision."
+        },
+        {
+          "id": "u1-a3b",
+          "name": "Visual Extraction Decision recorded",
+          "description": "Generated mockup metadata or output includes preview path, visual classification, observed count, run/skip/ask decision, and reason."
+        },
+        {
+          "id": "u1-a4",
+          "name": "Mockup metadata contains preview paths",
+          "description": "Generated mockup.html includes or references preview image paths for reviewed Figma frames."
+        },
+        {
+          "id": "u1-a5",
+          "name": "States represented directly in HTML",
+          "description": "Generated mockup.html represents multi-state or board-style Figma sources using visible state sections such as data-state entries instead of relying on a separate Markdown state matrix."
+        },
+        {
+          "id": "u1-a6",
+          "name": "Near-duplicate states are consolidated",
+          "description": "Generated mockup.html merges states that share the same layout into base markup plus concise state deltas, rather than duplicating the whole screen for every Figma frame."
+        },
+        {
+          "id": "u1-a7",
+          "name": "Merged states are traceable",
+          "description": "Generated mockup.html or notes list the source frames/states that were merged and explain why they did not need separate full layouts."
+        },
+        {
+          "id": "u1-a8",
+          "name": "Supporting metadata is collapsed",
+          "description": "Generated mockup.html places Source Metadata and Visual Extraction Decision in collapsed-by-default details sections so the UI content appears first."
+        },
+        {
+          "id": "u1-a9",
+          "name": "Multiple states use tabs",
+          "description": "When 3 or more states are represented, generated mockup.html uses tabs or an equivalent non-scrolling state switcher instead of stacking full state sections vertically."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We already have a Figma extraction folder with `figma-spec.json`, `figma-spec.md`, and a generated preview PNG. Use it to write the implementation mockup for the current AI-DLC unit. Do not rerun extraction unless the preview indicates it is a board that needs child-frame images.",
+      "expected_output": "Reads figma-spec.md and the existing preview image first; records a Visual Extraction Decision; if it is a single focused screen, proceeds without --child-images and explains why; if it is multi-screen, component-board, dense, or unclear, reruns figma-design with --child-images and reads the child previews before finalizing mockup.html.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "u2-a1",
+          "name": "Reuses existing matching artifacts",
+          "description": "Output checks existing figma-spec.md/source metadata instead of blindly rerunning extraction."
+        },
+        {
+          "id": "u2-a2",
+          "name": "Preview read gates child-image decision",
+          "description": "Output bases the run/skip/ask decision for --child-images on reading the preview image and states the reason."
+        },
+        {
+          "id": "u2-a3",
+          "name": "Visual limitation documented",
+          "description": "If no preview image can be read, output documents the limitation instead of claiming visual review was completed."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create an implementation mockup for the current AI-DLC unit. The app uses Magenta MDS (`@ocean-network-express/magenta-react`) and requirements mention Button, Input, Dialog, and Tag mappings, but there is no Figma URL, screenshot, preview PNG, or other design image in the repo. This is running from a design subagent, so do not ask me directly unless you need the main agent to collect missing input.",
+      "expected_output": "Runs the design-image gate before writing HTML, detects that no usable visual reference exists, and returns a subagent handoff status such as html_status=needs_design_image instead of generating a generic unsupported implementation mockup. The response should explain that a screenshot, Figma export, or Figma URL is needed, and should not claim Visual QA was completed.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "u3-a1",
+          "name": "Design image gate blocks unsupported prototype",
+          "description": "Output checks for Figma previews, screenshots, mockup images, or existing design artifacts before HTML generation and does not proceed when none exist."
+        },
+        {
+          "id": "u3-a2",
+          "name": "Subagent returns needs_design_image",
+          "description": "Because the prompt says this is a subagent flow, output returns a clear needs_design_image/html_status handoff instead of asking the user directly or creating HTML."
+        },
+        {
+          "id": "u3-a3",
+          "name": "No false Visual QA claim",
+          "description": "Output does not claim browser screenshot comparison or Visual QA completion when no design image exists."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Generate a full visual prototype for PO review for a Magenta MDS app. Requirements include a Figma URL with generated preview images that show a filter page in default, loading, empty, error, and selected-row states. The prototype should be static HTML and saved under `aidlc-docs/design-artifacts/prototype/booking-filter/`, but we will later use it as a visual reference for real `@ocean-network-express/magenta-react` code, so make it obvious which MDS components each important element maps to. Keep the prototype lean: do not create a separate full page for each minor state.",
+      "expected_output": "Invokes figma-design as needed, reads preview images before HTML generation, selects prototype mode, invokes magenta-mds for component and token mapping, writes a static HTML prototype under aidlc-docs/design-artifacts/prototype/booking-filter/ without React imports, consolidates minor states into toggles/tabs/variant strips or annotated changed regions rather than one full page per state, includes data-mds-component/data-mds-props/data-mds-confidence on meaningful elements, writes README.md with an MDS Component Map and merged-state mapping, and runs browser visual QA against the design image when browser tooling is available. If running in a subagent and browser tooling is unavailable, returns visual_qa=pending:main-agent with artifact path, design image source, reason, and recommended breakpoints.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "u4-a1",
+          "name": "MDS guidance used for prototype",
+          "description": "Output shows magenta-mds informed component names, props, variants, tokens, or icons before the HTML prototype was finalized."
+        },
+        {
+          "id": "u4-a1b",
+          "name": "Prototype saved to design artifacts path",
+          "description": "Generated prototype files are saved under aidlc-docs/design-artifacts/prototype/booking-filter/."
+        },
+        {
+          "id": "u4-a2",
+          "name": "Static HTML does not import React MDS",
+          "description": "Generated prototype is plain HTML/CSS/JS and does not import @ocean-network-express/magenta-react unless the prompt explicitly requested React."
+        },
+        {
+          "id": "u4-a3",
+          "name": "HTML includes MDS traceability attributes",
+          "description": "Meaningful mapped elements include data-mds-component, data-mds-props, and data-mds-confidence attributes."
+        },
+        {
+          "id": "u4-a4",
+          "name": "README includes MDS Component Map",
+          "description": "Generated README.md includes a table mapping HTML selectors/elements to intended MDS components, props/variants, confidence, and notes."
+        },
+        {
+          "id": "u4-a5",
+          "name": "Browser visual QA attempted when possible",
+          "description": "When browser tooling and a design image are available, output captures or attempts screenshots at 375px, 768px, and 1280px, compares with the design image, and fixes or documents gaps."
+        },
+        {
+          "id": "u4-a6",
+          "name": "Subagent escalates visual QA to main agent",
+          "description": "If browser validation cannot run in a subagent, output returns visual_qa=pending:main-agent with artifact path, design image source, reason, and recommended breakpoints instead of silently skipping QA."
+        },
+        {
+          "id": "u4-a7",
+          "name": "Prototype merges minor states",
+          "description": "Generated prototype keeps top-level pages for distinct flows/layouts and represents loading, empty, error, selected, and disabled variants inside the nearest page rather than duplicating the full page per state."
+        },
+        {
+          "id": "u4-a8",
+          "name": "README maps merged states",
+          "description": "README documents which source frames/states were represented by each page or variant region so reviewers can trace coverage without bloated HTML."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use the existing local design screenshot in the spec folder to create only the single-file implementation mockup for an MDS-backed dialog flow. Save it to `aidlc-docs/specs/dialog-flow/mockup.html`. After generating it, use the available browser tool or chrome-devtools to capture the mockup and compare it with the screenshot. If spacing, component sizing, or typography is off, fix the HTML/CSS and re-check, but keep it implementation-focused.",
+      "expected_output": "Finds and reads the existing design screenshot before writing HTML, creates exactly one static MDS-aware implementation mockup at aidlc-docs/specs/dialog-flow/mockup.html, includes lean provenance metadata, visible state sections, MDS component traceability, and an embedded MDS Component Map inside mockup.html, uses browser tooling or chrome-devtools to capture screenshots at required breakpoints when practical, compares against the design screenshot, fixes or documents detected gaps, and records Visual QA evidence only if validation actually ran. If browser validation cannot run from a subagent, returns visual_qa=pending:main-agent with enough paths/context for the main agent to verify and fix it.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "u5-a1",
+          "name": "Existing design image reused",
+          "description": "Output searches for and reads the local design screenshot from the spec folder before creating the mockup."
+        },
+        {
+          "id": "u5-a2",
+          "name": "Mockup saved as single index file",
+          "description": "Generated output is exactly aidlc-docs/specs/dialog-flow/mockup.html and does not create additional HTML files."
+        },
+        {
+          "id": "u5-a2b",
+          "name": "MDS map embedded in index",
+          "description": "The implementation mockup embeds the MDS Component Map and implementation notes inside mockup.html instead of relying on README.md."
+        },
+        {
+          "id": "u5-a3",
+          "name": "Visual gaps fixed or documented",
+          "description": "Output compares captured prototype screenshots to the design image and either updates the HTML/CSS or documents unresolved differences."
+        },
+        {
+          "id": "u5-a4",
+          "name": "Visual QA only claimed when run",
+          "description": "Visual QA evidence is added only if browser capture/comparison actually ran; otherwise the limitation is documented."
+        },
+        {
+          "id": "u5-a5",
+          "name": "Main agent QA handoff includes required context",
+          "description": "When browser QA cannot run in a subagent, output includes visual_qa=pending:main-agent, mockup path, design image source, reason, and recommended breakpoints."
+        },
+        {
+          "id": "u5-a6",
+          "name": "Mockup avoids long vertical state scroll",
+          "description": "For dialog flows with multiple states, generated mockup.html keeps states in tabs or compact changed-region panels and does not duplicate the full dialog for each minor state."
+        },
+        {
+          "id": "u5-a7",
+          "name": "Large support sections collapsed",
+          "description": "Generated mockup.html collapses large support sections such as metadata, implementation notes, visual extraction details, and MDS component maps by default."
+        },
+        {
+          "id": "u5-a8",
+          "name": "Browser opens generated mockup",
+          "description": "When a design image exists, output opens or attempts to open the generated mockup.html with a built-in browser tool, browser automation, or chrome-devtools before claiming completion."
+        },
+        {
+          "id": "u5-a9",
+          "name": "Browser QA handoff includes attempted tool",
+          "description": "If browser validation cannot run in a subagent, output returns visual_qa=pending:main-agent with mockup path, design image source, attempted browser tool, reason, and recommended breakpoints."
+        }
+      ]
+    }
+  ]
+}

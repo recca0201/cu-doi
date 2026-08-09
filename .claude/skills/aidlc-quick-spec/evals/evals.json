@@ -1,0 +1,82 @@
+{
+  "skill_name": "aidlc-quick-spec",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-medium-feature",
+      "prompt": "I want to add a 'Remember me' checkbox to our login form. When the user checks it, the auth token should persist across browser restarts (localStorage instead of sessionStorage). When unchecked, behavior stays the same. Touches the login form component, the useAuth hook, and probably the logout function. I'd like a spec doc for this so I can review it before you start coding — but I don't need a separate design doc, this is pretty straightforward.",
+      "expected_output": "Single spec.md at aidlc-docs/specs/login-remember-me/spec.md (or similar kebab-case name) with Goal, Requirements (traceable acceptance criteria without checkbox markers), Design (the technical solution following existing codebase patterns, with any user-confirmed decisions recorded — not a menu of approaches), File Structure (3 files with specific paths), and checkboxed Tasks with exact Files list, Implements lines tracing to requirement IDs, Interfaces blocks where tasks depend on each other, one-action steps, optional code snippets only when needed to reduce ambiguity, exact commands, and expected output. No placeholders. Before the user gate, the skill spawns ai-assistant-product-owner (Goal/Requirements) and ai-solutions-architect (Design/File Structure/Tasks) review subagents — or runs both checklists explicitly if subagents are unavailable — then stops and waits for user approval before writing any code. After approval, the skill honors an explicit inline or subagent instruction without another question; when the approach is unspecified, it asks once before implementation with a recommendation based on the task graph.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "borderline-vibe-with-record",
+      "prompt": "Quick one — fix the bug where the password field doesn't clear after a failed login attempt. Should clear on any error response. But please write a small spec.md for it, I want a record of what we changed and why for the security review next month.",
+      "expected_output": "Short spec.md (proportional to the task — likely 1-2 requirement criteria, 1-paragraph Design, 1-2 files in File Structure, 1-2 tasks). Skill should NOT bloat the spec just because the format has 5 sections, and the review pass should stay proportional too. Skill stops for user approval after review.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "large-scope-explicit-quick-spec",
+      "prompt": "Add OAuth login (Google + GitHub) to our app. Right now we only have email/password. Should integrate with our existing user model. I'd like a quick spec for this — single approval gate is fine, I don't want to do the full 4-phase thing.",
+      "expected_output": "The skill recognizes that OAuth is outside the recommended quick-spec boundary, briefly recommends aidlc-spec-driven and explains the risk, but honors the user's explicit request for quick-spec with one approval gate and continues the quick-spec workflow. It does not silently switch workflows or refuse solely because the scope is large.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "discovery-asks-before-vague-spec",
+      "prompt": "Write a quick spec for adding export to the admin dashboard.",
+      "expected_output": "Skill should use Step 3 (Understand the Requirements) before writing spec.md because important behavior is unclear or ambiguous. It should ask a concrete spec-shaping question about scope, success, behavior, constraints, or verification, and should not produce a final spec.md until that answer is resolved.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "approved-implement-all-mode-unspecified",
+      "prompt": "aidlc-docs/specs/login-remember-me/spec.md is approved. Implement all tasks.",
+      "expected_output": "The skill treats every unchecked task in spec.md as the requested scope, runs the pre-flight check, and asks exactly once whether to execute inline or subagent-driven because the prompt does not select an approach. It recommends based on task dependencies and does not edit implementation files before the user chooses.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "approved-implement-all-explicit-inline",
+      "prompt": "aidlc-docs/specs/login-remember-me/spec.md is approved. Implement all tasks inline in this session and do not spawn implementation subagents.",
+      "expected_output": "The skill selects all unchecked tasks, does not ask an execution-approach question, updates the spec to In Progress, reads inline-execution.md, and executes tasks continuously in order with per-task verification and checkbox updates.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "approved-implement-all-explicit-subagents",
+      "prompt": "aidlc-docs/specs/login-remember-me/spec.md is approved. Implement all tasks using subagents.",
+      "expected_output": "The skill does not ask another execution-approach question. It updates the spec to In Progress and spawns one ai-orchestration-engineer implementer at a time in task order with an explicit model, records a pre-spawn baseline including exact staged and unstaged diffs for pre-existing dirty files, passes those changes as work to preserve, verifies changed-file scope and reruns each task verification before checking it off, never spawns implementation subagents in parallel, and gives implementers a scoped prompt that prevents reloading AIDLC workflow skills and leaves changes uncommitted without staging or committing.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "subagent-selection-unavailable",
+      "prompt": "The approved quick spec should be implemented with subagents, but this session cannot spawn subagents.",
+      "expected_output": "The skill does not silently fall back to inline execution. It stops before implementation and asks whether the user wants to switch to inline execution.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "separate-tasks-file-routes-to-spec-driven",
+      "prompt": "/aidlc:construction:execute-task aidlc-docs/specs/proactive-deadline-watchdog/tasks.md Implement all tasks",
+      "expected_output": "The quick-spec skill recognizes that separate requirements.md, design.md, and tasks.md artifacts belong to aidlc-spec-driven and routes there. It does not claim that quick-spec execution-mode rules control this command.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "completion-review-blockers-keep-in-progress",
+      "prompt": "All tasks in aidlc-docs/specs/login-remember-me/spec.md are checked off and each passed its own verification. The change touched 5 files, so the completion aidlc-code-review ran — it found one blocking finding: the logout function still reads the token from sessionStorage only. Wrap up the quick-spec.",
+      "expected_output": "The skill does not mark the spec Complete and does not claim the work is done. The spec status stays In Progress and the ticked checkboxes are left as-is (each task passed its own verification). The blocking finding is fixed per the active approach (inline directly, or one fixer subagent carrying the complete findings list in subagent mode), the affected verification is re-run, and the review is re-run because it raised the blockers. Only after both pass clean does the skill flip the status to Complete and report with evidence.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "resume-all-checked-still-in-progress",
+      "prompt": "Resume aidlc-docs/specs/login-remember-me/spec.md. Its status is In Progress and every task checkbox is already ticked.",
+      "expected_output": "The skill recognizes that ticked checkboxes record per-task implementation and verification only, not spec completion. It does not redo any task and does not report the spec as done on the checkboxes alone. It re-enters the Completion steps: final lint/build, the conditional aidlc-code-review when its triggers apply, then the status update to Complete only when those pass clean.",
+      "files": []
+    }
+  ]
+}

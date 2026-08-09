@@ -1,0 +1,545 @@
+{
+  "skill_name": "aidlc-spec-driven",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Inside the provided sandbox, start a new AI-DLC spec named cross-team-okr-sync for a feature that lets HOA leads bulk-sync weekly OKR status from division spreadsheets into a management summary workspace. The sandbox does not include foundation docs. Continue the normal spec-driven workflow without blocking on that missing context, and create only the Phase 1 requirements artifact.",
+      "expected_output": "The assistant should continue without foundation docs, create requirements.md, and briefly note that foundation context was unavailable rather than blocking the workflow.",
+      "files": [],
+      "expectations": [
+        "A requirements.md file is created for cross-team-okr-sync in the sandbox spec directory.",
+        "The response notes that foundation docs were unavailable or missing without treating that as a blocker.",
+        "No design.md or tasks.md file is created for cross-team-okr-sync in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Inside the provided sandbox, create the Phase 1 requirements doc for spec copilot-usage-rollup. Feature details: as a TA manager, I want a weekly GitHub Copilot usage rollup that aggregates seat activity by team member and flags inactive seats for 14+ days so that I can coach adoption and reclaim unused licenses. Scope: ingest a weekly CSV export, normalize usernames to employee IDs using existing team roster data, show per-member totals for suggestions accepted and lines accepted, let managers filter by division and period, and surface rows with missing roster matches. Constraints: read-only reporting only, no writes back to GitHub, keep historical weekly snapshots, and keep the UI usable on laptop screens. Edge cases: empty CSV, duplicate usernames, unknown users, and stale roster data. Produce only requirements.md in the standard spec location.",
+      "expected_output": "The assistant should create requirements.md in the spec folder with a feature summary, user story, numbered EARS-style acceptance criteria, the required Next Steps section, and a Product Owner review gate before asking for user approval.",
+      "files": [],
+      "expectations": [
+        "A requirements.md file is created at aidlc-docs/specs/copilot-usage-rollup/requirements.md inside the sandbox.",
+        "The requirements document includes a user story line beginning with 'As a TA manager'.",
+        "The requirements document includes numbered acceptance criteria using 'shall' language.",
+        "The requirements document covers inactive-seat detection or unresolved user mapping behavior.",
+        "The requirements document includes the required Next Steps section.",
+        "After the first complete saved draft, output indicates Product Owner review ran with a PASS, FIX_BEFORE_USER_REVIEW, or NEEDS_USER_DECISION verdict, or explicitly states delegated subagent review was unavailable and an inline review checklist was used instead.",
+        "Product Owner review is review-only: the response does not claim the subagent edited requirements.md directly, and clear blocking fixes are applied by the parent before user approval.",
+        "The assistant does not ask whether requirements look good or suggest moving to Phase 2 until the Product Owner review gate has passed or a required user decision is surfaced.",
+        "No design.md or tasks.md file is created for copilot-usage-rollup in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Inside the provided sandbox, continue the existing copilot-usage-rollup spec and create the implementation task plan only. The requirements and design are already approved. Keep the tasks actionable for a coding agent, reference granular requirements, stay within planning only, and stop after tasks.md is ready.",
+      "expected_output": "The assistant should create tasks.md with numbered checkbox tasks, requirement references, file targets, and the required Next Steps section without implementing code.",
+      "files": [],
+      "expectations": [
+        "A tasks.md file is created at aidlc-docs/specs/copilot-usage-rollup/tasks.md inside the sandbox.",
+        "The task plan contains checkbox items with decimal numbering such as 1.1 or 2.1.",
+        "The task plan references specific requirements from the requirements document.",
+        "The task plan names files or components to create or modify.",
+        "The task plan includes the required Next Steps section.",
+        "No implementation source code files are created in the sandbox outside the spec documents for this eval."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Inside the provided sandbox, continue the approved copilot-usage-rollup spec at Phase 2 and create only design.md. Base the design on the existing requirements, analyze the current codebase in the sandbox, include architecture, components and interfaces, data models, error handling, testing strategy, and end with the required Next Steps section.",
+      "expected_output": "The assistant should create design.md only, grounded in the approved requirements and codebase context, with the required sections and Next Steps.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/copilot-usage-rollup/design.md inside the sandbox.",
+        "The design document includes the sections Overview, Architecture, Components and Interfaces, Data Models, Error Handling, and Testing Strategy.",
+        "The design document reflects codebase analysis or integration points rather than only restating the requirements.",
+        "The design document includes the required Next Steps section.",
+        "No tasks.md or implementation source files are created for copilot-usage-rollup in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Inside the provided sandbox, continue the approved copilot-usage-rollup spec at Phase 4 and execute task 1.1 only. Read the spec docs first, implement the requested code change, run the available verification steps that make sense for the sandbox, update the checkbox for task 1.1, and report any skipped verification steps with reasons.",
+      "expected_output": "The assistant should implement the requested task, run or explicitly skip verification steps with reasons, run or explicitly skip `aidlc-code-review`, and update the matching checkbox in tasks.md.",
+      "files": [],
+      "expectations": [
+        "A source-code or test file is created or modified to implement task 1.1.",
+        "The response or transcript shows the requirements.md, design.md, and tasks.md files were read before implementation.",
+        "The run records verification activity for lint, tests, build, and runtime, or explicitly states why a step was skipped.",
+        "The run records `aidlc-code-review` execution for the implemented task, or explicitly states why code review was skipped.",
+        "The checkbox for task 1.1 is marked complete in tasks.md after implementation.",
+        "The response reports verification results instead of only claiming the task was completed."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Inside the provided sandbox, continue the approved spec manager-dashboard-redesign at Phase 2 and create only design.md. The feature is frontend-heavy: redesign the manager dashboard so team leads can scan squad health, filter by period, open a detail drawer, and act on alerts from a laptop without losing context. Base the design on the existing requirements, analyze the current frontend code in the sandbox, read any available uiux-guideline.md, and include architecture, components and interfaces, data models, error handling, testing strategy, and the required Next Steps section.",
+      "expected_output": "The assistant should create a frontend-aware design grounded in the existing codebase and UI/UX guidance, including component hierarchy, user flow, responsive behavior, and accessibility expectations inside the standard design sections.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/manager-dashboard-redesign/design.md inside the sandbox.",
+        "The design document includes the sections Overview, Architecture, Components and Interfaces, Data Models, Error Handling, and Testing Strategy.",
+        "The design reflects existing frontend codebase patterns or integration points rather than only restating the requirements.",
+        "The design document describes screen or component hierarchy and the primary manager user flow.",
+        "The design document captures responsive or laptop-oriented behavior and accessibility expectations for the UI.",
+        "The design document references UI/UX guidance when available, or explicitly notes that it was unavailable.",
+        "The design document includes the required Next Steps section."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Inside the provided sandbox, continue the approved manager-dashboard-redesign spec and create the implementation task plan only. The requirements and design are already approved. Keep the tasks actionable for a coding agent, preserve the frontend design intent, reference granular requirements, stay within planning only, and stop after tasks.md is ready.",
+      "expected_output": "The assistant should create a frontend implementation task plan that turns the approved UI design into concrete coding steps, including screen or component work, interaction states, accessibility, and testing coverage.",
+      "files": [],
+      "expectations": [
+        "A tasks.md file is created at aidlc-docs/specs/manager-dashboard-redesign/tasks.md inside the sandbox.",
+        "The task plan contains checkbox items with decimal numbering such as 1.1 or 2.1.",
+        "The task plan references specific requirements from the requirements document.",
+        "The task plan names concrete frontend files, screens, routes, or components to create or modify.",
+        "The task plan includes explicit UI implementation work rather than only generic data or integration tasks.",
+        "The task plan includes frontend testing, interaction-state handling, or accessibility-oriented tasks where relevant.",
+        "The task plan includes the required Next Steps section.",
+        "No implementation source code files are created in the sandbox outside the spec documents for this eval."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Inside the provided sandbox, the copilot-usage-rollup spec has all tasks completed in Phase 4 (tasks 1.1 through 3.2 are all marked done in tasks.md). Now run the full-unit code review for the entire unit. Do not run the review inline — this is a full-unit scope, so delegate to the appropriate dedicated agent session.",
+      "expected_output": "The assistant should recognize this as a full-unit review scope and instruct spawning a dedicated agent session using subagent_type 'ai-orchestration-engineer', passing the unit slug, spec path, and scope. It should NOT attempt to run the 3-stage review pipeline inline in the current session.",
+      "files": [],
+      "expectations": [
+        "The response identifies the review scope as full-unit (not per-task) based on all tasks being complete.",
+        "The response delegates the review to a fresh review-only subagent and uses subagent type 'ai-orchestration-engineer' when the harness supports named types.",
+        "The response does not run the Stage 1, Stage 2, or Stage 3 review pipeline inline in the current session.",
+        "The response passes the unit slug 'copilot-usage-rollup', the spec path 'aidlc-docs/specs/copilot-usage-rollup/', and scope context to the spawned agent.",
+        "The response explains that a dedicated agent session is used to avoid bloating the current context."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Inside the provided sandbox, continue the approved create-invoice-dialog spec at Phase 2 and create only design.md. The requirements.md contains a supported Figma design URL and there is no mockup.html yet. Use the Phase 2 UI handoff flow: delegate mockup.html generation to the design orchestrator, require the JSON handoff contract, and do not draft design.md until the handoff succeeds.",
+      "expected_output": "The assistant should delegate to the UI handoff path before Phase 2 design, require a valid mockup.html, and then create design.md with only a lean UI extract.",
+      "files": [],
+      "expectations": [
+        "The response or transcript shows that ai-design-orchestrator / aidlc-uiux-design is used before Phase 2 design.",
+        "The response requires or records a JSON handoff object with fields such as status, mockup_exists, metadata_valid, and figma_artifacts_complete.",
+        "The assistant does not invoke figma-design directly from aidlc-spec-driven Phase 2 to create mockup.html.",
+        "A design.md file is created only after the UI/UX handoff succeeds or after an explicitly documented user-approved failure.",
+        "The design.md links to mockup.html and includes only a lean implementation-critical UI extract."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Inside the provided sandbox, continue the approved booking-details-panel spec at Phase 2. A mockup.html already exists, but its metadata points to a different Figma file key than the Figma URL in requirements.md. Create design.md only after handling the stale UI handoff correctly.",
+      "expected_output": "The assistant should detect stale/mismatched UI/UX provenance, refresh through aidlc-uiux-design or stop for clarification, and avoid using the stale UI spec as authoritative.",
+      "files": [],
+      "expectations": [
+        "The assistant compares the requirements Figma file key/node ID with mockup.html metadata.",
+        "The assistant identifies the existing mockup.html as stale or mismatched.",
+        "The assistant routes the refresh through ai-design-orchestrator / aidlc-uiux-design rather than manually editing mockup.html in Phase 2.",
+        "The assistant does not present design.md as complete using the stale UI handoff."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Inside the provided sandbox, continue the approved partner-onboarding spec at Phase 2. Requirements include a FigJam/board URL, not a supported Figma design/file/proto URL, and the feature is mostly backend workflow with no UI screens. Create design.md without blocking unnecessarily.",
+      "expected_output": "The assistant should treat the unsupported Figma URL as non-blocking when incidental, document the limitation, and proceed with Phase 2 design from requirements and codebase context.",
+      "files": [],
+      "expectations": [
+        "The assistant recognizes the Figma URL type is unsupported for extraction.",
+        "The assistant does not block indefinitely waiting for a design/file/proto URL when the link is incidental to a backend-heavy feature.",
+        "The design.md notes the unsupported Figma link or missing UI context if relevant.",
+        "No mockup.html is hand-authored by aidlc-spec-driven Phase 2."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Inside the provided sandbox, continue the approved dispute-resolution-modal spec at Phase 2. Requirements contain a supported Figma URL, but Figma credentials are unavailable and aidlc-uiux-design returns a failed JSON handoff with user_approved_continue_without_ui_handoff=false. Do not ask me for more information; handle the gate correctly.",
+      "expected_output": "The assistant should not proceed to draft design.md because UI handoff is required and the user did not approve continuing without it.",
+      "files": [],
+      "expectations": [
+        "The assistant treats the failed UI handoff as a blocking condition because user_approved_continue_without_ui_handoff is false.",
+        "The assistant does not create design.md as Phase 2 complete.",
+        "The response explains the required next action: retry UI handoff generation, provide credentials/artifacts, or explicitly approve continuing without mockup.html."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Inside the provided sandbox, continue the approved settings-redesign spec at Phase 2. A valid mockup.html exists with matching metadata, preview paths, visible state sections, and MDS confidence. Create design.md and keep the UI Design Specification section concise.",
+      "expected_output": "The assistant should consume the valid UI handoff, create design.md, link to mockup.html, and avoid duplicating full UI detail.",
+      "files": [],
+      "expectations": [
+        "The assistant validates or trusts the matching mockup.html metadata before using it.",
+        "The design.md includes a link to mockup.html.",
+        "The UI Design Specification section is concise and does not duplicate full wireframes, token tables, accessibility checklists, or detailed component trees.",
+        "The design.md preserves implementation-critical MDS mapping confidence or carries ambiguity into Open Questions."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 2.1 for the approved copilot-usage-rollup spec. Implement the requested code task in the active ai-orchestration-engineer session. Do not spawn a subagent for implementation. After verification passes, delegate only the code review gate to ai-orchestration-engineer with aidlc-code-review.",
+      "expected_output": "The assistant should keep implementation in the active session, load aidlc-spec-driven, read the required spec files, create verification todos, run or explicitly skip verification steps with reasons, spawn a review subagent only after verification for the code-changing task, and update tasks.md only after review has no blockers.",
+      "files": [],
+      "expectations": [
+        "The transcript shows aidlc-spec-driven is invoked before implementation.",
+        "The assistant does not spawn a subagent for implementation or execution.",
+        "The assistant resolves the unit/spec slug, task number, and task type before editing.",
+        "Verification todos or equivalent verification tracking are created before completion.",
+        "A dedicated ai-orchestration-engineer subagent is spawned only for aidlc-code-review after verification passes.",
+        "The task checkbox is updated only after verification and review report no blocking findings."
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 1.4 for the approved release-notes-cleanup spec. The task is documentation-only and does not change implementation code. Follow Phase 4 gates, but do not run a code review subagent unless code actually changes.",
+      "expected_output": "The assistant should load aidlc-spec-driven, resolve the task as documentation-only, make only the requested documentation change, run applicable verification or explain skipped steps, explicitly skip aidlc-code-review because no code changed, and update tasks.md only after verification is complete.",
+      "files": [],
+      "expectations": [
+        "The assistant identifies the task as documentation-only or no-code before editing.",
+        "The assistant does not spawn an implementation subagent.",
+        "The assistant does not spawn an aidlc-code-review subagent for the no-code task.",
+        "The response explicitly states why code review was skipped.",
+        "The task checkbox is updated only after applicable verification completes or is explicitly skipped with reasons."
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 3.2 for the approved manager-dashboard-redesign spec. This is a visible UI task and mockup.html exists. Implement in the active session, verify against mockup.html, and delegate only the post-verification code review.",
+      "expected_output": "The assistant should read mockup.html before UI implementation, keep implementation in the active session, run UI-specific verification including mockup.html cross-check and browser/design comparison when possible, pass UI touched and mockup.html presence in the review handoff, and delegate only review to the ai-orchestration-engineer subagent.",
+      "files": [],
+      "expectations": [
+        "The assistant reads mockup.html before implementing the UI task.",
+        "The assistant does not spawn a subagent for implementation.",
+        "The verification evidence includes UI spec cross-check and browser visual comparison, or explicit skip reasons.",
+        "The review handoff includes whether UI files changed and whether mockup.html exists.",
+        "The review subagent is constrained to review only and not update tasks.md."
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 4.1 for the approved cargo-dashboard-redesign spec. This is a FE-heavy page layout task with mockup.html, uiux-guideline.md, and preview images available. Implement in the active session and do not mark complete unless the rendered structure, layout, responsive behavior, and states are verified against the approved design sources.",
+      "expected_output": "The assistant should classify the task as FE-heavy UI, read mockup.html (the UI source of truth), uiux-guideline.md, and preview images before coding, create a UI implementation checklist, run visual/responsive verification or explicit skip paths, include UI quality evidence in the review handoff, and delegate only the review gate. It does not depend on the Figma extraction as an implementation baseline.",
+      "files": [],
+      "expectations": [
+        "The assistant classifies the task as FE-heavy UI before editing.",
+        "The assistant reads mockup.html, uiux-guideline.md, and preview images when available before implementation, and does not treat the Figma extraction as a required implementation source.",
+        "The assistant creates or reports a UI implementation checklist covering layout structure, component mapping, token mapping, responsive breakpoints, and required states.",
+        "Verification includes rendered layout fidelity and mobile/desktop responsive checks, or explicit skip reasons.",
+        "The review handoff includes UI source artifacts read, design-system mapping, viewport/browser checks, screenshots or skip reasons, and unresolved visual gaps."
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 2.3 for the approved booking-filter-panel spec. The app uses @ocean-network-express/magenta-react and mockup.html maps the controls to Magenta Select, Button, Tag, and Dialog variants. Implement the UI without inventing custom controls or raw token values.",
+      "expected_output": "The assistant should detect Magenta/MDS as the design system, use magenta-mds guidance before implementing UI, prefer confirmed MDS components and variants, avoid invented props or raw values where tokens exist, verify design-system alignment, and pass that evidence to code review.",
+      "files": [],
+      "expectations": [
+        "The assistant detects Magenta/MDS from dependencies, foundation docs, nearby code, or mockup.html.",
+        "The assistant invokes or explicitly uses magenta-mds guidance before implementing the UI task.",
+        "The implementation plan prefers confirmed MDS components and valid variants over ad hoc custom controls.",
+        "Verification checks component/token alignment against mockup.html and Magenta/MDS guidance.",
+        "The review handoff includes the design-system decision and component/token mapping evidence."
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Inside the provided sandbox, run /aidlc.construction.execute-task 5.2 for the approved exception-resolution-drawer spec. It is a FE-heavy drawer layout task, but the local app cannot be launched because required environment variables are missing. Follow the UI quality gate honestly instead of claiming visual alignment.",
+      "expected_output": "The assistant should still read the UI sources, implement the requested scope, run static and build verification when possible, explicitly report that browser visual comparison could not run because the app cannot launch, ask the user to capture/provide design/reference and implemented UI screenshots when automated capture is unavailable, avoid claiming Figma/design alignment, and require review to evaluate the available UI evidence plus the documented visual verification gap.",
+      "files": [],
+      "expectations": [
+        "The assistant reads available UI design sources before implementation.",
+        "The assistant attempts applicable non-browser verification such as lint, tests, build, or type-check.",
+        "The assistant explicitly states browser visual comparison could not run and why.",
+        "The assistant asks the user to capture or provide design/reference and implemented UI screenshots when automated capture is unavailable.",
+        "The assistant does not claim visual/Figma alignment when browser comparison was skipped.",
+        "The review handoff includes the visual verification gap as an unresolved risk or skip reason."
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Inside the provided sandbox, create the Phase 1 requirements doc for spec shipment-exception-triage using --template checklist. Feature details: as an operations coordinator, I want to review shipment exceptions from a queue, assign an owner, and mark resolution outcomes so that urgent exceptions are not lost between shifts. Scope: filter by severity and status, bulk-assign selected exceptions, capture resolution notes, and show empty/error states. Produce only requirements.md in the standard spec location.",
+      "expected_output": "The assistant should compose requirements.md from the spec-driven document wrapper and the shared checklist story-block format: include the spec wrapper sections and Next Steps, while using checklist acceptance criteria with stable trace IDs.",
+      "files": [],
+      "expectations": [
+        "A requirements.md file is created at aidlc-docs/specs/shipment-exception-triage/requirements.md inside the sandbox.",
+        "The requirements document includes the spec wrapper sections '# Requirements:', '## Introduction', '## Requirements', and '## Next Steps'.",
+        "The requirements document includes a user story line beginning with 'As an operations coordinator'.",
+        "Acceptance criteria use Markdown checklist items with - [ ] and stable IDs such as 1.1 or 2.1.",
+        "Acceptance criteria are grouped under numbered category headings rather than Given/When/Then tables.",
+        "The requirements document covers ownership assignment, resolution notes, and empty or error states.",
+        "No design.md or tasks.md file is created for shipment-exception-triage in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "Inside the provided sandbox, create the Phase 1 requirements doc for spec vendor-credit-review using the checklist requirements format. Feature details: as a finance analyst, I want to review vendor credit requests, approve or reject them with notes, and see pending items by aging bucket so that high-risk requests are handled before month-end close. Produce only requirements.md in the standard spec location.",
+      "expected_output": "The assistant should treat the natural-language checklist request as an explicit template selection, pass/use the equivalent of --template checklist, and create requirements.md with checklist acceptance criteria instead of using config or the default template.",
+      "files": [],
+      "expectations": [
+        "A requirements.md file is created at aidlc-docs/specs/vendor-credit-review/requirements.md inside the sandbox.",
+        "The assistant treats 'checklist requirements format' as explicit template selection.",
+        "Acceptance criteria use Markdown checklist items with - [ ] and stable IDs such as 1.1 or 2.1.",
+        "Acceptance criteria are not written as Given/When/Then table rows.",
+        "No design.md or tasks.md file is created for vendor-credit-review in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "Inside the provided sandbox, start from the child app folder apps/mtv-aidlc-vscode and create the Phase 1 requirements doc for spec vendor-aging-alerts. Do not provide any --template argument. The workspace root has .mtv-aidlc/extension-config.json with userStory.template set to given-when-then-table. Feature details: as a finance manager, I want vendor aging alerts grouped by overdue bucket so that month-end follow-up is prioritized. Produce only requirements.md in the standard spec location.",
+      "expected_output": "The assistant should omit --template, let aidlc-spec-driven find the workspace-root config from the child app path, and create requirements.md using the configured Given/When/Then table format instead of the built-in default.",
+      "files": [],
+      "expectations": [
+        "A requirements.md file is created at aidlc-docs/specs/vendor-aging-alerts/requirements.md inside the sandbox.",
+        "The assistant does not pass or invent --template default when no template argument is provided.",
+        "The assistant resolves .mtv-aidlc/extension-config.json from the workspace root rather than looking only inside apps/mtv-aidlc-vscode.",
+        "Acceptance criteria use a Given/When/Then table with columns such as Given, When, and Then.",
+        "Acceptance criteria are not written as default EARS-style bullet criteria.",
+        "No design.md or tasks.md file is created for vendor-aging-alerts in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "Inside the provided sandbox, continue the approved invoice-dispute-routing spec at Phase 2 from the child app folder apps/mtv-aidlc-vscode. Do not provide any --design-template argument. The workspace root has .mtv-aidlc/extension-config.json with designDocument.template set to custom and designDocument.customTemplatePath pointing to a readable custom design guidance file. Create only design.md.",
+      "expected_output": "The assistant should omit --design-template, let aidlc-spec-driven resolve the workspace-root custom design guidance, and avoid forcing the built-in standard design template as an explicit argument.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/invoice-dispute-routing/design.md inside the sandbox.",
+        "The assistant does not pass or invent --design-template standard when no design-template argument is provided.",
+        "The assistant resolves designDocument.template from the workspace-root .mtv-aidlc/extension-config.json, even when starting from apps/mtv-aidlc-vscode.",
+        "The selected design guidance is the configured custom guidance, or the transcript clearly shows custom design-template resolution.",
+        "No tasks.md or implementation source files are created for invoice-dispute-routing in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "Inside the provided sandbox, continue the approved vendor-credit-review spec and create the implementation task plan only from the child app folder apps/mtv-aidlc-vscode. Do not provide any --task-template argument. The workspace root has .mtv-aidlc/extension-config.json with implementationTask.template set to custom and implementationTask.customTemplatePath pointing to a readable custom task guidance file.",
+      "expected_output": "The assistant should omit --task-template, let aidlc-spec-driven resolve the workspace-root custom task guidance, and avoid forcing test-first as an explicit default.",
+      "files": [],
+      "expectations": [
+        "A tasks.md file is created at aidlc-docs/specs/vendor-credit-review/tasks.md inside the sandbox.",
+        "The assistant does not pass or invent --task-template test-first when no task-template argument is provided.",
+        "The assistant resolves implementationTask.template from the workspace-root .mtv-aidlc/extension-config.json, even when starting from apps/mtv-aidlc-vscode.",
+        "The selected task guidance is the configured custom guidance, or the transcript clearly shows custom task-template resolution.",
+        "The task plan remains planning-only and does not create implementation source files."
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "Inside the provided sandbox, start a new AI-DLC spec named admin-dashboard-export for the feature request: Add export to the admin dashboard. Use the normal Phase 1 requirements workflow.",
+      "expected_output": "The assistant should identify unresolved artifact-shaping decisions, ask clarification before generating, and stop without creating requirements.md.",
+      "files": [],
+      "expectations": [
+        "The assistant asks clarification before presenting or saving requirements.",
+        "The assistant asks about at least one artifact-shaping export decision such as export format, data scope, delivery mode, permissions, or failure behavior.",
+        "The assistant uses concrete options when choices are known and marks a recommended option with (Recommended).",
+        "No requirements.md file is created for admin-dashboard-export while the clarification is unresolved.",
+        "No design.md or tasks.md file is created for admin-dashboard-export."
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "Inside the provided sandbox, create the Phase 1 requirements doc for spec existing-user-profile-edit. Feature details: improve the existing user profile edit flow so account users can update display name and timezone using the current profile screen patterns. Produce only requirements.md in the standard spec location.",
+      "expected_output": "The assistant should do read-only codebase grounding for the existing profile flow before writing requirements, then create only requirements.md.",
+      "files": [],
+      "expectations": [
+        "The response or transcript shows read-only codebase analysis, such as finding or reading relevant existing profile files, routes, docs, or components.",
+        "The requirements reflect existing behavior, terminology, constraints, or integration points discovered from codebase grounding.",
+        "A requirements.md file is created at aidlc-docs/specs/existing-user-profile-edit/requirements.md inside the sandbox.",
+        "No implementation source files are created or modified.",
+        "No design.md or tasks.md file is created for existing-user-profile-edit in this Phase 1 eval."
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "Inside the provided sandbox, continue the approved license-reclaim-alerts spec at Phase 2 and create only design.md using the lean design template. The requirements are already approved. Analyze the existing codebase in the sandbox before drafting, keep the document short and decision-dense, include the architecture diagram, and stop after design.md is ready.",
+      "expected_output": "The assistant should resolve the lean design template, analyze the sandbox codebase, and produce a short design.md following the lean structure: Summary, Architecture with a Mermaid diagram, a Codebase Alignment table citing real sandbox file paths, Contracts & Data Changes, Edge Cases & Failure Handling, Testing Strategy, and Decisions & Open Questions.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/license-reclaim-alerts/design.md inside the sandbox.",
+        "The transcript shows the design-template guidance resolved to lean (explicit --design-template lean or built-in:lean/config:lean in the script output).",
+        "The design document contains the lean section headings: Summary, Architecture, Codebase Alignment, Contracts & Data Changes, Testing Strategy, and Decisions & Open Questions.",
+        "The Architecture section contains at least one Mermaid diagram that uses module or component names from the sandbox codebase.",
+        "The Codebase Alignment section contains a table where each new or modified element cites an existing sandbox file path it follows or reuses, or explicitly states no precedent exists.",
+        "Every file path cited in the Codebase Alignment table exists in the sandbox codebase.",
+        "The design.md body, excluding YAML frontmatter and the Next Steps section, is at most 150 lines.",
+        "The design document contains no full function, component, or test implementation bodies (code fences only hold contracts, schemas, or diagrams).",
+        "The design document includes the required Next Steps section.",
+        "No tasks.md or implementation source files are created for license-reclaim-alerts in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "Inside the provided sandbox, continue the approved okr-reminder-scheduler spec at Phase 2 and create only design.md. Do not select any design template in this request; the sandbox's .mtv-aidlc/extension-config.json already configures the design template. Analyze the existing codebase first and stop after design.md is ready. (Sandbox setup: extension-config.json sets designDocument.template to \"lean\".)",
+      "expected_output": "The assistant should omit the --design-template flag, let the script resolve the configured lean template from extension-config.json, and produce a lean-format design.md instead of the standard six-section layout.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/okr-reminder-scheduler/design.md inside the sandbox.",
+        "The transcript shows the design-template script was called without an explicit --design-template flag and resolved config:lean.",
+        "The design document uses the lean section layout (Summary, Codebase Alignment, Contracts & Data Changes, Decisions & Open Questions) rather than the standard six-section layout (no separate Components and Interfaces or Data Models sections).",
+        "The Codebase Alignment section cites existing sandbox file paths for reused or followed patterns.",
+        "The design.md body, excluding YAML frontmatter and the Next Steps section, is at most 150 lines.",
+        "No tasks.md or implementation source files are created for okr-reminder-scheduler in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "Inside the provided sandbox, continue the approved division-report-export spec at Phase 2 and create only design.md using the lean design template. The sandbox codebase already contains a working CSV export feature for team rosters (an export service, an API endpoint, and a download button component) that overlaps heavily with this feature. Base the design on the actual code you find, prefer reusing or extending the existing export logic over introducing parallel new implementations, and stop after design.md is ready.",
+      "expected_output": "The assistant should discover the existing roster export implementation during codebase analysis and design the new feature around it: reusing or extending the existing export service, endpoint conventions, and download component, with the Codebase Alignment table citing those real files, instead of inventing a duplicate export stack.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/division-report-export/design.md inside the sandbox.",
+        "The transcript shows the assistant read the existing roster export implementation files before drafting the design.",
+        "The Codebase Alignment table references the existing export service, endpoint, or download component by their real sandbox paths.",
+        "The design reuses or extends the existing export logic, or explicitly justifies in Decisions & Open Questions why reuse was rejected; it does not silently propose a parallel duplicate implementation.",
+        "Every file path cited in design.md exists in the sandbox codebase (no invented paths).",
+        "New elements follow naming and layering conventions consistent with the existing export feature or the sandbox foundation docs, and any deviation from foundation docs is noted in Decisions & Open Questions.",
+        "The design.md body, excluding YAML frontmatter and the Next Steps section, is at most 150 lines.",
+        "No tasks.md or implementation source files are created for division-report-export in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "Inside the provided sandbox, continue the approved audit-log-viewer spec at Phase 2 and create only design.md using the standard design template. Note: the sandbox's .mtv-aidlc/extension-config.json sets designDocument.template to \"lean\", but this request explicitly asks for the standard template. Stop after design.md is ready.",
+      "expected_output": "The assistant should treat the explicit request as the template selection, pass --design-template standard so it overrides the configured lean value, and produce a standard-format design.md with the six standard sections.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/audit-log-viewer/design.md inside the sandbox.",
+        "The transcript shows the design-template script was called with --design-template standard and resolved built-in:standard despite the configured lean template.",
+        "The design document includes the standard sections Overview, Architecture, Components and Interfaces, Data Models, Error Handling, and Testing Strategy.",
+        "The design document does not use the lean-only section layout (no Codebase Alignment or Contracts & Data Changes headings).",
+        "The design document includes the required Next Steps section.",
+        "No tasks.md or implementation source files are created for audit-log-viewer in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "Inside the provided sandbox, continue the approved team-health-cards spec at Phase 2 and create only design.md using the lean design template. A valid matching mockup.html with complete handoff metadata already exists in the spec folder. Consume the existing UI handoff (do not regenerate mockup.html), keep the design lean, and stop after design.md is ready.",
+      "expected_output": "The assistant should keep the lean document shape, include the optional UI Design Specification section linking to mockup.html with only implementation-critical constraints, capture visible UI states in Edge Cases & Failure Handling, and avoid duplicating the mockup's visual structure or token inventory.",
+      "files": [],
+      "expectations": [
+        "A design.md file is created at aidlc-docs/specs/team-health-cards/design.md inside the sandbox.",
+        "The design document uses the lean section layout and includes a UI Design Specification section with a link to mockup.html.",
+        "The UI Design Specification extract stays lean: it does not duplicate the mockup's full HTML structure, complete token inventory, or comprehensive design-system mapping.",
+        "The existing mockup.html is not regenerated or modified in this eval.",
+        "Empty, loading, validation, or error states visible to the user are captured in the Edge Cases & Failure Handling section.",
+        "The design.md body, excluding YAML frontmatter and the Next Steps section, is at most 150 lines.",
+        "No tasks.md or implementation source files are created for team-health-cards in this Phase 2 eval."
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "Use the aidlc-spec-driven skill. Continue the approved notification-digest spec in this project: execute all remaining tasks from aidlc-docs/specs/notification-digest/tasks.md using subagent-driven execution - dispatch implementer subagents for the task groups.",
+      "expected_output": "The assistant honors the explicit subagent-driven request: it announces subagent-driven execution without asking, dispatches one implementer subagent per task group in sequence, scope-checks and re-validates each return, writes no implementation code itself, and updates checkboxes only after full verification and the broad review pass.",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec"
+      ],
+      "expectations": [
+        "The session never asks the user to confirm the execution approach (no inline-vs-subagent question in the transcript); it announces subagent-driven execution and proceeds because the prompt explicitly requested implementer subagents.",
+        "Before the first spawn, the coordinator performs one pre-flight scan of the requested task groups for contradictions and proceeds without a user question because the base fixture is internally consistent.",
+        "Implementation is delegated: the transcript contains one ai-orchestration-engineer implementer Agent spawn per task group, spawned one at a time in sequence (2 implementer spawns for groups 1 and 2), not one per sub-task.",
+        "Every implementer and broad-reviewer Agent spawn supplies an explicit model argument selected from observable task or review complexity; no spawn silently inherits the parent session model.",
+        "Each implementer prompt stays close to the standard template: it names the project root, includes the full task-group text and allowed Files entries, and does not paste accumulated session history.",
+        "The top-level session makes no Edit/Write tool calls on src/ or tests/ implementation files (the coordinator writes no implementation code).",
+        "The transcript shows git baseline evidence (git diff --stat and/or git status --short) captured before spawning each group implementer.",
+        "The coordinator re-runs the group's validation commands itself after each implementer return (node --test invocations by the top-level session).",
+        "No focused review Agent runs after each group; the coordinator scope-checks and re-runs the group's validation commands before spawning the next implementer.",
+        "After full verification, a separate broad review Agent checks cross-group integration before checkbox completion.",
+        "No coordinator or delegated Agent stages, commits, amends, resets, restores, checks out, cleans, or switches branches; git log still contains only the baseline commit.",
+        "All four tasks are implemented in the final sandbox: src/models/digestEntry.js, src/store/digestStore.js, src/services/digestBuilder.js exist and src/app.js registers a digest feature.",
+        "npm run lint, npm test, and npm run build all pass in the final sandbox when re-run by the grader.",
+        "All four checkboxes in tasks.md are marked [x], and checkbox updates happen only after full verification and the broad review return."
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "Use the aidlc-spec-driven skill. Execute tasks 1.1 and 1.2 of the approved notification-digest spec inline, in this session - do not spawn implementation subagents.",
+      "expected_output": "The assistant executes inline: explicit inline wording wins over the workspace config's taskExecution.approach=subagent, no implementer subagent is spawned, implementation stays in the top-level session, scope stays at tasks 1.1-1.2, and the review gate is still delegated.",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec and .mtv-aidlc/extension-config.json containing taskExecution.approach set to \"subagent\""
+      ],
+      "expectations": [
+        "Explicit inline wording wins over the workspace config: despite .mtv-aidlc/extension-config.json setting taskExecution.approach to subagent, the session executes inline without asking about the approach.",
+        "No implementer Agent is spawned: the only Agent spawn, if any, is the dedicated code-review Agent.",
+        "Implementation edits are made by the top-level session itself (Edit/Write tool calls on src/models/digestEntry.js, src/store/digestStore.js and their test files).",
+        "Only the requested scope is executed: src/models/digestEntry.js and src/store/digestStore.js exist; src/services/digestBuilder.js is NOT created and src/app.js gains no digest feature.",
+        "Only checkboxes 1.1 and 1.2 are marked [x] in tasks.md; 2.1 and 2.2 remain unchecked.",
+        "The session runs verification (lint, tests, build) before completion, and a dedicated review Agent with an explicit model is spawned for the executed range.",
+        "The session does not stage or commit the implementation; git log still contains only the baseline commit.",
+        "npm run lint, npm test, and npm run build all pass in the final sandbox when re-run by the grader."
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "Use the aidlc-spec-driven skill. Continue the approved notification-digest spec in this project: execute all remaining tasks from aidlc-docs/specs/notification-digest/tasks.md using subagent-driven execution - dispatch implementer subagents for the task groups.",
+      "expected_output": "Phase 4 pre-flight blocks delegated execution before implementation: phase4-blocked-spec-mismatch (fixture: variant-blocked (task 2.1 contradicts the approved design and references a nonexistent scheduler module))",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec"
+      ],
+      "expectations": [
+        "The pre-flight scan catches that task 2.1 contradicts design.md and references a nonexistent scheduler module before any implementer is spawned.",
+        "No scheduler is fabricated: the run does not invent src/services/scheduler.js with a made-up scheduleDailyDigest to satisfy the drifted task text.",
+        "The contradiction is presented as one blocking specification-change question with the conflicting task and design text, rather than being silently resolved.",
+        "No implementation Agent is spawned, no implementation source or test files are created, and the coordinator does not hand-write a workaround.",
+        "All four checkboxes remain unchecked in tasks.md.",
+        "No files are staged or committed and git log still contains only the baseline commit.",
+        "The coordinator does not hand-write implementation code to work around the blocker (no top-level Edit/Write on src/ in subagent mode)."
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "Use the aidlc-spec-driven skill. Continue the approved notification-digest spec in this project: execute all remaining tasks from aidlc-docs/specs/notification-digest/tasks.md using subagent-driven execution - dispatch implementer subagents for the task groups.",
+      "expected_output": "Phase 4 execution per the subagent-driven default: phase4-dirty-worktree-fencing (fixture: variant-dirty (src/services/notifier.js carries an uncommitted WIP edit from another session: a 'slack' channel addition with a do-not-touch comment))",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec"
+      ],
+      "expectations": [
+        "All four tasks are implemented and npm run lint / npm test / npm run build pass in the final sandbox when re-run by the grader.",
+        "Before spawning the implementer, the coordinator captures the actual staged and unstaged baseline diff for the pre-existing dirty notifier.js file, not only git status or diff statistics.",
+        "Each group uses an explicit model argument, and the implementer prompt names the pre-existing notifier.js change as excluded work to preserve.",
+        "The pre-existing uncommitted edit to src/services/notifier.js survives untouched: the slack channel line and its WIP comment are still present, neither reverted nor extended.",
+        "No coordinator or delegated Agent stages, commits, amends, resets, restores, checks out, cleans, or switches branches.",
+        "The unrelated notifier.js change is explicitly called out as excluded/out-of-scope in the completion report or review handoff (not silently absorbed into the task work).",
+        "No new git commits are created in the sandbox (git log still shows only the baseline commit).",
+        "No focused review Agent runs after each group; coordinator scope and validation checks gate group progression, followed by a broad review after full verification.",
+        "All four checkboxes in tasks.md are marked [x] only after verification and the broad review complete."
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "Use the aidlc-spec-driven skill. Continue the approved notification-digest spec in this project: execute all remaining tasks from aidlc-docs/specs/notification-digest/tasks.md.",
+      "expected_output": "With no approach wording in the prompt and no taskExecution config in the sandbox, the assistant defaults to subagent-driven execution: it announces the approach in one line without asking, dispatches one implementer subagent per task group in sequence, writes no implementation code in the coordinator session, and gates checkboxes on full verification plus the broad review.",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec and no taskExecution key in .mtv-aidlc/extension-config.json"
+      ],
+      "expectations": [
+        "The session never asks the user to choose or confirm the execution approach (no inline-vs-subagent question in the transcript).",
+        "The session selects subagent-driven execution as the default without asking, and announces it in one line.",
+        "Implementation is delegated: the transcript contains one ai-orchestration-engineer implementer Agent spawn per task group, spawned one at a time in sequence (2 implementer spawns for groups 1 and 2), not one per sub-task.",
+        "The top-level session makes no Edit/Write tool calls on src/ or tests/ implementation files (the coordinator writes no implementation code).",
+        "All four tasks are implemented in the final sandbox: src/models/digestEntry.js, src/store/digestStore.js, src/services/digestBuilder.js exist and src/app.js registers a digest feature.",
+        "The coordinator re-runs the group's validation commands itself after each implementer return before spawning the next group.",
+        "After full verification, a separate broad review Agent checks cross-group integration before checkbox completion.",
+        "All four checkboxes in tasks.md are marked [x], and checkbox updates happen only after verification and the broad review return.",
+        "The session does not stage or commit the implementation; git log still contains only the baseline commit.",
+        "npm run lint, npm test, and npm run build all pass in the final sandbox when re-run by the grader."
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "Use the aidlc-spec-driven skill. Continue the approved notification-digest spec in this project: execute all remaining tasks from aidlc-docs/specs/notification-digest/tasks.md.",
+      "expected_output": "With no approach wording in the prompt but the workspace config setting taskExecution.approach to subagent, the assistant selects subagent-driven execution: it announces the approach in one line without asking, dispatches one implementer subagent per task group in sequence, writes no implementation code in the coordinator session, and gates checkboxes on full verification plus the broad review.",
+      "files": [
+        "fixture-execution sandbox: team-pulse-service with approved notification-digest spec and .mtv-aidlc/extension-config.json containing taskExecution.approach set to \"subagent\""
+      ],
+      "expectations": [
+        "The session selects subagent-driven execution from the workspace config without asking the user to confirm the approach, and announces it in one line.",
+        "The transcript resolves the approach deterministically before the first spawn: a spec_workflow.py execution-approach run or a direct read of .mtv-aidlc/extension-config.json.",
+        "Implementation is delegated: the transcript contains one ai-orchestration-engineer implementer Agent spawn per task group, spawned one at a time in sequence (2 implementer spawns for groups 1 and 2), not one per sub-task.",
+        "The top-level session makes no Edit/Write tool calls on src/ or tests/ implementation files (the coordinator writes no implementation code).",
+        "The coordinator re-runs the group's validation commands itself after each implementer return before spawning the next group.",
+        "After full verification, a separate broad review Agent checks cross-group integration before checkbox completion.",
+        "All four tasks are implemented in the final sandbox and all four checkboxes in tasks.md are marked [x] only after verification and the broad review return.",
+        "npm run lint, npm test, and npm run build all pass in the final sandbox when re-run by the grader."
+      ]
+    }
+  ]
+}

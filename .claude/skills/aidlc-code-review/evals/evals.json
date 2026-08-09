@@ -1,0 +1,39 @@
+{
+  "skill_name": "aidlc-code-review",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I just finished implementing Phase 1 (tasks 1-3) of the mark-spec-done-feature unit in apps/mtv-aidlc-vscode. The tasks were: (1) add status metadata parsing to SpecParser, (2) add task validation logic to TaskManagementService, (3) add completion state cache to StateManager. Can you do an AIDLC code review on this?",
+      "expected_output": "A structured 3-stage review: Stage 1 checks each of the 3 tasks against tasks.md acceptance criteria (FR-2, FR-4, NFR-1 from requirements.md), Stage 2 checks code quality against foundation/code-standards.md, Stage 3 adversarial review (or skipped with reason). Output uses the AIDLC review template with unit/scope header.",
+      "files": [
+        "apps/mtv-aidlc-vscode/aidlc-docs/specs/mark-spec-done-feature/requirements.md",
+        "apps/mtv-aidlc-vscode/aidlc-docs/specs/mark-spec-done-feature/tasks.md",
+        "apps/mtv-aidlc-vscode/src/services/SpecParser.ts",
+        "apps/mtv-aidlc-vscode/src/services/TaskManagementService.ts",
+        "apps/mtv-aidlc-vscode/src/services/StateManager.ts"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Full unit review for mark-spec-done-feature in apps/mtv-aidlc-vscode. Implementation phases 1-3 are done (tasks 1-9 checked off in tasks.md). Please review the complete unit.",
+      "expected_output": "Full unit review mode: Stage 1 checks all acceptance criteria in requirements.md against implementation (FR-1 through FR-5, NFRs), Stage 2 code quality review across all changed files using code-standards.md, Stage 3 adversarial review of the command implementations and FileWatcher/StateManager interactions. Final assessment table with 'ready to proceed?' verdict.",
+      "files": [
+        "apps/mtv-aidlc-vscode/aidlc-docs/specs/mark-spec-done-feature/requirements.md",
+        "apps/mtv-aidlc-vscode/aidlc-docs/specs/mark-spec-done-feature/design.md",
+        "apps/mtv-aidlc-vscode/aidlc-docs/specs/mark-spec-done-feature/tasks.md",
+        "apps/mtv-aidlc-vscode/aidlc-docs/foundation/code-standards.md",
+        "apps/mtv-aidlc-vscode/src/services/SpecParser.ts",
+        "apps/mtv-aidlc-vscode/src/services/StateManager.ts",
+        "apps/mtv-aidlc-vscode/src/services/TaskManagementService.ts",
+        "apps/mtv-aidlc-vscode/src/providers/SpecTreeProvider.ts",
+        "apps/mtv-aidlc-vscode/src/extension.ts"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "can you do aidlc code review",
+      "expected_output": "Skill recognizes scope is missing and asks the user a clarifying question: at minimum the unit slug, and optionally the task scope (per-task vs full unit) and git range. Should NOT proceed to review without this information.",
+      "files": []
+    }
+  ]
+}

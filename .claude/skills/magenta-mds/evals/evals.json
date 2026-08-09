@@ -1,0 +1,40 @@
+{
+  "skill_name": "magenta-mds",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a React TSX example for a customer search panel in an app that already uses @ocean-network-express/magenta-react. Put a SearchInput at the top, then a row with a Select for status, TagsInput for owners, and a primary Button labeled Apply filters. Under that, show two active filters as Tag chips and a Pagination control aligned to the right. Use only valid MDS components and props, keep the layout practical, and explain the component choices briefly.",
+      "expected_output": "A TSX example that uses supported MDS components and props for a search and filter panel, plus a short explanation of why those components were chosen.",
+      "files": [],
+      "expectations": [
+        "The TSX includes the required MDS controls: SearchInput, Select, TagsInput, Button, Tag, and Pagination.",
+        "The TSX uses MDS token variables for layout styling rather than relying only on raw hex or pixel literals.",
+        "The TSX stays within the MDS component surface explicitly documented in the bundled references for this task."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I am wiring a destructive confirmation dialog in a Magenta app. Tell me which MDS components and prop values you would use for: a warning title, body copy, a danger-styled confirm button, a neutral cancel action, and a small status badge that says Pending. Keep the answer grounded in actual supported variants and include a minimal JSX example.",
+      "expected_output": "A concise explanation with a minimal JSX example that uses only supported Dialog, Button, and Indicator or Tag props.",
+      "files": [],
+      "expectations": [
+        "The JSX example composes the dialog with Dialog, DialogHeader, DialogContent, and DialogAction.",
+        "The confirm action uses a Button with variant fill and color danger.",
+        "The answer explicitly avoids inventing a warning-specific dialog header variant that is not documented."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review the attached TSX snippet that someone wrote against magenta-react. Identify unsupported or suspicious MDS props, suggest supported replacements where possible, and give a corrected version of the snippet. Save both the review notes and the corrected TSX.",
+      "expected_output": "Review notes that flag invalid or unsupported props and a corrected TSX snippet aligned with supported MDS component APIs.",
+      "files": [
+        "evals/files/legacy-profile-panel.tsx"
+      ],
+      "expectations": [
+        "The review flags Dialog maxWidth 2xl as unsupported and suggests xl.",
+        "The review flags SearchInput variant ghost as unsupported or undocumented.",
+        "The corrected TSX removes unsupported values such as 2xl, Input state danger, and solid variants."
+      ]
+    }
+  ]
+}

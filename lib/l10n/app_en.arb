@@ -1,0 +1,48 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Bắn Bừa",
+  "menuTagline": "Straight shots don't count. Bank it.",
+  "playCta": "Play",
+  "arenaSelectCta": "Pick a stage",
+  "settingsCta": "Settings",
+  "howToCta": "How to play",
+  "bestScoreLabel": "Best score",
+  "coinsLabel": "Coins",
+
+  "arenaHeading": "Stage {id} · {name}",
+  "shotsLeft": "{count} shots left",
+  "scoreLabel": "points",
+  "multiplier": "BANK ×{value}",
+
+  "stampBank": "BANK!",
+  "stampBlocked": "Straight on, really?",
+
+  "resultWin": "Cleared!",
+  "resultLose": "Out of shots",
+  "resultScore": "{score} points",
+
+  "retryCta": "Retry",
+  "nextArenaCta": "Next stage",
+  "menuCta": "Menu",
+  "backCta": "Back",
+  "gotItCta": "Got it — let's shoot!",
+
+  "arenaSelectTitle": "Pick a stage",
+  "arenaLocked": "Locked",
+  "arenaStars": "{earned}/{total} stars",
+  "arenaLockedHint": "Finish the stage before this one first!",
+
+  "howToTitle": "How to play",
+  "howToRule1": "A direct hit destroys NOTHING. The number on each target is how many wall banks your shot needs first.",
+  "howToRule2": "The ball does not stop on contact — it keeps ricocheting. One shot can take several targets.",
+  "howToRule3": "More banks, bigger multiplier. But the floor is not a wall: a ball that drops out is gone.",
+  "howToRule4": "While the ball is flying, any target that lights up is one you can now break.",
+
+  "settingsTitle": "Settings",
+  "soundLabel": "Sound",
+  "musicLabel": "Music",
+  "languageLabel": "Language",
+  "resetProgressCta": "Reset progress",
+  "resetProgressDone": "Progress cleared."
+}

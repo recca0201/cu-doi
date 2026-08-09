@@ -1,0 +1,139 @@
+{
+  "version": "1.21.0",
+  "installedAt": "2026-08-05T01:51:07.474Z",
+  "ide": {
+    "copilot": true,
+    "claude": true,
+    "vscode": false
+  },
+  "paths": {
+    "copilot": {
+      "prompts": ".github/prompts",
+      "instructions": ".github/copilot-instructions.md",
+      "hooks": ".github/hooks"
+    },
+    "claude": {
+      "agents": ".claude/agents",
+      "commands": ".claude/commands/aidlc",
+      "skills": ".claude/skills",
+      "settings": ".claude/settings.json"
+    },
+    "runtime": {
+      "hooks": ".mtv-aidlc/hooks"
+    }
+  },
+  "managed": {
+    "copilotPrompts": [
+      "aidlc.common.brainstorm.prompt.md",
+      "aidlc.construction.code-review.prompt.md",
+      "aidlc.construction.create-design.prompt.md",
+      "aidlc.construction.create-tasks.prompt.md",
+      "aidlc.construction.execute-task.prompt.md",
+      "aidlc.construction.plan-bolts.prompt.md",
+      "aidlc.construction.refine-requirements.prompt.md",
+      "aidlc.construction.ux-design.prompt.md",
+      "aidlc.construction.vibe.prompt.md",
+      "aidlc.foundation.code-standards.prompt.md",
+      "aidlc.foundation.codebase-summary.prompt.md",
+      "aidlc.foundation.foundation-context.prompt.md",
+      "aidlc.foundation.foundation-report.prompt.md",
+      "aidlc.foundation.product-overview.prompt.md",
+      "aidlc.foundation.system-architecture.prompt.md",
+      "aidlc.foundation.uiux-guideline.prompt.md",
+      "aidlc.inception.brainstorm.prompt.md",
+      "aidlc.inception.decompose-units.prompt.md",
+      "aidlc.inception.inception-workflow.prompt.md",
+      "aidlc.inception.nfr.prompt.md",
+      "aidlc.inception.risks.prompt.md",
+      "aidlc.inception.roadmap.prompt.md",
+      "aidlc.inception.user-stories.prompt.md",
+      "aidlc.operations.phase-report.prompt.md",
+      "aidlc.operations.status.prompt.md"
+    ],
+    "copilotInstructionsBlock": true,
+    "claudeAgents": [
+      "ai-assistant-product-owner.md",
+      "ai-delivery-manager.md",
+      "ai-design-orchestrator.md",
+      "ai-orchestration-engineer.md",
+      "ai-quality-orchestrator.md",
+      "ai-solutions-architect.md"
+    ],
+    "claudeCommandsInstalled": true,
+    "claudeSkillDirs": [
+      "_aidlc-shared",
+      "aidlc-bolt-planning",
+      "aidlc-brainstorm",
+      "aidlc-code-review",
+      "aidlc-compact-spec",
+      "aidlc-core",
+      "aidlc-creator",
+      "aidlc-e2e-tests",
+      "aidlc-estimation",
+      "aidlc-foundation-context",
+      "aidlc-quick-spec",
+      "aidlc-requirements-engineering",
+      "aidlc-spec-driven",
+      "aidlc-test-cases",
+      "aidlc-translator",
+      "aidlc-uiux-design",
+      "aidlc-units-decomposition",
+      "aidlc-units-roadmap",
+      "aidlc-vibe",
+      "atlassian-rest",
+      "azure-devops",
+      "chrome-devtools",
+      "ddd",
+      "discovery-analysis",
+      "docugen-nfr-generate",
+      "docugen-nfr-validate",
+      "docugen-risk-assessment-generate",
+      "docugen-risk-assessment-validate",
+      "docugen-technical-roadmap",
+      "docx",
+      "figma-design",
+      "magenta-mds",
+      "mermaid-diagramming",
+      "pdf",
+      "pptx",
+      "repomix",
+      "skill-creator",
+      "ui-ux-pro-max",
+      "xlsx"
+    ],
+    "runtimeHookScripts": [
+      "aidlc-context-inject.cjs"
+    ],
+    "copilotHookConfigs": [
+      "aidlc-context-inject.json"
+    ],
+    "claudeHookRegistration": true,
+    "claudeCommandFiles": [
+      "common/brainstorm.md",
+      "construction/code-review.md",
+      "construction/create-design.md",
+      "construction/create-tasks.md",
+      "construction/execute-task.md",
+      "construction/plan-bolts.md",
+      "construction/refine-requirements.md",
+      "construction/ux-design.md",
+      "construction/vibe.md",
+      "foundation/code-standards.md",
+      "foundation/codebase-summary.md",
+      "foundation/foundation-context.md",
+      "foundation/foundation-report.md",
+      "foundation/product-overview.md",
+      "foundation/system-architecture.md",
+      "foundation/uiux-guideline.md",
+      "inception/brainstorm.md",
+      "inception/decompose-units.md",
+      "inception/inception-workflow.md",
+      "inception/nfr.md",
+      "inception/risks.md",
+      "inception/roadmap.md",
+      "inception/user-stories.md",
+      "operations/phase-report.md",
+      "operations/status.md"
+    ]
+  }
+}

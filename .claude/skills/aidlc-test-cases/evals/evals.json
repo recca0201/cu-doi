@@ -1,0 +1,41 @@
+{
+  "skill_name": "aidlc-test-cases",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create functional test cases from the user story artifact for the onboarding checklist feature. Use the default table-friendly format and include traceability to acceptance criteria.",
+      "expected_output": "The skill identifies a story-level request, locates or asks for the story artifact when the slug/path is missing, and creates a story-level Markdown test-case document under aidlc-docs/test-cases/. The output uses the gherkin-table format by default, focuses on business-facing functional QA scenarios, maps test cases to acceptance criteria, and avoids detailed E2E handoff metadata.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Generate UAT test cases for the update-notification spec from requirements.md and design.md. I want PO-friendly scenarios, not implementation details.",
+      "expected_output": "The skill treats this as a spec-level request and creates or updates aidlc-docs/specs/update-notification/test-cases.md. It uses the selected UAT type to focus on business sign-off, role behavior, visible outcomes, and approval gaps. Technical details are limited to shallow setup or observable behavior.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Please generate regression test cases for the update-notification spec using the standard-table format.",
+      "expected_output": "The skill treats this as a spec-level regression request, uses the standard-table display format, and focuses on release confidence, critical existing flows, impacted behavior, previous defect risk, and smoke coverage. The output remains traceable to requirements or acceptance criteria.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "can you write aidlc test cases",
+      "expected_output": "The skill does not guess scope or source. It asks one focused clarification question using AskUserQuestion when available, requesting whether the source is a story or spec and the relevant artifact path/slug before drafting.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Generate test cases for the update-notification spec and export them to both CSV and Excel for QA tracking.",
+      "expected_output": "The skill creates the Markdown source of truth first, then derives CSV and Excel exports using the bundled exporter. The export uses the schema from assets/export-schema.json and keeps traceability IDs, coverage type, automation target, and priority consistent across formats.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Create gherkin-blocks test cases for the update-notification spec and give me a Jira/Xray-friendly CSV export as well.",
+      "expected_output": "The skill creates a gherkin-blocks Markdown QA document with scenario inventory and Gherkin blocks, then exports a Jira/Xray-friendly CSV using --profile xray. It preserves AIDLC test case IDs and source mappings without adding long export schema text to the generated document.",
+      "files": []
+    }
+  ]
+}

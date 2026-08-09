@@ -1,0 +1,118 @@
+{
+  "skill_name": "aidlc-brainstorm",
+  "evals": [
+    {
+      "id": 1,
+      "name": "managed-vs-diy-realtime",
+      "prompt": "I'm building a real-time collaborative document editor as a 2-person startup. We need real-time sync between users, conflict resolution, and basic offline support. Stack is Next.js + Node.js, budget is tight, and we need to ship an MVP in 3 weeks. Should we build our own WebSocket-based backend (e.g. with socket.io), or use a managed service like Liveblocks or Ably? If you ask me questions, assume: our documents are mostly text with simple formatting, we expect <100 concurrent users at launch, and we can afford ~$50/month on infra.",
+      "expected_output": "A Decision Record saved to a file (aidlc-docs/brainstorming/ or similar path). The DR should clearly state a chosen option with rationale, list at least 2 alternatives with honest pros/cons, include a Consequences section acknowledging trade-offs, and use the lite DR format since this is an isolated technical decision.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk, not just printed)",
+        "The DR states a clearly chosen option (not left open-ended)",
+        "At least 2 alternatives are documented with pros and cons",
+        "The DR's Alternatives Considered captures pros/cons and a complexity rating per option (e.g., a comparison table), not just one-line rejection reasons",
+        "The DR includes a Consequences section with at least one trade-off acknowledged",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields",
+        "The recommendation considers the 3-week timeline and team size constraints"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "mvp-feature-prioritization",
+      "prompt": "We're building a fintech app MVP for young professionals aged 25-35 who want better visibility into their spending. We have 3 candidate features: (1) transaction history with search and filtering, (2) spending analytics dashboard with category breakdowns and charts, (3) bill payment flow. Team is 3 developers, 8-week timeline before investor demo. We can only build one feature well in this time. Which should we prioritize? Assume we already have user auth and bank account linking done.",
+      "expected_output": "A Decision Record saved to a file. The DR should pick exactly one feature as the priority (not 'it depends' or 'build both'), explain why that feature over the others, acknowledge what's being deferred and why that's acceptable, use the appropriate DR template (Hybrid type, Inception phase), and hand off to aidlc-requirements-engineering with the DR path for detailed user stories.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The DR picks exactly one feature as the priority — not 'it depends' or a split recommendation",
+        "The DR type includes 'Hybrid' (product + business decision)",
+        "The AI-DLC Phase is marked as 'Inception'",
+        "The DR explains what the other two features provide and why they were deprioritized",
+        "The final response hands off to aidlc-requirements-engineering for detailed user stories, referencing the saved DR path as its input (stories must align with the DR's Decision and Scope boundary)",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields",
+        "The rationale considers the investor demo deadline as a constraint"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "react-state-management",
+      "prompt": "I need to pick a state management solution for our React dashboard app. We have 4 devs — 2 seniors who've worked with Redux before, 2 juniors who haven't used either Redux or Zustand. The app has ~20 components sharing state, some async data fetching from REST APIs, and we need to handle loading/error states. We're using React 18 with TypeScript. Should we use Zustand or Redux Toolkit? Or is there a third option I should consider?",
+      "expected_output": "A Decision Record saved to a file. The DR should give a clear recommendation, consider the team's mixed experience level, include a YAGNI check (don't over-engineer for a dashboard), present the visible recommendation with per-option trade-offs, and use the lite DR format since this is an isolated Construction-phase technical decision with a likely clear winner.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The DR states a clearly chosen option",
+        "The DR includes a YAGNI check field or equivalent reasoning about avoiding over-engineering",
+        "The DR considers the team's mixed experience level as a factor in the recommendation",
+        "The DR AI-DLC Phase is marked as 'Construction'",
+        "At least one alternative beyond just Zustand and Redux Toolkit is considered or explicitly ruled out",
+        "The DR's Alternatives Considered captures pros/cons and a complexity rating per option, not just one-line rejection reasons",
+        "The recommendation (in the visible response / final-response artifact) presents each viable option's key pros/cons alongside the lead choice — not only the conclusion",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "prototype-tier-ds-lookandfeel",
+      "prompt": "We need to decide the visual design direction for the main analytics dashboard of our fintech app before next week's investor demo. There are roughly three directions on the table: (1) a dense data-grid layout that maximizes information density, (2) a card-based summary layout that leads with big-number KPI cards and charts, (3) a hybrid that pairs a summary header with a detail grid below. This decision is really about look-and-feel and what reads as polished for the demo, not about the underlying data. Our frontend is React on the Magenta Design System (we use @ocean-network-express/magenta-react and our design system is documented in aidlc-docs/foundation/uiux-guideline.md). Assume: I'm at my desk and happy to open a browser to look at options, I'll accept any offer to see things rendered, and if you show me the directions styled the way they'd actually ship I'll go with the card-based summary direction (option 2). Audience is non-technical investors.",
+      "expected_output": "A Decision Record saved to a file that picks a clear design direction (card-based summary). Because the decision hinges on look-and-feel AND a design system (Magenta/MDS) is present, the skill should recognize this as a Prototype-tier situation: it should treat grey wireframes as insufficient and plan to render design-system-faithful options (delegating to an ai-design-orchestrator subagent and/or producing a prototype artifact under aidlc-docs/design-artifacts/prototype/), rather than only hand-authoring crude wireframes. The DR should reference the design system and tie the recommendation to the look-and-feel framing and the investor-demo constraint.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The DR states a clearly chosen design direction (not left open-ended)",
+        "The response recognizes that a design system (Magenta/MDS or the uiux-guideline) is present and relevant to how options should be visualized",
+        "The approach to visualizing the options is high-fidelity / design-system-faithful (Prototype tier) — it delegates to or spawns ai-design-orchestrator, and/or produces a prototype artifact under aidlc-docs/design-artifacts/prototype/, rather than relying only on grey wireframe mock-* blocks",
+        "The recommendation is tied to the look-and-feel framing and the investor-demo deadline",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "wireframe-guard-no-ds",
+      "prompt": "Help me decide the navigation structure for an internal admin tool. The options are: left sidebar nav, top horizontal nav, or a collapsible drawer. This is purely about information architecture — where things live and how people move between sections — not about visual styling or branding. We don't have a formal design system yet; it's an early-stage internal tool. Assume: about 4 main sections, fewer than 100 screens total, daily power users who value speed over discovery, and if you offer to sketch the options for me I'll take a look and I lean toward the left sidebar.",
+      "expected_output": "A Decision Record saved to a file that picks one navigation structure (likely left sidebar) with honest pros/cons. Because the crux is structural/layout (information architecture) and there is NO design system, this should be handled at the wireframe tier — it should NOT escalate to a high-fidelity design-system prototype or spawn a heavyweight ai-design-orchestrator subagent, and it should NOT invent a design system that doesn't exist. This guards the new Prototype tier against over-triggering on any UI-flavored question.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The DR states a clearly chosen navigation structure",
+        "The decision is treated as a structural/layout (information-architecture) question appropriate for the wireframe tier, NOT escalated to a high-fidelity design-system prototype",
+        "The response does NOT spawn or delegate to an ai-design-orchestrator subagent for this decision",
+        "The response does not fabricate a design system — it acknowledges none exists yet rather than inventing one",
+        "At least 2 alternatives are documented with pros and cons",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "brownfield-scout-first",
+      "prompt": "Our task-tracker backend's reminder system is unreliable — reminders get skipped when we deploy and double-sent when we run two instances. We need to decide the right approach for reliable background reminder delivery: adopt a Redis-backed queue like BullMQ, use a Postgres-based job queue like pg-boss, or split reminders into a separate cron sidecar service. The codebase is in the `project/` directory inside your working folder — look at it before asking me anything. There are no aidlc-docs foundation documents for this project. If you ask me questions, assume: 2-developer team, we already run managed Postgres and do NOT want new infrastructure unless clearly justified, volume is ~500 reminders/day, we need this decided within 2 weeks, and reliability (no missed reminders) matters more than sub-minute delivery precision.",
+      "expected_output": "A Decision Record saved to a file. Before questioning/analysis, the run should scout the actual codebase (package.json deps, src/services/reminders.js, src/db.js) and present a short findings summary. Options should be grounded in the scouted reality (Postgres is the only datastore → pg-boss avoids new infra; BullMQ adds Redis). The DR should name concrete touchpoints (real files) and pick one option with per-option pros/cons/complexity. No implementation code should be written.",
+      "files": ["fixtures/task-tracker"],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The response presents a scout summary of actual codebase findings (referencing real files such as src/services/reminders.js or the package.json dependencies) before or alongside its discovery/assumption step",
+        "The alternatives are grounded in the scouted reality — e.g., acknowledging Postgres is the only existing datastore, so a Postgres-based queue avoids new infrastructure while BullMQ requires adding Redis",
+        "The DR identifies concrete touchpoints — actual files or modules from the project (e.g., src/services/reminders.js, src/server.js) affected by the decision",
+        "The DR states a clearly chosen option with pros/cons and a complexity rating per alternative",
+        "No implementation code is written — the project/ source files are unmodified and no new source or config files are added to the project (DR and notes are the only artifacts)",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "vague-request-impl-bait",
+      "prompt": "Our REST API's error handling is a mess — every route does its own thing and the responses are inconsistent. Pick the best approach and set it up for us. If you ask me questions, assume: Express + TypeScript, about 15 routes, no error middleware today, 4 developers, we want consistent JSON error responses with proper logging, and it needs to land next sprint. Beyond that, use your judgment.",
+      "expected_output": "A Decision Record saved to a file. The vague request ('a mess', 'set it up') should be converted into concrete decision inputs (criteria, scope boundary, constraints, touchpoints) — via questions or explicitly stated assumptions — before analysis. Despite the 'set it up' bait, no implementation code should be written: the skill advises, records the decision, and routes implementation to the transition/next step.",
+      "files": [],
+      "assertions": [
+        "A Decision Record file is created (saved to disk)",
+        "The vague request is converted into concrete decision inputs before analysis: the run either asks targeted questions or explicitly states concrete assumptions covering decision criteria, scope boundary, constraints, and touchpoints",
+        "Despite being asked to 'set it up', NO implementation code is written (no middleware files, no route changes, no scaffolding) — the run advises and records the decision only",
+        "The final response routes implementation to an explicit next step (transition/handoff) rather than performing it",
+        "The DR states a clearly chosen option with at least 2 alternatives, each with pros/cons and a complexity rating",
+        "The DR contains no placeholder text like TBD, TODO, or empty bracketed fields"
+      ]
+    }
+  ]
+}

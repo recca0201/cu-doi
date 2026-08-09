@@ -1,0 +1,58 @@
+{
+  "workItemType": "Task",
+  "fields": [
+    {
+      "op": "add",
+      "path": "/fields/System.Title",
+      "value": "[Action verb] [specific task description]"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.Description",
+      "value": "<div><b>Task Details:</b><br/>[Detailed description of what needs to be done]<br/><br/><b>Steps:</b><br/><ol><li>[Step 1]</li><li>[Step 2]</li><li>[Step 3]</li></ol><br/><b>Dependencies:</b><br/>[Any dependencies or prerequisites]<br/><br/><b>Resources:</b><br/>[Links to documentation, examples, or references]</div>"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Scheduling.OriginalEstimate",
+      "value": null,
+      "comment": "Estimated hours (e.g., 4, 8, 16)"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Scheduling.RemainingWork",
+      "value": null,
+      "comment": "Should match OriginalEstimate initially"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.AssignedTo",
+      "value": null,
+      "comment": "Email address of assignee"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.IterationPath",
+      "value": "ProjectName\\Sprint X",
+      "comment": "Replace with actual iteration path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.AreaPath",
+      "value": "ProjectName\\Component",
+      "comment": "Replace with actual area path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.Priority",
+      "value": 2,
+      "comment": "1=High, 2=Medium, 3=Low, 4=Very Low"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.Tags",
+      "value": "development",
+      "comment": "Semicolon-separated tags (e.g., 'development; testing; documentation')"
+    }
+  ],
+  "notes": "This template creates a task with time tracking fields. Tasks are typically child work items of User Stories or Features."
+}

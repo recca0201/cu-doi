@@ -1,0 +1,42 @@
+{
+  "standard": [
+    { "header": "Test Case ID", "field": "test_case_id" },
+    { "header": "Title", "field": "title" },
+    { "header": "Source ID", "field": "source_id" },
+    { "header": "Source Summary", "field": "source_summary" },
+    { "header": "Coverage Type", "field": "coverage_type" },
+    { "header": "Automation Target", "field": "automation_target" },
+    { "header": "Priority", "field": "priority" },
+    { "header": "Preconditions", "field": "preconditions" },
+    { "header": "Test Steps", "field": "test_steps" },
+    { "header": "Expected Result", "field": "expected_result" },
+    { "header": "Tags", "field": "tags" },
+    { "header": "Notes", "field": "notes" }
+  ],
+  "xray": [
+    { "header": "External ID", "field": "test_case_id" },
+    { "header": "Summary", "field": "title" },
+    { "header": "Issue Type", "value": "Test" },
+    { "header": "Test Type", "value": "Manual" },
+    { "header": "Priority", "field": "priority" },
+    { "header": "Labels", "field": "tags" },
+    { "header": "Description", "field": "xray_description" },
+    { "header": "Manual Test Step", "field": "test_steps" },
+    { "header": "Manual Test Data", "field": "preconditions" },
+    { "header": "Manual Test Result", "field": "expected_result" }
+  ],
+  "xlsx_widths": {
+    "A": 16,
+    "B": 42,
+    "C": 18,
+    "D": 36,
+    "E": 18,
+    "F": 18,
+    "G": 12,
+    "H": 36,
+    "I": 36,
+    "J": 36,
+    "K": 24,
+    "L": 28
+  }
+}

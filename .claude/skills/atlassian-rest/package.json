@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "marked": "^18.0.5",
+    "marklassian": "^1.2.1"
+  }
+}

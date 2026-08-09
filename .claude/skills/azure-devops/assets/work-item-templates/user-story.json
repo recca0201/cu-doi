@@ -1,0 +1,57 @@
+{
+  "workItemType": "User Story",
+  "fields": [
+    {
+      "op": "add",
+      "path": "/fields/System.Title",
+      "value": "As a [user type], I want [goal] so that [benefit]"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.Description",
+      "value": "<div><b>User Story:</b><br/>As a [user type], I want [goal] so that [benefit]<br/><br/><b>Background:</b><br/>[Provide context and background information]<br/><br/><b>Requirements:</b><br/><ul><li>[Requirement 1]</li><li>[Requirement 2]</li><li>[Requirement 3]</li></ul></div>"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.AcceptanceCriteria",
+      "value": "<div><b>Acceptance Criteria:</b><br/><ul><li><b>Given</b> [context]<br/><b>When</b> [action]<br/><b>Then</b> [outcome]</li><li><b>Given</b> [context]<br/><b>When</b> [action]<br/><b>Then</b> [outcome]</li></ul><br/><b>Definition of Done:</b><br/><ul><li>Code reviewed</li><li>Unit tests written and passing</li><li>Integration tests passing</li><li>Documentation updated</li><li>Deployed to staging</li></ul></div>"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Scheduling.StoryPoints",
+      "value": null,
+      "comment": "Estimate story points (1, 2, 3, 5, 8, 13, 21)"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.IterationPath",
+      "value": "ProjectName\\Sprint X",
+      "comment": "Replace with actual iteration path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.AreaPath",
+      "value": "ProjectName\\FeatureArea",
+      "comment": "Replace with actual area path"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.Priority",
+      "value": 2,
+      "comment": "1=High, 2=Medium, 3=Low, 4=Very Low"
+    },
+    {
+      "op": "add",
+      "path": "/fields/Microsoft.VSTS.Common.ValueArea",
+      "value": "Business",
+      "comment": "Business or Architectural"
+    },
+    {
+      "op": "add",
+      "path": "/fields/System.Tags",
+      "value": "feature; user-facing",
+      "comment": "Semicolon-separated tags"
+    }
+  ],
+  "notes": "This template creates a user story with standard fields and formatting. Customize field values before creating the work item."
+}

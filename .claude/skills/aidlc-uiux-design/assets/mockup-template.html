@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{FEATURE_NAME}} Implementation Mockup</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #fff;
+      --muted-surface: #f1f4f8;
+      --border: #d8dee8;
+      --text: #172033;
+      --muted: #5f6b7a;
+      --primary: #2554d9;
+      --danger: #c73535;
+      --success: #16794c;
+      --radius: 10px;
+      --space: 10px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.35; }
+    a { color: var(--primary); font-size: 0.9rem; }
+    code { background: var(--muted-surface); border-radius: 5px; padding: 0.05rem 0.22rem; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 4px; font-size: 1.55rem; line-height: 1.12; letter-spacing: -0.02em; }
+    h2 { margin-bottom: 6px; font-size: 1.2rem; line-height: 1.2; letter-spacing: -0.01em; }
+    h3 { margin-bottom: 5px; font-size: 1rem; line-height: 1.25; }
+    p { margin-bottom: 8px; }
+    p:last-child { margin-bottom: 0; }
+    .shell { width: 100%; margin: 0; padding: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: 0 6px 18px rgba(23, 32, 51, 0.06); }
+    .hero { padding: 10px 14px; }
+    .hero h1 { margin-bottom: 4px; }
+    .hero nav { margin-top: 8px; }
+    .stack { display: grid; gap: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space); }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .between { display: flex; flex-wrap: wrap; gap: var(--space); align-items: start; justify-content: space-between; }
+    .chip { display: inline-flex; min-height: 20px; align-items: center; border-radius: 999px; background: var(--muted-surface); padding: 0 8px; color: var(--muted); font-size: 0.75rem; font-weight: 700; }
+    .chip[data-tone="success"] { color: var(--success); }
+    .chip[data-tone="danger"] { color: var(--danger); }
+    .button { min-height: 30px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); padding: 0 10px; color: var(--text); font: inherit; font-size: 0.85rem; font-weight: 700; }
+    .button-primary { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .field { display: grid; gap: 4px; }
+    .field label { color: var(--muted); font-size: 0.78rem; font-weight: 700; }
+    .field input, .field select { width: 100%; min-height: 32px; border: 1px solid var(--border); border-radius: 7px; padding: 0 9px; font: inherit; }
+    .helper { color: var(--muted); font-size: 0.78rem; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    th, td { padding: 7px 9px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--muted-surface); color: var(--muted); font-size: 0.78rem; }
+    details.card { padding: 0; overflow: hidden; }
+    details.card > summary { display: flex; gap: 6px; align-items: center; cursor: pointer; padding: 10px 14px; font-weight: 800; list-style: none; }
+    details.card > summary::-webkit-details-marker { display: none; }
+    details.card > summary::marker { content: ""; }
+    .summary-arrow { color: var(--primary); transform: rotate(0deg); transition: transform 0.16s ease; }
+    details[open] .summary-arrow { transform: rotate(90deg); }
+    details.card > .details-body { border-top: 1px solid var(--border); padding: 10px 14px 12px; }
+    .meta { margin: 6px 0 0; padding: 0; list-style: none; }
+    .meta li { display: grid; grid-template-columns: 140px 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border); }
+    .tabs { display: grid; gap: var(--space); }
+    .tab-list { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .tab { border: 1px solid var(--border); border-radius: 999px; background: var(--surface); padding: 5px 10px; color: var(--muted); font: inherit; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
+    .tab[aria-selected="true"] { border-color: var(--primary); background: #eef3ff; color: var(--primary); }
+    .state-panel[hidden] { display: none; }
+    .screen-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 280px; overflow: hidden; border: 1px solid var(--border); border-radius: 10px; }
+    .panel { display: grid; align-content: start; gap: var(--space); padding: var(--space); }
+    .panel-muted { background: var(--muted-surface); border-right: 1px solid var(--border); }
+    .delta-list { display: grid; gap: 8px; padding: 10px; border: 1px dashed var(--border); border-radius: 10px; background: #fbfcfe; }
+    .delta { border-left: 3px solid var(--primary); padding-left: 9px; }
+    .delta[data-tone="danger"] { border-left-color: var(--danger); }
+    .delta[data-tone="success"] { border-left-color: var(--success); }
+    @media (max-width: 800px) { .shell { padding: 12px; } .grid, .screen-layout, .meta li { grid-template-columns: 1fr; } .panel-muted { border-right: 0; border-bottom: 1px solid var(--border); } }
+  </style>
+</head>
+<body>
+  <div class="shell stack">
+    <header class="card hero">
+      <span class="chip">Implementation Mockup</span>
+      <h1>{{FEATURE_NAME}}</h1>
+      <p>{{FEATURE_SUMMARY}}</p>
+      <nav class="row" aria-label="Mockup sections">
+        <a href="#states">States</a>
+        <a href="#notes">Notes</a>
+        <a href="#component-map">Component Map</a>
+        <a href="#metadata">Metadata</a>
+      </nav>
+    </header>
+
+    <main class="stack" id="main">
+      <section class="card stack" id="states" aria-labelledby="states-title">
+        <div class="between">
+          <div>
+            <span class="chip">Tabbed States</span>
+            <h2 id="states-title">{{PRIMARY_SCREEN_NAME}}</h2>
+          </div>
+          <span class="chip">One full base layout + compact deltas</span>
+        </div>
+
+        <div class="tabs" data-tabs>
+          <div class="tab-list" role="tablist" aria-label="Screen states">
+            <button class="tab" id="tab-default" type="button" role="tab" aria-selected="true" aria-controls="panel-default">Default</button>
+            <button class="tab" id="tab-loading" type="button" role="tab" aria-selected="false" aria-controls="panel-loading">Loading</button>
+            <button class="tab" id="tab-empty" type="button" role="tab" aria-selected="false" aria-controls="panel-empty">Empty</button>
+            <button class="tab" id="tab-error" type="button" role="tab" aria-selected="false" aria-controls="panel-error">Error</button>
+            <button class="tab" id="tab-selected" type="button" role="tab" aria-selected="false" aria-controls="panel-selected">Selected</button>
+          </div>
+
+          <section class="state-panel stack" id="panel-default" role="tabpanel" aria-labelledby="tab-default">
+            <div class="screen-layout" data-screen="primary" data-state="default">
+              <aside class="panel panel-muted" aria-label="Filters or side panel">
+                <strong>{{SIDE_PANEL_TITLE}}</strong>
+                <div class="field">
+                  <label for="example-filter">{{FILTER_LABEL}}</label>
+                  <input id="example-filter" type="text" value="{{FILTER_VALUE}}" />
+                  <span class="helper">{{FILTER_HELPER_TEXT}}</span>
+                </div>
+                <div class="row">
+                  <button class="button button-primary" type="button" data-mds-component="Button" data-mds-props='{{PRIMARY_BUTTON_MDS_PROPS}}' data-mds-confidence="{{MDS_CONFIDENCE}}">{{PRIMARY_ACTION_LABEL}}</button>
+                  <button class="button" type="button" data-mds-component="Button" data-mds-props='{{SECONDARY_BUTTON_MDS_PROPS}}' data-mds-confidence="{{MDS_CONFIDENCE}}">{{SECONDARY_ACTION_LABEL}}</button>
+                </div>
+              </aside>
+              <section class="panel" aria-label="Primary content area">
+                <div class="between"><div><strong>{{CONTENT_TITLE}}</strong><p>{{CONTENT_DESCRIPTION}}</p></div><span class="chip">{{STATUS_LABEL}}</span></div>
+                <table aria-label="{{TABLE_LABEL}}" data-mds-component="Table" data-mds-props='{{TABLE_MDS_PROPS}}' data-mds-confidence="{{MDS_CONFIDENCE}}">
+                  <thead><tr><th>{{COLUMN_1}}</th><th>{{COLUMN_2}}</th><th>{{COLUMN_3}}</th></tr></thead>
+                  <tbody>
+                    <tr><td>{{ROW_1_CELL_1}}</td><td>{{ROW_1_CELL_2}}</td><td><span class="chip" data-tone="success">{{ROW_1_STATUS}}</span></td></tr>
+                    <tr aria-selected="true"><td>{{ROW_2_CELL_1}}</td><td>{{ROW_2_CELL_2}}</td><td><span class="chip">{{ROW_2_STATUS}}</span></td></tr>
+                  </tbody>
+                </table>
+              </section>
+            </div>
+          </section>
+
+          <section class="state-panel" id="panel-loading" role="tabpanel" aria-labelledby="tab-loading" hidden>
+            <div class="delta-list"><article class="delta"><strong>Loading delta:</strong> {{LOADING_DELTA}}</article></div>
+          </section>
+          <section class="state-panel" id="panel-empty" role="tabpanel" aria-labelledby="tab-empty" hidden>
+            <div class="delta-list"><article class="delta"><strong>Empty delta:</strong> {{EMPTY_DELTA}}</article></div>
+          </section>
+          <section class="state-panel" id="panel-error" role="tabpanel" aria-labelledby="tab-error" hidden>
+            <div class="delta-list"><article class="delta" data-tone="danger"><strong>Error delta:</strong> {{ERROR_DELTA}}</article></div>
+          </section>
+          <section class="state-panel" id="panel-selected" role="tabpanel" aria-labelledby="tab-selected" hidden>
+            <div class="delta-list"><article class="delta" data-tone="success"><strong>Selected delta:</strong> {{SELECTED_DELTA}}</article></div>
+          </section>
+        </div>
+
+        <p class="helper">{{PRIMARY_SCREEN_PURPOSE}}</p>
+      </section>
+
+      <details class="card" id="notes">
+        <summary><span class="summary-arrow" aria-hidden="true">&gt;</span><span>Implementation Notes</span></summary>
+        <div class="details-body">
+          <ul class="meta">
+            <li><strong>Responsive behavior</strong><span>{{RESPONSIVE_NOTES}}</span></li>
+            <li><strong>Open questions</strong><span>{{OPEN_QUESTIONS}}</span></li>
+            <li><strong>Known gaps</strong><span>{{KNOWN_GAPS}}</span></li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" id="component-map">
+        <summary><span class="summary-arrow" aria-hidden="true">&gt;</span><span>Component Map</span></summary>
+        <div class="details-body">
+          <table>
+            <thead><tr><th>HTML element</th><th>Intended component</th><th>Props / variant</th><th>Confidence</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>.button-primary</code></td><td><code>Button</code></td><td><code>{{BUTTON_PROPS}}</code></td><td>{{MDS_CONFIDENCE}}</td><td>{{BUTTON_MAPPING_NOTES}}</td></tr>
+              <tr><td><code>table</code></td><td><code>Table</code></td><td><code>{{TABLE_PROPS}}</code></td><td>{{MDS_CONFIDENCE}}</td><td>{{TABLE_MAPPING_NOTES}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <section class="card" id="metadata" aria-labelledby="metadata-title">
+        <h2 id="metadata-title">Source Metadata</h2>
+        <ul class="meta">
+          <li><strong>Spec</strong><span>{{SPEC_PATH}}</span></li>
+          <li><strong>Requirements</strong><span>{{REQUIREMENTS_PATH}}</span></li>
+          <li><strong>Design source</strong><span>{{DESIGN_SOURCE}}</span></li>
+          <li><strong>Preview images</strong><span>{{PREVIEW_IMAGE_PATHS}}</span></li>
+          <li><strong>Visual QA</strong><span>{{VISUAL_QA_STATUS}}</span></li>
+        </ul>
+      </section>
+
+      <details class="card" id="visual-extraction">
+        <summary><span class="summary-arrow" aria-hidden="true">&gt;</span><span>Visual Extraction Decision</span></summary>
+        <div class="details-body">
+          <ul class="meta">
+            <li><strong>Classification</strong><span>{{VISUAL_CLASSIFICATION}}</span></li>
+            <li><strong>Observed states</strong><span>{{OBSERVED_STATE_COUNT}}</span></li>
+            <li><strong>Decision</strong><span>{{CHILD_IMAGE_DECISION}}</span></li>
+            <li><strong>Reason</strong><span>{{DECISION_REASON}}</span></li>
+            <li><strong>Merged states</strong><span>{{MERGED_STATE_SUMMARY}}</span></li>
+          </ul>
+        </div>
+      </details>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-tabs]').forEach((tabs) => {
+      const buttons = [...tabs.querySelectorAll('[role="tab"]')];
+      const panels = [...tabs.querySelectorAll('[role="tabpanel"]')];
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          buttons.forEach((item) => item.setAttribute('aria-selected', String(item === button)));
+          panels.forEach((panel) => { panel.hidden = panel.id !== button.getAttribute('aria-controls'); });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

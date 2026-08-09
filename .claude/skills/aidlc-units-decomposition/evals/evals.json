@@ -1,0 +1,48 @@
+{
+  "skill_name": "aidlc-units-decomposition",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have user stories for a task management SaaS app. The team has 4 developers. Please decompose them into implementation units.\n\nUser Stories:\n- US-001: As a user, I can register with email and password so that I can access the app\n- US-002: As a user, I can log in with my credentials so that my data is secured\n- US-003: As a user, I can reset my password via email so that I can regain access if locked out\n- US-004: As a user, I can create a new task with title and description so that I can track my work\n- US-005: As a user, I can assign a task to a team member so that responsibilities are clear\n- US-006: As a user, I can set a due date and priority on a task so that I can manage deadlines\n- US-007: As a user, I can view all tasks on a Kanban board so that I have an overview of team progress\n- US-008: As a user, I can mark a task as complete so that the team knows the work is done\n- US-009: As a user, I can comment on a task so that the team can collaborate on details\n- US-010: As an admin, I can invite team members to the workspace so that the team can collaborate",
+      "expected_output": "A units decomposition document saved to aidlc-docs/requirements/ with: multiple named units (at least 2-3), a Mermaid dependency map, a priority table with User Story IDs, Value Proposition per unit, and Deployable Independently: YES on each unit. No Scrum terminology.",
+      "files": [],
+      "expectations": [
+        "Output file is created in aidlc-docs/requirements/ with correct naming convention (NNN_feature-name_units_decomposition.md)",
+        "Document contains a Mermaid graph TD dependency map",
+        "Each unit definition includes a Value Proposition field",
+        "Each unit definition includes 'Deployable Independently: YES'",
+        "Priority table includes User Story IDs (e.g. US-001, US-002)",
+        "Output does not contain Scrum terms: 'sprint', 'story point', 'velocity'",
+        "At least 3 units are defined (10 stories across 4 devs should produce 3+ units)",
+        "Authentication stories (US-001 to US-003) are grouped in a foundation unit with no dependencies"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We have a small startup team of only 2 developers building a SaaS onboarding flow. Please decompose these user stories into units — keep it lean, we want fewer units so we don't overwhelm the team.\n\nUser Stories:\n- US-001: As a new user, I can sign up with email or Google OAuth so that I can get started quickly\n- US-002: As a new user, I receive a welcome email after registration so that I know my account is ready\n- US-003: As a new admin, I can create and name my organization workspace so that my team has a home\n- US-004: As an admin, I can invite team members via email so that we can collaborate\n- US-005: As a team member, I can accept an invitation and join the workspace so that I can start working\n- US-006: As a new user, I see an interactive onboarding tutorial on first login so that I can learn the product\n- US-007: As an admin, I can choose a subscription plan so that I can activate the right features\n- US-008: As an admin, I can enter payment details and start billing so that my subscription is active",
+      "expected_output": "A units decomposition document with fewer units than the 4-dev test (ideally 2-3 units for 2 devs), correct structure, and notes about sequential execution strategy. Should reflect small-team constraints.",
+      "files": [],
+      "expectations": [
+        "Output file is created in aidlc-docs/requirements/ with correct naming convention",
+        "Produces 2-3 units (not 4+ which would overwhelm a 2-dev team)",
+        "Document contains a Mermaid dependency map",
+        "Each unit has Value Proposition and Deployable Independently: YES",
+        "Summary section mentions sequential execution or small-team constraints",
+        "Billing and onboarding stories are not broken into too many small fragments"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have an existing analytics reporting tool and want to add one small enhancement. Please decompose this into units:\n\n- US-001: As a user, I can export my analytics report to CSV so that I can analyze the data in Excel\n\nThis is an addition to an existing product — the core reporting feature already exists.",
+      "expected_output": "A single unit applying the brownfield exception. Should not reject the 1-story input or try to force it into 2-4 stories. The unit should acknowledge it's a brownfield enhancement.",
+      "files": [],
+      "expectations": [
+        "Output file is created in aidlc-docs/requirements/ with correct naming convention",
+        "Only 1 unit is defined (brownfield exception applies)",
+        "The unit has Value Proposition and Deployable Independently: YES",
+        "Document or unit notes acknowledge the brownfield/enhancement nature",
+        "Does NOT incorrectly reject the single story or warn it's too small"
+      ]
+    }
+  ]
+}

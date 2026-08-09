@@ -1,0 +1,19 @@
+{
+  "aidlcDocsPath": "aidlc-docs",
+  "designSystem": null,
+  "userStory": {
+    "template": "default"
+  },
+  "designDocument": {
+    "template": "standard"
+  },
+  "implementationTask": {
+    "template": "test-first"
+  },
+  "testCase": {
+    "format": "gherkin-table"
+  },
+  "taskExecution": {
+    "approach": "subagent"
+  }
+}
