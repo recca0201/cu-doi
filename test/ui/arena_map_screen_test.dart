@@ -1,6 +1,5 @@
 import 'package:ban_bua_tuong/domain/player_progress.dart';
 import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
-import 'package:ban_bua_tuong/ui/widgets/bb_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +14,7 @@ void main() {
       (tester.widget<Scaffold>(find.byType(Scaffold))).backgroundColor,
       const Color(0xFF090D2A),
     );
-    expect(find.text('CHỌN MÀN'), findsOneWidget);
+    expect(find.byKey(const Key('arena-map-title')), findsOneWidget);
     expect(find.text('Chương 1 · Học luật dội'), findsOneWidget);
     expect(find.text('0/15 sao'), findsWidgets);
     expect(find.byKey(const ValueKey<String>('arena-1')), findsOneWidget);
@@ -40,12 +39,13 @@ void main() {
     tester.widget<InkWell>(openNode).onTap!();
     await tester.pump();
     expect(find.byType(SnackBar), findsNothing);
-    expect(
-      tester
-          .widget<BbButton>(find.byKey(const Key('selected-arena-play')))
-          .onPressed,
-      isNotNull,
+    final Finder playButton = find.byKey(const Key('selected-arena-play'));
+    expect(playButton, findsOneWidget);
+    final Finder playInk = find.descendant(
+      of: playButton,
+      matching: find.byType(InkWell),
     );
+    expect(tester.widget<InkWell>(playInk).onTap, isNotNull);
     final Finder lockedNode = find.descendant(
       of: find.byKey(const ValueKey<String>('arena-2')),
       matching: find.byType(InkWell),

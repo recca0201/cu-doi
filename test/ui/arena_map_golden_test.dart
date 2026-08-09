@@ -20,6 +20,36 @@ void main() {
         child: ArenaMapScreen(),
       ),
     );
+    final BuildContext context = tester.element(find.byType(ArenaMapScreen));
+    await tester.runAsync(
+      () => Future.wait(<Future<void>>[
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/back_button.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/select_title.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/chapter_tab_selected.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/level_card_frame.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/detail_panel.png'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('assets/images/ui/galaxy/play_button_vi.png'),
+          context,
+        ),
+      ]),
+    );
+    await tester.pump();
     await expectLater(
       find.byKey(const Key('arena-map-golden')),
       matchesGoldenFile('goldens/arena_map_390x844.png'),

@@ -222,6 +222,64 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
   }
 }
 
+abstract final class _MapArt {
+  static const String backButton = 'assets/images/ui/galaxy/back_button.png';
+  static const String selectTitle = 'assets/images/ui/galaxy/select_title.png';
+  static const String chapterTabSelected =
+      'assets/images/ui/galaxy/chapter_tab_selected.png';
+  static const String levelCardFrame =
+      'assets/images/ui/galaxy/level_card_frame.png';
+  static const String detailPanel = 'assets/images/ui/galaxy/detail_panel.png';
+  static const String playButtonVi =
+      'assets/images/ui/galaxy/play_button_vi.png';
+}
+
+class _MapSpriteButton extends StatelessWidget {
+  const _MapSpriteButton({
+    super.key,
+    required this.asset,
+    required this.width,
+    required this.height,
+    required this.semanticLabel,
+    required this.onPressed,
+  });
+
+  final String asset;
+  final double width;
+  final double height;
+  final String semanticLabel;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: onPressed != null,
+    label: semanticLabel,
+    onTap: onPressed,
+    child: ExcludeSemantics(
+      child: Opacity(
+        opacity: onPressed == null ? .48 : 1,
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                asset,
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 class _MapAppBar extends StatelessWidget {
   const _MapAppBar({required this.progress});
 
@@ -230,6 +288,8 @@ class _MapAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations t = AppLocalizations.of(context);
+    final bool isVietnamese =
+        Localizations.localeOf(context).languageCode.toLowerCase() == 'vi';
     return Container(
       key: const Key('arena-map-header'),
       height: 104,
@@ -246,9 +306,10 @@ class _MapAppBar extends StatelessWidget {
           Positioned(
             left: 0,
             top: 8,
-            child: BbIconButton(
-              icon: Icons.arrow_back_rounded,
-              variant: BbVariant.secondary,
+            child: _MapSpriteButton(
+              asset: _MapArt.backButton,
+              width: 48,
+              height: 48,
               semanticLabel: t.backCta,
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -274,11 +335,26 @@ class _MapAppBar extends StatelessWidget {
           Positioned(
             left: 58,
             right: 118,
-            child: BbGameTitle(
-              key: const Key('arena-map-title'),
+            child: Semantics(
+              header: true,
               label: t.arenaSelectTitle,
-              height: 62,
-              fontSize: 48,
+              child: ExcludeSemantics(
+                child: SizedBox(
+                  key: const Key('arena-map-title'),
+                  height: 68,
+                  child: isVietnamese
+                      ? Image.asset(
+                          _MapArt.selectTitle,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.high,
+                        )
+                      : BbGameTitle(
+                          label: t.arenaSelectTitle,
+                          height: 62,
+                          fontSize: 48,
+                        ),
+                ),
+              ),
             ),
           ),
         ],
@@ -360,26 +436,24 @@ class _ChapterTabs extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     gradient: selected
-                        ? const LinearGradient(
-                            colors: <Color>[
-                              Color(0xFFFFD13B),
-                              Color(0xFFFF9E08),
-                            ],
-                          )
+                        ? null
                         : const LinearGradient(
                             colors: <Color>[
                               Color(0xFF174B8D),
                               Color(0xFF102A63),
                             ],
                           ),
+                    image: selected
+                        ? const DecorationImage(
+                            image: AssetImage(_MapArt.chapterTabSelected),
+                            fit: BoxFit.fill,
+                          )
+                        : null,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: selected
-                          ? BbTokens.primaryGoldDark
-                          : BbTokens.secondaryBlue,
-                      width: 2,
-                    ),
-                    boxShadow: BbTokens.sticker(3),
+                    border: selected
+                        ? null
+                        : Border.all(color: BbTokens.secondaryBlue, width: 2),
+                    boxShadow: selected ? null : BbTokens.sticker(3),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -501,7 +575,14 @@ class _ArenaCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: BbTokens.panelNavy,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: outline, width: selected ? 3 : 2),
+              image: DecorationImage(
+                image: const AssetImage(_MapArt.levelCardFrame),
+                fit: BoxFit.fill,
+                colorFilter: locked
+                    ? const ColorFilter.mode(Colors.black54, BlendMode.darken)
+                    : null,
+              ),
+              border: selected ? Border.all(color: outline, width: 3) : null,
               boxShadow: selected
                   ? <BoxShadow>[
                       BoxShadow(
@@ -520,7 +601,7 @@ class _ArenaCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 11, 5, 3),
+                        padding: const EdgeInsets.fromLTRB(9, 20, 9, 3),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: _ArenaPreview(arena: arena, locked: locked),
@@ -557,22 +638,14 @@ class _ArenaCard extends StatelessWidget {
                   ],
                 ),
                 Positioned(
-                  top: -8,
+                  top: 3,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: Container(
-                      width: 48,
-                      height: 34,
+                      width: 54,
+                      height: 40,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: locked
-                            ? BbTokens.panelNavy
-                            : BbTokens.secondaryBlueDark,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: outline, width: 2),
-                        boxShadow: BbTokens.sticker(2),
-                      ),
                       child: Text(
                         '${arena.id}',
                         style: BbText.h2(
@@ -622,11 +695,11 @@ class _ArenaDetailPanel extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: <Color>[Color(0xFF0C55A7), Color(0xFF102D68)],
+        image: const DecorationImage(
+          image: AssetImage(_MapArt.detailPanel),
+          fit: BoxFit.fill,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: BbTokens.trajectoryCyan, width: 2),
         boxShadow: BbTokens.sticker(5),
       ),
       child: Column(
@@ -704,13 +777,23 @@ class _ArenaDetailPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          BbButton.primary(
-            key: const Key('selected-arena-play'),
-            label: t.playCta.toUpperCase(),
-            icon: Icons.play_arrow_rounded,
-            expand: true,
-            onPressed: onPlay,
-          ),
+          if (localeCode == 'vi')
+            _MapSpriteButton(
+              key: const Key('selected-arena-play'),
+              asset: _MapArt.playButtonVi,
+              width: double.infinity,
+              height: 54,
+              semanticLabel: t.playCta,
+              onPressed: onPlay,
+            )
+          else
+            BbButton.primary(
+              key: const Key('selected-arena-play'),
+              label: t.playCta.toUpperCase(),
+              icon: Icons.play_arrow_rounded,
+              expand: true,
+              onPressed: onPlay,
+            ),
         ],
       ),
     );

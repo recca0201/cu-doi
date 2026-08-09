@@ -52,3 +52,6 @@ app.*.map.json
 /temp/android-en-capture/
 /play_store/assets/raw/phone/current.png
 /play_store/assets/raw/phone/next.png
+
+# Image generation working files (final sprites live under assets/images/).
+/tmp/imagegen/

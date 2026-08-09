@@ -15,6 +15,17 @@ import 'game_screen.dart';
 import 'how_to_play_screen.dart';
 import 'settings_screen.dart';
 
+abstract final class _MenuArt {
+  static const String scorePlaque =
+      'assets/images/ui/galaxy/menu_score_plaque.png';
+  static const String playVi = 'assets/images/ui/galaxy/menu_play_vi.png';
+  static const String stageSelectVi =
+      'assets/images/ui/galaxy/menu_stage_select_vi.png';
+  static const String rulesVi = 'assets/images/ui/galaxy/menu_rules_vi.png';
+  static const String playerHud = 'assets/images/ui/galaxy/menu_player_hud.png';
+  static const String settings = 'assets/images/ui/galaxy/menu_settings.png';
+}
+
 /// Galaxy-arcade launcher inspired by the product key art. Only real product
 /// flows are surfaced; decorative shop/event/mission buttons stay out.
 class MenuScreen extends ConsumerWidget {
@@ -23,6 +34,8 @@ class MenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations t = AppLocalizations.of(context);
+    final bool isVietnamese =
+        Localizations.localeOf(context).languageCode.toLowerCase() == 'vi';
     final PlayerProgress progress = ref.watch(progressProvider);
     ref.watch(dialogueSeenProvider);
 
@@ -118,13 +131,21 @@ class MenuScreen extends ConsumerWidget {
                             SizedBox(height: compactHeight ? 8 : 12),
                             SizedBox(
                               width: actionWidth,
-                              child: BbMenuButton(
-                                key: const Key('menu-play'),
-                                label: t.playCta,
-                                icon: Icons.play_arrow_rounded,
-                                hero: true,
-                                onPressed: play,
-                              ),
+                              child: isVietnamese
+                                  ? BbAssetButton(
+                                      key: const Key('menu-play'),
+                                      asset: _MenuArt.playVi,
+                                      height: 86,
+                                      semanticLabel: t.playCta,
+                                      onPressed: play,
+                                    )
+                                  : BbMenuButton(
+                                      key: const Key('menu-play'),
+                                      label: t.playCta,
+                                      icon: Icons.play_arrow_rounded,
+                                      hero: true,
+                                      onPressed: play,
+                                    ),
                             ),
                             SizedBox(height: compactHeight ? 10 : 14),
                             SizedBox(
@@ -132,40 +153,79 @@ class MenuScreen extends ConsumerWidget {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: BbMenuButton(
-                                      key: const Key('menu-arena-select'),
-                                      label: t.arenaSelectCta,
-                                      icon: Icons.track_changes_rounded,
-                                      variant: BbVariant.secondary,
-                                      onPressed: () =>
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute<void>(
-                                              builder: (_) =>
-                                                  const ArenaMapScreen(),
-                                            ),
+                                    child: isVietnamese
+                                        ? BbAssetButton(
+                                            key: const Key('menu-arena-select'),
+                                            asset: _MenuArt.stageSelectVi,
+                                            height: 62,
+                                            semanticLabel: t.arenaSelectCta,
+                                            onPressed: () =>
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute<void>(
+                                                    builder: (_) =>
+                                                        const ArenaMapScreen(),
+                                                  ),
+                                                ),
+                                          )
+                                        : BbMenuButton(
+                                            key: const Key('menu-arena-select'),
+                                            label: t.arenaSelectCta,
+                                            icon: Icons.track_changes_rounded,
+                                            variant: BbVariant.secondary,
+                                            onPressed: () =>
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute<void>(
+                                                    builder: (_) =>
+                                                        const ArenaMapScreen(),
+                                                  ),
+                                                ),
                                           ),
-                                    ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: BbMenuButton(
-                                      key: const Key('menu-how-to-play'),
-                                      label: t.howToCta,
-                                      icon: Icons.route_rounded,
-                                      variant: BbVariant.accent,
-                                      onPressed: () =>
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute<void>(
-                                              builder: (_) => HowToPlayScreen(
-                                                onDontShowAgain: () {
-                                                  dialogueSeen.markSeen(
-                                                    DialogueId.intro,
-                                                  );
-                                                },
-                                              ),
-                                            ),
+                                    child: isVietnamese
+                                        ? BbAssetButton(
+                                            key: const Key('menu-how-to-play'),
+                                            asset: _MenuArt.rulesVi,
+                                            height: 62,
+                                            semanticLabel: t.howToCta,
+                                            onPressed: () =>
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute<void>(
+                                                    builder: (_) =>
+                                                        HowToPlayScreen(
+                                                          onDontShowAgain: () {
+                                                            dialogueSeen
+                                                                .markSeen(
+                                                                  DialogueId
+                                                                      .intro,
+                                                                );
+                                                          },
+                                                        ),
+                                                  ),
+                                                ),
+                                          )
+                                        : BbMenuButton(
+                                            key: const Key('menu-how-to-play'),
+                                            label: t.howToCta,
+                                            icon: Icons.route_rounded,
+                                            variant: BbVariant.accent,
+                                            onPressed: () =>
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute<void>(
+                                                    builder: (_) =>
+                                                        HowToPlayScreen(
+                                                          onDontShowAgain: () {
+                                                            dialogueSeen
+                                                                .markSeen(
+                                                                  DialogueId
+                                                                      .intro,
+                                                                );
+                                                          },
+                                                        ),
+                                                  ),
+                                                ),
                                           ),
-                                    ),
                                   ),
                                 ],
                               ),
@@ -227,7 +287,13 @@ class _PlayerHud extends StatelessWidget {
                 narrow ? 6 : 10,
                 6,
               ),
-              decoration: _navyPanel(radius: 18),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(_MenuArt.playerHud),
+                  fit: BoxFit.fill,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(18)),
+              ),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
@@ -304,10 +370,11 @@ class _PlayerHud extends StatelessWidget {
             ),
           ),
           SizedBox(width: narrow ? 5 : 8),
-          BbIconButton(
-            icon: Icons.settings_rounded,
+          BbAssetButton(
+            asset: _MenuArt.settings,
             semanticLabel: t.settingsCta,
-            diameter: narrow ? 40 : 44,
+            width: narrow ? 40 : 44,
+            height: narrow ? 40 : 44,
             onPressed: onSettings,
           ),
         ],
@@ -450,11 +517,11 @@ class _ScorePlaque extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: <Color>[Color(0xFFFFF9E8), Color(0xFFFFE6A0)],
+        image: const DecorationImage(
+          image: AssetImage(_MenuArt.scorePlaque),
+          fit: BoxFit.fill,
         ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: BbTokens.primaryGoldDark, width: 4),
         boxShadow: BbTokens.sticker(6, BbTokens.outlineDark),
       ),
       child: Column(

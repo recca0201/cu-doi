@@ -580,6 +580,88 @@ class _BbMenuButtonState extends State<BbMenuButton> {
   }
 }
 
+/// ImageGen-backed button that keeps Flutter semantics and press feedback.
+class BbAssetButton extends StatefulWidget {
+  const BbAssetButton({
+    super.key,
+    required this.asset,
+    required this.height,
+    required this.semanticLabel,
+    required this.onPressed,
+    this.width = double.infinity,
+    this.fit = BoxFit.fill,
+    this.hiddenText,
+  });
+
+  final String asset;
+  final double width;
+  final double height;
+  final String semanticLabel;
+  final VoidCallback? onPressed;
+  final BoxFit fit;
+  final String? hiddenText;
+
+  @override
+  State<BbAssetButton> createState() => _BbAssetButtonState();
+}
+
+class _BbAssetButtonState extends State<BbAssetButton> {
+  bool _down = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool enabled = widget.onPressed != null;
+    final bool pressed = enabled && _down;
+    return Semantics(
+      container: true,
+      button: true,
+      enabled: enabled,
+      label: widget.semanticLabel,
+      onTap: enabled ? widget.onPressed : null,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          excludeFromSemantics: true,
+          behavior: HitTestBehavior.opaque,
+          onTapDown: enabled ? (_) => setState(() => _down = true) : null,
+          onTapUp: enabled ? (_) => setState(() => _down = false) : null,
+          onTapCancel: enabled ? () => setState(() => _down = false) : null,
+          onTap: widget.onPressed,
+          child: AnimatedOpacity(
+            duration: BbTokens.durFast,
+            opacity: enabled ? 1 : .48,
+            child: AnimatedContainer(
+              duration: BbTokens.durFast,
+              curve: BbTokens.easeOut,
+              width: widget.width,
+              height: widget.height,
+              transform: Matrix4.translationValues(
+                0,
+                pressed ? BbTokens.pressDrop : 0,
+                0,
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.asset(
+                    widget.asset,
+                    fit: widget.fit,
+                    filterQuality: FilterQuality.high,
+                  ),
+                  if (widget.hiddenText != null)
+                    Opacity(
+                      opacity: 0,
+                      child: Center(child: Text(widget.hiddenText!)),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _OutlinedButtonLabel extends StatelessWidget {
   const _OutlinedButtonLabel(
     this.text, {
@@ -627,7 +709,7 @@ class _OutlinedButtonLabel extends StatelessWidget {
   }
 }
 
-/// Round icon-only button (HUD chrome: pause, speaker, back) — same press physics.
+/// Galaxy jewel icon button used by the HUD and screen navigation.
 class BbIconButton extends StatefulWidget {
   const BbIconButton({
     super.key,
@@ -657,9 +739,10 @@ class _BbIconButtonState extends State<BbIconButton> {
     final enabled = widget.onPressed != null;
     final pressed = _down && enabled;
     final drop = pressed ? BbTokens.pressDrop : 0.0;
-    final shadowOffset = pressed ? 1.0 : BbTokens.stickerSm + 2;
-    final radius = widget.diameter * .24;
+    final shadowOffset = pressed ? 1.0 : BbTokens.stickerSm + 1;
+    final radius = widget.diameter * .28;
     final top = pressed ? Color.lerp(spec.top, spec.bottom, .5)! : spec.top;
+    final iconDiameter = widget.diameter * .67;
 
     return Semantics(
       container: true,
@@ -679,35 +762,60 @@ class _BbIconButtonState extends State<BbIconButton> {
             curve: BbTokens.easeOut,
             width: widget.diameter,
             height: widget.diameter,
-            transform: Matrix4.translationValues(drop, drop, 0),
+            transform: Matrix4.translationValues(0, drop, 0),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: BbTokens.outlineDark,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  Colors.white.withValues(alpha: .95),
+                  spec.rim,
+                  const Color(0xFF1AA8FF),
+                  BbTokens.outlineDark,
+                ],
+                stops: const <double>[0, .18, .62, 1],
+              ),
               borderRadius: BorderRadius.circular(radius),
-              border: Border.all(color: const Color(0xFF050816), width: 2.5),
+              border: Border.all(color: BbTokens.outlineDark, width: 2.4),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  offset: Offset(shadowOffset, shadowOffset),
+                  offset: Offset(0, shadowOffset),
                   blurRadius: 0,
                   color: spec.shadow,
                 ),
+                if (!pressed)
+                  BoxShadow(
+                    color: spec.rim.withValues(alpha: .35),
+                    blurRadius: 8,
+                    spreadRadius: -2,
+                  ),
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(3),
+              padding: EdgeInsets.all(widget.diameter * .075),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[top, spec.bottom],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: <Color>[
+                      Color.lerp(top, Colors.white, .16)!,
+                      spec.bottom,
+                      Color.lerp(spec.bottom, BbTokens.outlineDark, .38)!,
+                    ],
+                    stops: const <double>[0, .58, 1],
                   ),
-                  borderRadius: BorderRadius.circular(radius - 3),
-                  border: Border.all(color: spec.rim, width: 1.5),
+                  borderRadius: BorderRadius.circular(radius - 2),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: .5),
+                    width: 1.2,
+                  ),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Colors.white.withValues(alpha: .35),
-                      offset: const Offset(0, 1),
+                      color: Colors.black.withValues(alpha: .42),
+                      offset: const Offset(0, 2),
+                      blurRadius: 2,
                     ),
                   ],
                 ),
@@ -715,21 +823,77 @@ class _BbIconButtonState extends State<BbIconButton> {
                   alignment: Alignment.center,
                   children: <Widget>[
                     Positioned(
-                      left: 7,
-                      right: 7,
-                      top: 3,
+                      left: widget.diameter * .16,
+                      right: widget.diameter * .16,
+                      top: widget.diameter * .09,
                       child: Container(
-                        height: 2,
-                        color: Colors.white.withValues(alpha: .5),
+                        height: widget.diameter * .055,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .72),
+                          borderRadius: BorderRadius.circular(99),
+                        ),
                       ),
                     ),
-                    Icon(
-                      widget.icon,
-                      color: spec.fg,
-                      size: widget.diameter * .48,
-                      shadows: const <Shadow>[
-                        Shadow(color: Colors.black54, offset: Offset(0, 2)),
-                      ],
+                    Container(
+                      width: iconDiameter,
+                      height: iconDiameter,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          center: const Alignment(-.28, -.35),
+                          radius: .92,
+                          colors: <Color>[
+                            Colors.white.withValues(alpha: .28),
+                            top,
+                            spec.bottom,
+                          ],
+                          stops: const <double>[0, .48, 1],
+                        ),
+                        border: Border.all(color: spec.rim, width: 1.35),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: BbTokens.outlineDark.withValues(alpha: .75),
+                            offset: const Offset(0, 2),
+                            blurRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          Icon(
+                            widget.icon,
+                            color: BbTokens.outlineDark,
+                            size: widget.diameter * .53,
+                          ),
+                          Icon(
+                            widget.icon,
+                            color: spec.fg,
+                            size: widget.diameter * .43,
+                            shadows: const <Shadow>[
+                              Shadow(
+                                color: Colors.black45,
+                                offset: Offset(0, 1.5),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      left: widget.diameter * .18,
+                      top: widget.diameter * .17,
+                      child: Container(
+                        width: widget.diameter * .075,
+                        height: widget.diameter * .075,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: .9),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(color: Colors.white, blurRadius: 3),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -9,6 +9,19 @@ import '../../l10n/app_localizations.dart';
 import '../character_dialogue.dart';
 import '../widgets/bb_widgets.dart';
 
+abstract final class _TutorialArt {
+  static const String title = 'assets/images/ui/galaxy/tutorial_title.png';
+  static const String close = 'assets/images/ui/galaxy/tutorial_close.png';
+  static const String stepBadge =
+      'assets/images/ui/galaxy/tutorial_step_badge.png';
+  static const String cardFrame =
+      'assets/images/ui/galaxy/tutorial_card_frame.png';
+  static const String gotItVi =
+      'assets/images/ui/galaxy/tutorial_got_it_vi.png';
+  static const String dontShowVi =
+      'assets/images/ui/galaxy/tutorial_dont_show_vi.png';
+}
+
 enum _RuleArt { aim, bounce, direct, score, floor }
 
 class HowToPlayScreen extends StatelessWidget {
@@ -46,6 +59,8 @@ class HowToPlayPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations t = AppLocalizations.of(context);
+    final bool isVietnamese =
+        Localizations.localeOf(context).languageCode.toLowerCase() == 'vi';
     final List<({String title, String body, _RuleArt art})>
     rules = <({String title, String body, _RuleArt art})>[
       (title: t.howToAimTitle, body: t.howToAimBody, art: _RuleArt.aim),
@@ -75,7 +90,11 @@ class HowToPlayPanel extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
               child: Column(
                 children: <Widget>[
-                  _RulesHeader(title: t.howToTitle, onClose: onDismiss),
+                  _RulesHeader(
+                    title: t.howToTitle,
+                    isVietnamese: isVietnamese,
+                    onClose: onDismiss,
+                  ),
                   if (showDialogue) ...<Widget>[
                     const SizedBox(height: 12),
                     CharacterDialogue(
@@ -98,23 +117,39 @@ class HowToPlayPanel extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        child: BbButton.primary(
-                          label: t.gotItCta,
-                          size: BbSize.lg,
-                          icon: Icons.check_rounded,
-                          expand: true,
-                          onPressed: onDismiss,
-                        ),
+                        child: isVietnamese
+                            ? BbAssetButton(
+                                asset: _TutorialArt.gotItVi,
+                                height: 58,
+                                semanticLabel: t.gotItCta,
+                                hiddenText: t.gotItCta,
+                                onPressed: onDismiss,
+                              )
+                            : BbButton.primary(
+                                label: t.gotItCta,
+                                size: BbSize.lg,
+                                icon: Icons.check_rounded,
+                                expand: true,
+                                onPressed: onDismiss,
+                              ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: BbButton.secondary(
-                          label: t.dontShowAgainCta,
-                          size: BbSize.lg,
-                          icon: Icons.check_box_rounded,
-                          expand: true,
-                          onPressed: onDontShowAgain,
-                        ),
+                        child: isVietnamese
+                            ? BbAssetButton(
+                                asset: _TutorialArt.dontShowVi,
+                                height: 58,
+                                semanticLabel: t.dontShowAgainCta,
+                                hiddenText: t.dontShowAgainCta,
+                                onPressed: onDontShowAgain,
+                              )
+                            : BbButton.secondary(
+                                label: t.dontShowAgainCta,
+                                size: BbSize.lg,
+                                icon: Icons.check_box_rounded,
+                                expand: true,
+                                onPressed: onDontShowAgain,
+                              ),
                       ),
                     ],
                   ),
@@ -129,9 +164,14 @@ class HowToPlayPanel extends StatelessWidget {
 }
 
 class _RulesHeader extends StatelessWidget {
-  const _RulesHeader({required this.title, required this.onClose});
+  const _RulesHeader({
+    required this.title,
+    required this.isVietnamese,
+    required this.onClose,
+  });
 
   final String title;
+  final bool isVietnamese;
   final VoidCallback onClose;
 
   @override
@@ -140,31 +180,37 @@ class _RulesHeader extends StatelessWidget {
     child: Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        Positioned(
-          left: 18,
-          right: 18,
-          bottom: 8,
-          child: Container(
-            height: 47,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: <Color>[Color(0xFF0B54B4), Color(0xFF183486)],
+        if (!isVietnamese)
+          Positioned(
+            left: 18,
+            right: 18,
+            bottom: 8,
+            child: Container(
+              height: 47,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: <Color>[Color(0xFF0B54B4), Color(0xFF183486)],
+                ),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: BbTokens.outlineDark, width: 4),
+                boxShadow: BbTokens.sticker(4),
               ),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: BbTokens.outlineDark, width: 4),
-              boxShadow: BbTokens.sticker(4),
             ),
           ),
-        ),
         Positioned(
           left: 22,
           right: 22,
           top: 10,
-          child: BbGameTitle(
+          child: SizedBox(
             key: const Key('how-to-title'),
-            label: title,
-            height: 72,
-            fontSize: 58,
+            height: 78,
+            child: isVietnamese
+                ? Image.asset(
+                    _TutorialArt.title,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                  )
+                : BbGameTitle(label: title, height: 72, fontSize: 58),
           ),
         ),
         Positioned.fill(
@@ -175,11 +221,11 @@ class _RulesHeader extends StatelessWidget {
         Positioned(
           right: 0,
           top: 0,
-          child: BbIconButton(
-            icon: Icons.close_rounded,
-            variant: BbVariant.danger,
+          child: BbAssetButton(
+            asset: _TutorialArt.close,
             semanticLabel: MaterialLocalizations.of(context).closeButtonTooltip,
-            diameter: 48,
+            width: 48,
+            height: 48,
             onPressed: onClose,
           ),
         ),
@@ -206,11 +252,11 @@ class _RuleCard extends StatelessWidget {
     constraints: const BoxConstraints(minHeight: 126),
     padding: const EdgeInsets.fromLTRB(9, 10, 12, 10),
     decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: <Color>[Color(0xF20A1B46), Color(0xF20E2F63)],
+      image: const DecorationImage(
+        image: AssetImage(_TutorialArt.cardFrame),
+        fit: BoxFit.fill,
       ),
       borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: BbTokens.primaryGold, width: 2),
       boxShadow: const <BoxShadow>[
         BoxShadow(color: BbTokens.outlineDark, offset: Offset(0, 4)),
       ],
@@ -278,14 +324,11 @@ class _StepBadge extends StatelessWidget {
     height: 44,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      gradient: const LinearGradient(
-        colors: <Color>[Color(0xFF55C9FF), Color(0xFF1764C8)],
+      image: const DecorationImage(
+        image: AssetImage(_TutorialArt.stepBadge),
+        fit: BoxFit.contain,
       ),
-      border: Border.all(color: Colors.white, width: 3),
-      boxShadow: const <BoxShadow>[
-        BoxShadow(color: BbTokens.outlineDark, offset: Offset(0, 4)),
-      ],
+      shape: BoxShape.circle,
     ),
     child: Text(
       '$number',
