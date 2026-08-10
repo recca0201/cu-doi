@@ -745,21 +745,21 @@ class _BbKarstPlayButtonState extends State<BbKarstPlayButton> {
                     fit: BoxFit.fill,
                     filterQuality: FilterQuality.high,
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      widget.height * .92,
-                      widget.height * .12,
-                      widget.height * .28,
-                      widget.height * .13,
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        widget.label.toUpperCase(),
-                        maxLines: 1,
-                        style: BbText.button(
-                          const Color(0xFF572600),
-                        ).copyWith(fontSize: widget.height * .43, height: 1),
+                  Positioned(
+                    left: widget.height * .92,
+                    right: widget.height * .28,
+                    top: widget.height * .10,
+                    bottom: widget.height * .18,
+                    child: Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          widget.label.toUpperCase(),
+                          maxLines: 1,
+                          style: BbText.button(
+                            const Color(0xFF572600),
+                          ).copyWith(fontSize: widget.height * .43, height: 1),
+                        ),
                       ),
                     ),
                   ),

@@ -88,7 +88,9 @@ class MenuScreen extends ConsumerWidget {
                 final double scoreWidth = (actionWidth * .58)
                     .clamp(compact ? 160 : 190, 330)
                     .toDouble();
-                final double scoreHeight = scoreWidth / 2.15;
+                // The plaque artwork is visually dense at its native aspect
+                // ratio. Give the two text rows a little more vertical room.
+                final double scoreHeight = scoreWidth / 1.95;
                 final double logoHeight = tablet
                     ? responsiveHeight(136, 200)
                     : responsiveHeight(112, 176);
@@ -246,7 +248,9 @@ class _PlayerHud extends StatelessWidget {
                   clipBehavior: Clip.none,
                   children: <Widget>[
                     Positioned(
-                      left: -(avatarPadding + 4),
+                      // Keep the circular frame flush with the panel edge.
+                      // The previous extra -4 offset made it bleed left.
+                      left: -avatarPadding,
                       top: narrow ? -7 : -9,
                       child: Container(
                         key: const Key('menu-player-avatar'),
@@ -417,18 +421,19 @@ class _GameLogo extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 3,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF07504A),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: BbTokens.primaryGold, width: 2.5),
-              boxShadow: BbTokens.sticker(3),
-            ),
-            child: Text(
-              title,
-              style: BbText.button(Colors.white).copyWith(fontSize: 16),
+          left: 24,
+          right: 24,
+          bottom: 5,
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            style: BbText.button(Colors.white).copyWith(
+              fontSize: 16,
+              shadows: const <Shadow>[
+                Shadow(color: Color(0xCC062E2B), offset: Offset(0, 2)),
+              ],
             ),
           ),
         ),

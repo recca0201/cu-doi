@@ -160,13 +160,14 @@ class _RulesHeader extends StatelessWidget {
               children: <Widget>[
                 Image.asset(
                   _TutorialArt.title,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
+                  fit: BoxFit.fill,
                   filterQuality: FilterQuality.high,
                 ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(42, 13, 42, 15),
+                Padding(
+                  // The medallions and curved rails are decoration; align the
+                  // title to the clear green centre of the artwork.
+                  padding: const EdgeInsets.fromLTRB(82, 17, 82, 20),
+                  child: Center(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(

@@ -76,7 +76,7 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
       orElse: () => section.arenas.first,
     );
     final double textScale = MediaQuery.textScalerOf(context).scale(16) / 16;
-    final double detailHeight = 232 + math.max(0, textScale - 1) * 92;
+    final double detailHeight = 244 + math.max(0, textScale - 1) * 92;
 
     return Scaffold(
       backgroundColor: BbTokens.karstDeep,
@@ -319,14 +319,12 @@ class _MapImageTextButton extends StatelessWidget {
                     fit: BoxFit.fill,
                     filterQuality: FilterQuality.high,
                   ),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        height * .82,
-                        height * .08,
-                        height * .22,
-                        height * .08,
-                      ),
+                  Positioned(
+                    left: height * .82,
+                    right: height * .22,
+                    top: height * .04,
+                    bottom: height * .16,
+                    child: Center(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
@@ -417,9 +415,11 @@ class _MapAppBar extends StatelessWidget {
                         fit: BoxFit.contain,
                         filterQuality: FilterQuality.high,
                       ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                      Padding(
+                        // Keep the label inside the green field, away from the
+                        // two decorative Dong Son medallions.
+                        padding: const EdgeInsets.fromLTRB(34, 13, 34, 16),
+                        child: Center(
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
@@ -777,110 +777,130 @@ class _ArenaDetailPanel extends StatelessWidget {
     );
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      padding: const EdgeInsets.fromLTRB(24, 17, 42, 14),
       decoration: BoxDecoration(
-        image: const DecorationImage(
-          image: AssetImage(_MapArt.detailPanel),
-          fit: BoxFit.fill,
-        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: BbTokens.sticker(5),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
+      child: Stack(
         children: <Widget>[
-          Expanded(
-            child: Row(
+          Positioned.fill(
+            child: Transform.scale(
+              // The source PNG carries roughly 22% transparent canvas below
+              // its visible frame. Stretch from the top so the lower rail
+              // encloses the CTA instead of ending above it.
+              scaleY: 1.28,
+              alignment: Alignment.topCenter,
+              child: Image.asset(
+                _MapArt.detailPanel,
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+          ),
+          Padding(
+            // These insets follow the clear inner field of detail_panel.png.
+            padding: const EdgeInsets.fromLTRB(46, 28, 46, 27),
+            child: Column(
               children: <Widget>[
-                SizedBox(
-                  key: const Key('selected-arena-preview'),
-                  width: previewWidth,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: _ArenaPreview(arena: arena, locked: onPlay == null),
-                  ),
-                ),
-                const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: FittedBox(
+                      SizedBox(
+                        key: const Key('selected-arena-preview'),
+                        width: previewWidth,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: _ArenaPreview(
+                            arena: arena,
+                            locked: onPlay == null,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: FittedBox(
+                                    alignment: Alignment.centerLeft,
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      t.arenaNumberLabel(arena.id),
+                                      maxLines: 1,
+                                      style: BbText.h2(
+                                        Colors.white,
+                                      ).copyWith(fontSize: 22),
+                                    ),
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.star_rounded,
+                                  color: BbTokens.primaryGold,
+                                ),
+                                Text(
+                                  '${progress.starsFor(arena.id)}',
+                                  style: BbText.h3(BbTokens.primaryGold),
+                                ),
+                              ],
+                            ),
+                            FittedBox(
                               alignment: Alignment.centerLeft,
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                t.arenaNumberLabel(arena.id),
+                                name,
                                 maxLines: 1,
-                                style: BbText.h2(
-                                  Colors.white,
-                                ).copyWith(fontSize: 22),
+                                style: BbText.h3(
+                                  BbTokens.primaryGold,
+                                ).copyWith(fontSize: 15, height: 1.05),
                               ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.star_rounded,
-                            color: BbTokens.primaryGold,
-                          ),
-                          Text(
-                            '${progress.starsFor(arena.id)}',
-                            style: BbText.h3(BbTokens.primaryGold),
-                          ),
-                        ],
-                      ),
-                      FittedBox(
-                        alignment: Alignment.centerLeft,
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          name,
-                          maxLines: 1,
-                          style: BbText.h3(
-                            BbTokens.primaryGold,
-                          ).copyWith(fontSize: 15, height: 1.05),
+                            const SizedBox(height: 4),
+                            _DetailLine(
+                              icon: Icons.track_changes_rounded,
+                              label: t.arenaTargetsLabel,
+                              value: '${arena.targets.length}',
+                            ),
+                            _DetailLine(
+                              icon: Icons.circle_rounded,
+                              label: t.arenaBankRequirementsLabel,
+                              value: arena.targets
+                                  .map(
+                                    (TargetSpec target) => target.requiredBanks,
+                                  )
+                                  .join(' / '),
+                            ),
+                            _DetailLine(
+                              icon: Icons.bolt_rounded,
+                              label: t.arenaShotsLabel,
+                              value: '${arena.shots}',
+                            ),
+                            _DetailLine(
+                              icon: Icons.star_rounded,
+                              label: t.arenaStarThresholdsLabel,
+                              value: arena.starThresholds.join(' / '),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      _DetailLine(
-                        icon: Icons.track_changes_rounded,
-                        label: t.arenaTargetsLabel,
-                        value: '${arena.targets.length}',
-                      ),
-                      _DetailLine(
-                        icon: Icons.circle_rounded,
-                        label: t.arenaBankRequirementsLabel,
-                        value: arena.targets
-                            .map((TargetSpec target) => target.requiredBanks)
-                            .join(' / '),
-                      ),
-                      _DetailLine(
-                        icon: Icons.bolt_rounded,
-                        label: t.arenaShotsLabel,
-                        value: '${arena.shots}',
-                      ),
-                      _DetailLine(
-                        icon: Icons.star_rounded,
-                        label: t.arenaStarThresholdsLabel,
-                        value: arena.starThresholds.join(' / '),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 8),
+                FractionallySizedBox(
+                  widthFactor: .68,
+                  child: _MapImageTextButton(
+                    key: const Key('selected-arena-play'),
+                    asset: _MapArt.playButton,
+                    height: 54,
+                    label: t.playCta.toUpperCase(),
+                    onPressed: onPlay,
+                  ),
+                ),
               ],
-            ),
-          ),
-          const SizedBox(height: 7),
-          FractionallySizedBox(
-            widthFactor: .60,
-            child: SizedBox(
-              child: _MapImageTextButton(
-                key: const Key('selected-arena-play'),
-                asset: _MapArt.playButton,
-                height: 46,
-                label: t.playCta.toUpperCase(),
-                onPressed: onPlay,
-              ),
             ),
           ),
         ],
