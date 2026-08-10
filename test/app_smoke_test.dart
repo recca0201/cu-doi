@@ -91,7 +91,7 @@ void main() {
   testWidgets('the menu builds in Vietnamese', (WidgetTester tester) async {
     await _boot(tester);
 
-    expect(find.text('Bắn Bừa'), findsOneWidget);
+    expect(find.text('game bắn dội tường'), findsOneWidget);
     expect(find.byKey(const Key('menu-play')), findsOneWidget);
     expect(find.byKey(const Key('menu-arena-select')), findsOneWidget);
     expect(tester.takeException(), isNull);

@@ -6,6 +6,9 @@ abstract final class BbTokens {
   // --- Arcade-night semantic palette ---
   static const nightIndigo = Color(0xFF090D2A);
   static const panelNavy = Color(0xFF151B3E);
+  static const karstDeep = Color(0xFF042D31);
+  static const karstTeal = Color(0xFF07504A);
+  static const karstBronze = Color(0xFFD99A38);
   static const primaryGold = Color(0xFFFFC21C);
   static const primaryGoldDark = Color(0xFFD99B00);
   static const secondaryBlue = Color(0xFF1976D2);

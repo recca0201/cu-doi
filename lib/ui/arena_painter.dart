@@ -241,7 +241,7 @@ class ArenaPainter extends CustomPainter {
     canvas.drawPath(
       p,
       Paint()
-        ..color = const Color(0xFF234D83)
+        ..color = const Color(0xFF075A52)
         ..style = PaintingStyle.stroke
         ..strokeWidth = fit.u(2.8)
         ..strokeCap = StrokeCap.square,
@@ -249,7 +249,7 @@ class ArenaPainter extends CustomPainter {
     canvas.drawPath(
       p,
       Paint()
-        ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x7A)
+        ..color = ArenaInk.of(ArenaInk.primaryGold, 0xB8)
         ..style = PaintingStyle.stroke
         ..strokeWidth = fit.u(.35),
     );

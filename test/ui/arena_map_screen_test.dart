@@ -1,4 +1,5 @@
 import 'package:ban_bua_tuong/domain/player_progress.dart';
+import 'package:ban_bua_tuong/core/bb_tokens.dart';
 import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,13 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 import '../support/pump_app.dart';
 
 void main() {
-  testWidgets('night shell shows chapter progress and three-column cards', (
+  testWidgets('karst shell shows chapter progress and three-column cards', (
     tester,
   ) async {
     await pumpApp(tester, home: const ArenaMapScreen());
     expect(
       (tester.widget<Scaffold>(find.byType(Scaffold))).backgroundColor,
-      const Color(0xFF090D2A),
+      BbTokens.karstDeep,
     );
     expect(find.byKey(const Key('arena-map-title')), findsOneWidget);
     expect(find.text('Chương 1 · Học luật dội'), findsOneWidget);

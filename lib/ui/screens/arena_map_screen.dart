@@ -76,10 +76,10 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
       orElse: () => section.arenas.first,
     );
     final double textScale = MediaQuery.textScalerOf(context).scale(16) / 16;
-    final double detailHeight = 202 + math.max(0, textScale - 1) * 72;
+    final double detailHeight = 232 + math.max(0, textScale - 1) * 92;
 
     return Scaffold(
-      backgroundColor: BbTokens.nightIndigo,
+      backgroundColor: BbTokens.karstDeep,
       body: Stack(
         children: <Widget>[
           const Positioned.fill(
@@ -321,12 +321,21 @@ class _MapImageTextButton extends StatelessWidget {
                   ),
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.only(left: height * .62),
-                      child: Text(
-                        label,
-                        style: BbText.button(
-                          const Color(0xFF572600),
-                        ).copyWith(fontSize: 25),
+                      padding: EdgeInsets.fromLTRB(
+                        height * .82,
+                        height * .08,
+                        height * .22,
+                        height * .08,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          style: BbText.button(
+                            const Color(0xFF572600),
+                          ).copyWith(fontSize: 24),
+                        ),
                       ),
                     ),
                   ),
@@ -405,17 +414,21 @@ class _MapAppBar extends StatelessWidget {
                     children: <Widget>[
                       Image.asset(
                         _MapArt.selectTitle,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.contain,
                         filterQuality: FilterQuality.high,
                       ),
                       Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            t.arenaSelectTitle.toUpperCase(),
-                            style: BbText.h2(
-                              const Color(0xFFFFE7A0),
-                            ).copyWith(fontSize: 27),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              t.arenaSelectTitle.toUpperCase(),
+                              maxLines: 1,
+                              style: BbText.h2(
+                                const Color(0xFFFFE7A0),
+                              ).copyWith(fontSize: 27),
+                            ),
                           ),
                         ),
                       ),
@@ -573,11 +586,14 @@ class _ChapterProgress extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: Text(
-              chapterTitle(section.chapter, AppLocalizations.of(context)),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: BbText.h3(Colors.white).copyWith(fontSize: 16),
+            child: FittedBox(
+              alignment: Alignment.centerLeft,
+              fit: BoxFit.scaleDown,
+              child: Text(
+                chapterTitle(section.chapter, AppLocalizations.of(context)),
+                maxLines: 1,
+                style: BbText.h3(Colors.white).copyWith(fontSize: 16),
+              ),
             ),
           ),
           Text(
@@ -755,9 +771,13 @@ class _ArenaDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations t = AppLocalizations.of(context);
     final String name = forLocale(localeCode, arena.name, arena.nameEn);
+    final double previewWidth = (MediaQuery.sizeOf(context).width * .24).clamp(
+      84.0,
+      112.0,
+    );
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(24, 17, 42, 14),
       decoration: BoxDecoration(
         image: const DecorationImage(
           image: AssetImage(_MapArt.detailPanel),
@@ -766,13 +786,15 @@ class _ArenaDetailPanel extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: BbTokens.sticker(5),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: <Widget>[
           Expanded(
             child: Row(
               children: <Widget>[
-                AspectRatio(
-                  aspectRatio: .78,
+                SizedBox(
+                  key: const Key('selected-arena-preview'),
+                  width: previewWidth,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: _ArenaPreview(arena: arena, locked: onPlay == null),
@@ -786,11 +808,16 @@ class _ArenaDetailPanel extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            child: Text(
-                              t.arenaNumberLabel(arena.id),
-                              style: BbText.h2(
-                                Colors.white,
-                              ).copyWith(fontSize: 22),
+                            child: FittedBox(
+                              alignment: Alignment.centerLeft,
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                t.arenaNumberLabel(arena.id),
+                                maxLines: 1,
+                                style: BbText.h2(
+                                  Colors.white,
+                                ).copyWith(fontSize: 22),
+                              ),
                             ),
                           ),
                           const Icon(
@@ -803,13 +830,16 @@ class _ArenaDetailPanel extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text(
-                        name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: BbText.h3(
-                          BbTokens.primaryGold,
-                        ).copyWith(fontSize: 16),
+                      FittedBox(
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          name,
+                          maxLines: 1,
+                          style: BbText.h3(
+                            BbTokens.primaryGold,
+                          ).copyWith(fontSize: 15, height: 1.05),
+                        ),
                       ),
                       const SizedBox(height: 4),
                       _DetailLine(
@@ -841,9 +871,9 @@ class _ArenaDetailPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          Align(
+          FractionallySizedBox(
+            widthFactor: .60,
             child: SizedBox(
-              width: MediaQuery.sizeOf(context).width * .72,
               child: _MapImageTextButton(
                 key: const Key('selected-arena-play'),
                 asset: _MapArt.playButton,
@@ -877,19 +907,30 @@ class _DetailLine extends StatelessWidget {
         Icon(icon, size: 14, color: BbTokens.primaryGold),
         const SizedBox(width: 4),
         Expanded(
-          child: Text(
-            '$label:',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: BbText.small(Colors.white).copyWith(fontSize: 11),
+          flex: 4,
+          child: FittedBox(
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '$label:',
+              maxLines: 1,
+              style: BbText.small(Colors.white).copyWith(fontSize: 11),
+            ),
           ),
         ),
         const SizedBox(width: 4),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            value,
-            style: BbText.small(BbTokens.trajectoryCyan).copyWith(fontSize: 11),
+        Expanded(
+          flex: 3,
+          child: FittedBox(
+            alignment: Alignment.centerRight,
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: BbText.small(
+                BbTokens.trajectoryCyan,
+              ).copyWith(fontSize: 11),
+            ),
           ),
         ),
       ],

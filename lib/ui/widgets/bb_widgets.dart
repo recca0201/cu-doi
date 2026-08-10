@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 
-enum BbVariant { primary, secondary, accent, grape, danger, light }
+enum BbVariant { primary, secondary, accent, grape, danger, light, karst }
 
 enum BbSize { sm, md, lg }
 
@@ -163,6 +163,13 @@ const _variants = {
     shadow: Color(0xFF050A1C),
     fg: BbTokens.textPrimary,
   ),
+  BbVariant.karst: _VariantSpec(
+    top: Color(0xFF15947F),
+    bottom: Color(0xFF07504A),
+    rim: Color(0xFFFFD36A),
+    shadow: Color(0xFF3D210E),
+    fg: Color(0xFFFFF3D7),
+  ),
 };
 
 /// Signature sticker-pill CTA with the "press-drop" physics (US design system).
@@ -223,6 +230,15 @@ class BbButton extends StatefulWidget {
     this.expand = false,
     this.selected,
   }) : variant = BbVariant.danger;
+  const BbButton.karst({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.size = BbSize.md,
+    this.icon,
+    this.expand = false,
+    this.selected,
+  }) : variant = BbVariant.karst;
 
   final String label;
   final VoidCallback? onPressed;
@@ -266,7 +282,10 @@ class _BbButtonState extends State<BbButton> {
       curve: BbTokens.easeOut,
       height: _height * controlScale,
       transform: Matrix4.translationValues(drop, drop, 0),
-      alignment: Alignment.center,
+      // An alignment loosens the child's constraints. For expanded buttons
+      // that made only the black outer shell fill the row while the coloured
+      // face shrank to the label's intrinsic width.
+      alignment: widget.expand ? null : Alignment.center,
       decoration: BoxDecoration(
         color: BbTokens.outlineDark,
         borderRadius: BorderRadius.circular(BbTokens.rPill),
@@ -669,6 +688,91 @@ class _BbAssetButtonState extends State<BbAssetButton> {
   }
 }
 
+/// Gold/bronze CTA used by the karst visual language.
+///
+/// The source sprite has a 1890:691 aspect ratio. Keeping that ratio here is
+/// important: stretching it to the width of a row makes the bronze ornaments
+/// and the label area look unnaturally long.
+class BbKarstPlayButton extends StatefulWidget {
+  const BbKarstPlayButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.height = 60,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final double height;
+
+  @override
+  State<BbKarstPlayButton> createState() => _BbKarstPlayButtonState();
+}
+
+class _BbKarstPlayButtonState extends State<BbKarstPlayButton> {
+  bool _down = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool enabled = widget.onPressed != null;
+    final bool pressed = enabled && _down;
+    return Semantics(
+      container: true,
+      button: true,
+      enabled: enabled,
+      label: widget.label,
+      onTap: enabled ? widget.onPressed : null,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: enabled ? (_) => setState(() => _down = true) : null,
+          onTapUp: enabled ? (_) => setState(() => _down = false) : null,
+          onTapCancel: enabled ? () => setState(() => _down = false) : null,
+          onTap: widget.onPressed,
+          child: AnimatedOpacity(
+            duration: BbTokens.durFast,
+            opacity: enabled ? 1 : .48,
+            child: AnimatedContainer(
+              duration: BbTokens.durFast,
+              transform: Matrix4.translationValues(0, pressed ? 2 : 0, 0),
+              height: widget.height,
+              width: widget.height * (1890 / 691),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/ui/karst/play_button.png',
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.high,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      widget.height * .92,
+                      widget.height * .12,
+                      widget.height * .28,
+                      widget.height * .13,
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.label.toUpperCase(),
+                        maxLines: 1,
+                        style: BbText.button(
+                          const Color(0xFF572600),
+                        ).copyWith(fontSize: widget.height * .43, height: 1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _OutlinedButtonLabel extends StatelessWidget {
   const _OutlinedButtonLabel(
     this.text, {
@@ -750,6 +854,7 @@ class _BbIconButtonState extends State<BbIconButton> {
     final radius = widget.diameter * .28;
     final top = pressed ? Color.lerp(spec.top, spec.bottom, .5)! : spec.top;
     final iconDiameter = widget.diameter * .67;
+    final bool karst = widget.variant == BbVariant.karst;
 
     return Semantics(
       container: true,
@@ -775,12 +880,19 @@ class _BbIconButtonState extends State<BbIconButton> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: <Color>[
-                  Colors.white.withValues(alpha: .95),
-                  spec.rim,
-                  const Color(0xFF1AA8FF),
-                  BbTokens.outlineDark,
-                ],
+                colors: karst
+                    ? const <Color>[
+                        Color(0xFFFFE2A0),
+                        Color(0xFFD99A38),
+                        Color(0xFF087064),
+                        Color(0xFF3D210E),
+                      ]
+                    : <Color>[
+                        Colors.white.withValues(alpha: .95),
+                        spec.rim,
+                        Color.lerp(spec.top, spec.bottom, .5)!,
+                        BbTokens.outlineDark,
+                      ],
                 stops: const <double>[0, .18, .62, 1],
               ),
               borderRadius: BorderRadius.circular(radius),
@@ -815,7 +927,9 @@ class _BbIconButtonState extends State<BbIconButton> {
                   ),
                   borderRadius: BorderRadius.circular(radius - 2),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: .5),
+                    color: karst
+                        ? const Color(0xFFFFD36A)
+                        : Colors.white.withValues(alpha: .5),
                     width: 1.2,
                   ),
                   boxShadow: <BoxShadow>[
@@ -922,12 +1036,16 @@ class BbCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(BbTokens.sp5),
     this.sticker = true,
     this.radius = BbTokens.rLg,
+    this.borderColor = BbTokens.outlineDark,
+    this.shadowColor = BbTokens.outlineDark,
   });
   final Widget child;
   final Color color;
   final EdgeInsets padding;
   final bool sticker;
   final double radius;
+  final Color borderColor;
+  final Color shadowColor;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -935,9 +1053,9 @@ class BbCard extends StatelessWidget {
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: BbTokens.outlineDark, width: BbTokens.bd3),
+      border: Border.all(color: borderColor, width: BbTokens.bd3),
       boxShadow: sticker
-          ? BbTokens.sticker(BbTokens.stickerMd, BbTokens.outlineDark)
+          ? BbTokens.sticker(BbTokens.stickerMd, shadowColor)
           : const [],
     ),
     child: child,
@@ -1006,10 +1124,14 @@ class BbToggle extends StatelessWidget {
               height: 38,
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                color: value ? BbTokens.secondaryBlue : BbTokens.textMuted,
+                gradient: LinearGradient(
+                  colors: value
+                      ? const <Color>[Color(0xFF15947F), Color(0xFF07504A)]
+                      : const <Color>[Color(0xFF6E6250), Color(0xFF3D352C)],
+                ),
                 borderRadius: BorderRadius.circular(BbTokens.rPill),
                 border: Border.all(
-                  color: BbTokens.outlineDark,
+                  color: BbTokens.karstBronze,
                   width: BbTokens.bd2,
                 ),
               ),
@@ -1021,10 +1143,10 @@ class BbToggle extends StatelessWidget {
                   width: 28,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: BbTokens.textPrimary,
+                    color: const Color(0xFFFFF3D7),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: BbTokens.outlineDark,
+                      color: const Color(0xFF3D210E),
                       width: BbTokens.bd2,
                     ),
                   ),
@@ -1043,7 +1165,7 @@ class BbDialog extends StatelessWidget {
   const BbDialog({
     super.key,
     required this.child,
-    this.color = BbTokens.panelNavy,
+    this.color = BbTokens.karstDeep,
   });
   final Widget child;
   final Color color;
@@ -1058,7 +1180,7 @@ class BbDialog extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(BbTokens.rXl),
-          border: Border.all(color: BbTokens.outlineDark, width: BbTokens.bd4),
+          border: Border.all(color: BbTokens.karstBronze, width: BbTokens.bd4),
           boxShadow: BbTokens.sticker(BbTokens.stickerLg, BbTokens.outlineDark),
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [child]),

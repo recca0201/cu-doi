@@ -19,7 +19,7 @@ class SettingsScreen extends ConsumerWidget {
     final SettingsController controller = ref.read(settingsProvider.notifier);
 
     return Scaffold(
-      backgroundColor: BbTokens.nightIndigo,
+      backgroundColor: BbTokens.karstDeep,
       body: Stack(
         children: <Widget>[
           const Positioned.fill(
@@ -31,37 +31,10 @@ class SettingsScreen extends ConsumerWidget {
                 constraints: const BoxConstraints(maxWidth: BbTokens.screenMax),
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(BbTokens.sp4),
-                      decoration: const BoxDecoration(
-                        color: BbTokens.panelNavy,
-                        border: Border(
-                          bottom: BorderSide(
-                            color: BbTokens.outlineDark,
-                            width: BbTokens.bd2,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          BbIconButton(
-                            icon: Icons.arrow_back_rounded,
-                            semanticLabel: t.backCta,
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          const SizedBox(width: BbTokens.sp3),
-                          Expanded(
-                            child: BbGameTitle(
-                              key: const Key('settings-title'),
-                              label: t.settingsTitle,
-                              height: 44,
-                              fontSize: 31,
-                              tilt: -.01,
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _SettingsHeader(
+                      title: t.settingsTitle,
+                      backLabel: t.backCta,
+                      onBack: () => Navigator.of(context).pop(),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -69,6 +42,9 @@ class SettingsScreen extends ConsumerWidget {
                         child: Column(
                           children: <Widget>[
                             BbCard(
+                              color: const Color(0xF207504A),
+                              borderColor: BbTokens.karstBronze,
+                              shadowColor: const Color(0xFF3D210E),
                               child: Column(
                                 children: <Widget>[
                                   _Row(
@@ -111,7 +87,7 @@ class SettingsScreen extends ConsumerWidget {
                                           size: BbSize.sm,
                                           variant: settings.localeCode == 'vi'
                                               ? BbVariant.primary
-                                              : BbVariant.light,
+                                              : BbVariant.karst,
                                           selected: settings.localeCode == 'vi',
                                           onPressed: () =>
                                               controller.setLocale('vi'),
@@ -122,7 +98,7 @@ class SettingsScreen extends ConsumerWidget {
                                           size: BbSize.sm,
                                           variant: settings.localeCode == 'en'
                                               ? BbVariant.primary
-                                              : BbVariant.light,
+                                              : BbVariant.karst,
                                           selected: settings.localeCode == 'en',
                                           onPressed: () =>
                                               controller.setLocale('en'),
@@ -134,18 +110,23 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: BbTokens.sp5),
-                            BbButton.danger(
-                              label: t.resetProgressCta,
-                              expand: true,
-                              onPressed: () async {
-                                await ref
-                                    .read(progressProvider.notifier)
-                                    .reset();
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(t.resetProgressDone)),
-                                );
-                              },
+                            FractionallySizedBox(
+                              widthFactor: .60,
+                              child: BbButton.danger(
+                                label: t.resetProgressCta,
+                                expand: true,
+                                onPressed: () async {
+                                  await ref
+                                      .read(progressProvider.notifier)
+                                      .reset();
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(t.resetProgressDone),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                             const SizedBox(height: BbTokens.sp6),
                           ],
@@ -173,7 +154,7 @@ class _Row extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: <Widget>[
-      Icon(icon, color: BbTokens.trajectoryCyan),
+      Icon(icon, color: const Color(0xFFFFD36A)),
       const SizedBox(width: BbTokens.sp3),
       Expanded(child: Text(label, style: BbText.body(BbTokens.textPrimary))),
       child,
@@ -187,6 +168,95 @@ class _NightDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Divider(
     height: BbTokens.sp6,
-    color: BbTokens.textMuted.withValues(alpha: .22),
+    color: BbTokens.karstBronze.withValues(alpha: .35),
+  );
+}
+
+class _SettingsHeader extends StatelessWidget {
+  const _SettingsHeader({
+    required this.title,
+    required this.backLabel,
+    required this.onBack,
+  });
+
+  final String title;
+  final String backLabel;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 82,
+    child: Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Positioned(
+          left: 68,
+          right: 68,
+          top: 7,
+          bottom: 7,
+          child: _CroppedHeaderFrame(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title.toUpperCase(),
+                key: const Key('settings-title'),
+                maxLines: 1,
+                style: BbText.h2(
+                  const Color(0xFFFFF0C5),
+                ).copyWith(fontSize: 27),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: 10,
+          top: 14,
+          child: Semantics(
+            button: true,
+            label: backLabel,
+            onTap: onBack,
+            child: GestureDetector(
+              onTap: onBack,
+              child: const Image(
+                image: AssetImage('assets/images/ui/karst/back_button.png'),
+                width: 52,
+                height: 52,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _CroppedHeaderFrame extends StatelessWidget {
+  const _CroppedHeaderFrame({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ClipRect(
+    child: Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          height: 92,
+          child: Image.asset(
+            'assets/images/ui/karst/select_title_frame.png',
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.high,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(36, 8, 36, 14),
+          child: child,
+        ),
+      ],
+    ),
   );
 }

@@ -41,9 +41,9 @@ class CharacterDialogue extends ConsumerWidget {
         key: Key('character-dialogue-${id.name}'),
         padding: const EdgeInsets.all(BbTokens.sp4),
         decoration: BoxDecoration(
-          color: BbTokens.panelNavy,
+          color: BbTokens.karstDeep,
           borderRadius: BorderRadius.circular(BbTokens.rLg),
-          border: Border.all(color: BbTokens.textMuted, width: BbTokens.bd2),
+          border: Border.all(color: BbTokens.karstBronze, width: BbTokens.bd2),
           boxShadow: modal
               ? BbTokens.sticker(BbTokens.stickerMd, BbTokens.outlineDark)
               : const <BoxShadow>[],
@@ -92,11 +92,14 @@ class CharacterDialogue extends ConsumerWidget {
                 ),
                 if (modal) ...<Widget>[
                   const SizedBox(height: BbTokens.sp4),
-                  BbButton.primary(
-                    key: const Key('dialogue-dismiss'),
-                    label: t.gotItCta,
-                    expand: true,
-                    onPressed: () => _dismiss(ref),
+                  FractionallySizedBox(
+                    widthFactor: .60,
+                    child: BbButton.primary(
+                      key: const Key('dialogue-dismiss'),
+                      label: t.gotItCta,
+                      expand: true,
+                      onPressed: () => _dismiss(ref),
+                    ),
                   ),
                 ],
               ],

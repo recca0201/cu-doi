@@ -90,7 +90,7 @@ abstract final class BbTheme {
         secondary: BbTokens.secondaryBlue,
         surface: BbTokens.panelNavy,
       ),
-      scaffoldBackgroundColor: BbTokens.nightIndigo,
+      scaffoldBackgroundColor: BbTokens.karstDeep,
     );
     return base.copyWith(
       textTheme: base.textTheme

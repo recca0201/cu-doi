@@ -57,6 +57,8 @@ void main() {
     }
     expect(find.textContaining('50 xu'), findsWidgets);
     expect(find.text('Thử lại'), findsOneWidget);
+    expect(find.byKey(const Key('result-backdrop')), findsOneWidget);
+    expect(find.byKey(const Key('result-panel')), findsOneWidget);
     expect(find.byKey(const Key('skip-arena-button')), findsNothing);
   });
 }

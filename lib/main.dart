@@ -16,6 +16,8 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
     DeviceOrientation.portraitUp,
   ]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(_karstSystemUi);
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
@@ -40,7 +42,23 @@ class BanBuaTuongApp extends ConsumerWidget {
       locale: Locale(settings.localeCode),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      builder: (BuildContext context, Widget? child) =>
+          AnnotatedRegion<SystemUiOverlayStyle>(
+            value: _karstSystemUi,
+            child: child ?? const SizedBox.shrink(),
+          ),
       home: const MenuScreen(),
     );
   }
 }
+
+const SystemUiOverlayStyle _karstSystemUi = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.light,
+  statusBarBrightness: Brightness.dark,
+  systemNavigationBarColor: Colors.transparent,
+  systemNavigationBarDividerColor: Colors.transparent,
+  systemNavigationBarIconBrightness: Brightness.light,
+  systemStatusBarContrastEnforced: false,
+  systemNavigationBarContrastEnforced: false,
+);

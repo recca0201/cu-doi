@@ -55,14 +55,11 @@ class _GameHudPill extends StatelessWidget {
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: <Color>[
-          ArenaInk.of(ArenaInk.panelNavy),
-          ArenaInk.of(ArenaInk.bgTop),
-        ],
+        colors: <Color>[const Color(0xFF07504A), const Color(0xFF042D31)],
       ),
       borderRadius: BorderRadius.circular(14),
       border: Border.all(
-        color: ArenaInk.of(ArenaInk.trajectoryCyan, 0x88),
+        color: BbTokens.primaryGold.withValues(alpha: .68),
         width: 2,
       ),
       boxShadow: const <BoxShadow>[
@@ -106,7 +103,7 @@ class _ArenaBankMeter extends StatelessWidget {
       gradient: const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: <Color>[Color(0xFF234F9A), Color(0xFF0A1D4B)],
+        colors: <Color>[Color(0xFF087069), Color(0xFF06383A)],
       ),
       borderRadius: BorderRadius.circular(14),
       border: Border.all(color: BbTokens.primaryGold, width: 2),
@@ -418,53 +415,66 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final AppLocalizations t = AppLocalizations.of(context);
     final HintState hint = ref.watch(hintControllerProvider);
     return Scaffold(
-      backgroundColor: ArenaInk.of(ArenaInk.bgTop),
+      backgroundColor: BbTokens.karstDeep,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: <Widget>[
-            _hud(t),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  _lastSize = Size(constraints.maxWidth, constraints.maxHeight);
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[
-                      const BbCanyonBackdrop(scrim: .46, bottomShade: .70),
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTapUp: (TapUpDetails d) => setState(() {
-                          _aimAt(d.localPosition);
-                          _fire();
-                        }),
-                        onPanStart: (DragStartDetails d) =>
-                            setState(() => _aimAt(d.localPosition)),
-                        onPanUpdate: (DragUpdateDetails d) =>
-                            setState(() => _aimAt(d.localPosition)),
-                        onPanEnd: (DragEndDetails d) => setState(_fire),
-                        child: SizedBox.expand(
-                          child: CustomPaint(painter: _painter(hint.path)),
-                        ),
-                      ),
-                      Positioned(
-                        left: 10,
-                        bottom: 12,
-                        child: IgnorePointer(
-                          child: _ArenaBankMeter(
-                            label: t.banksLabel,
-                            banks: _runner?.banks ?? 0,
-                          ),
-                        ),
-                      ),
-                      if (_guideVisible) _guide(t),
-                      if (_outcome != null && !_guideVisible)
-                        _result(t, _outcome!),
-                    ],
-                  );
-                },
-              ),
+            Column(
+              children: <Widget>[
+                _hud(t),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                          _lastSize = Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
+                          );
+                          return Stack(
+                            fit: StackFit.expand,
+                            children: <Widget>[
+                              const BbCanyonBackdrop(
+                                scrim: .46,
+                                bottomShade: .70,
+                              ),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTapUp: (TapUpDetails d) => setState(() {
+                                  _aimAt(d.localPosition);
+                                  _fire();
+                                }),
+                                onPanStart: (DragStartDetails d) =>
+                                    setState(() => _aimAt(d.localPosition)),
+                                onPanUpdate: (DragUpdateDetails d) =>
+                                    setState(() => _aimAt(d.localPosition)),
+                                onPanEnd: (DragEndDetails d) => setState(_fire),
+                                child: SizedBox.expand(
+                                  child: CustomPaint(
+                                    painter: _painter(hint.path),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 10,
+                                bottom: 12,
+                                child: IgnorePointer(
+                                  child: _ArenaBankMeter(
+                                    label: t.banksLabel,
+                                    banks: _runner?.banks ?? 0,
+                                  ),
+                                ),
+                              ),
+                              if (_guideVisible) _guide(t),
+                            ],
+                          );
+                        },
+                  ),
+                ),
+                _footer(t, hint),
+              ],
             ),
-            _footer(t, hint),
+            if (_outcome != null && !_guideVisible)
+              Positioned.fill(child: _result(t, _outcome!)),
           ],
         ),
       ),
@@ -518,14 +528,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: <Color>[
-            ArenaInk.of(ArenaInk.bgTop),
-            ArenaInk.of(ArenaInk.panelNavy),
-          ],
+          colors: <Color>[const Color(0xFF07504A), const Color(0xFF042D31)],
         ),
         border: Border(
           bottom: BorderSide(
-            color: ArenaInk.of(ArenaInk.trajectoryCyan, 0x55),
+            color: BbTokens.primaryGold.withValues(alpha: .62),
             width: 2,
           ),
         ),
@@ -540,7 +547,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
             children: <Widget>[
               BbIconButton(
                 icon: Icons.arrow_back_rounded,
-                variant: BbVariant.secondary,
+                variant: BbVariant.karst,
                 semanticLabel: t.menuCta,
                 diameter: 46,
                 onPressed: () => Navigator.of(context).pop(),
@@ -556,13 +563,15 @@ class _GameScreenState extends ConsumerState<GameScreen>
                       fontSize: 27,
                       tilt: -.01,
                     ),
-                    Text(
-                      forLocale(code, _arena.name, _arena.nameEn),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: BbText.small(
-                        BbTokens.textMuted,
-                      ).copyWith(fontSize: 12),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        forLocale(code, _arena.name, _arena.nameEn),
+                        maxLines: 1,
+                        style: BbText.small(
+                          BbTokens.textMuted,
+                        ).copyWith(fontSize: 12),
+                      ),
                     ),
                   ],
                 ),
@@ -570,7 +579,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               const SizedBox(width: 10),
               BbIconButton(
                 icon: Icons.pause_rounded,
-                variant: BbVariant.secondary,
+                variant: BbVariant.karst,
                 semanticLabel: t.pauseTitle,
                 diameter: 46,
                 onPressed: () => _showPause(t),
@@ -639,9 +648,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 7, 12, 10),
       decoration: BoxDecoration(
-        color: ArenaInk.of(ArenaInk.panelNavy),
+        color: const Color(0xFF042D31),
         border: Border(
-          top: BorderSide(color: ArenaInk.of(ArenaInk.danger, 0x99), width: 2),
+          top: BorderSide(
+            color: BbTokens.primaryGold.withValues(alpha: .72),
+            width: 2,
+          ),
         ),
       ),
       child: Column(
@@ -669,20 +681,15 @@ class _GameScreenState extends ConsumerState<GameScreen>
             ],
           ),
           const SizedBox(height: 6),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  forLocale(code, _arena.hint, _arena.hintEn),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: BbText.small(
-                    ArenaInk.of(ArenaInk.cream, 0xCC),
-                  ).copyWith(fontSize: 12),
-                ),
-              ),
-              const SizedBox(width: 8),
-              BbButton.primary(
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final Widget copy = Text(
+                forLocale(code, _arena.hint, _arena.hintEn),
+                style: BbText.small(
+                  ArenaInk.of(ArenaInk.cream, 0xCC),
+                ).copyWith(fontSize: 12),
+              );
+              final Widget action = BbButton.primary(
                 key: const Key('hint-button'),
                 label:
                     (missing > 0
@@ -691,9 +698,26 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         .toUpperCase(),
                 size: BbSize.md,
                 icon: Icons.route_rounded,
+                expand: true,
                 onPressed: enabled ? _requestHint : null,
-              ),
-            ],
+              );
+              if (constraints.maxWidth < 380) {
+                return Column(
+                  children: <Widget>[
+                    copy,
+                    const SizedBox(height: 8),
+                    FractionallySizedBox(widthFactor: .58, child: action),
+                  ],
+                );
+              }
+              return Row(
+                children: <Widget>[
+                  Expanded(child: copy),
+                  const SizedBox(width: 12),
+                  SizedBox(width: constraints.maxWidth * .42, child: action),
+                ],
+              );
+            },
           ),
           if (statusText.isNotEmpty) ...<Widget>[
             const SizedBox(height: BbTokens.sp2),
@@ -729,18 +753,24 @@ class _GameScreenState extends ConsumerState<GameScreen>
             const SizedBox(height: BbTokens.sp3),
             BbGameTitle(label: t.pauseTitle, height: 52, fontSize: 38),
             const SizedBox(height: BbTokens.sp5),
-            BbButton.primary(
-              label: t.resumeCta,
-              icon: Icons.play_arrow_rounded,
-              expand: true,
-              onPressed: () => Navigator.of(dialogContext).pop(false),
+            FractionallySizedBox(
+              widthFactor: .64,
+              child: BbButton.primary(
+                label: t.resumeCta,
+                icon: Icons.play_arrow_rounded,
+                expand: true,
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+              ),
             ),
             const SizedBox(height: BbTokens.sp3),
-            BbButton.light(
-              label: t.menuCta,
-              icon: Icons.home_rounded,
-              expand: true,
-              onPressed: () => Navigator.of(dialogContext).pop(true),
+            FractionallySizedBox(
+              widthFactor: .64,
+              child: BbButton.karst(
+                label: t.menuCta,
+                icon: Icons.home_rounded,
+                expand: true,
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+              ),
             ),
           ],
         ),
@@ -801,186 +831,242 @@ class _GameScreenState extends ConsumerState<GameScreen>
         ? (hasNext ? DialogueId.levelWin : DialogueId.finalVictory)
         : (crowded ? DialogueId.levelLoseShort : DialogueId.levelLose);
 
-    return Container(
-      color: ArenaInk.of(ArenaInk.bgTop, 0xE6),
-      alignment: Alignment.center,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(BbTokens.sp6),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                BbGameTitle(
-                  key: Key(won ? 'result-win-title' : 'result-lose-title'),
-                  label: won ? t.resultWin : t.resultLose,
-                  tone: won ? BbTitleTone.victory : BbTitleTone.danger,
-                  height: won ? 82 : 72,
-                  fontSize: won ? 56 : 48,
-                ),
-                if (won) ...<Widget>[
-                  const SizedBox(height: BbTokens.sp4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                      3,
-                      (int i) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: BbTokens.sp1,
+    final Color resultAccent = won ? BbTokens.primaryGold : BbTokens.dangerRed;
+    return ClipRect(
+      child: BackdropFilter(
+        key: const Key('result-backdrop'),
+        filter: ui.ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+        child: Container(
+          color: BbTokens.karstDeep.withValues(alpha: .68),
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(BbTokens.sp5),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: Container(
+                  key: const Key('result-panel'),
+                  padding: const EdgeInsets.fromLTRB(18, 20, 18, 22),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[Color(0xFA0A5B50), Color(0xFA043032)],
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: resultAccent, width: 3),
+                    boxShadow: <BoxShadow>[
+                      const BoxShadow(
+                        color: Color(0xCC021516),
+                        offset: Offset(0, 10),
+                        blurRadius: 22,
+                      ),
+                      BoxShadow(
+                        color: resultAccent.withValues(alpha: .34),
+                        blurRadius: 22,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      BbGameTitle(
+                        key: Key(
+                          won ? 'result-win-title' : 'result-lose-title',
                         ),
-                        child: Icon(
-                          i < stars
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
-                          size: i == 1 ? 72 : 58,
-                          color: i < stars
-                              ? BbTokens.primaryGold
-                              : BbTokens.textMuted,
-                          shadows: const <Shadow>[
-                            Shadow(
-                              color: BbTokens.outlineDark,
-                              offset: Offset(0, 4),
+                        label: won ? t.resultWin : t.resultLose,
+                        tone: won ? BbTitleTone.victory : BbTitleTone.danger,
+                        height: won ? 82 : 72,
+                        fontSize: won ? 56 : 48,
+                      ),
+                      if (won) ...<Widget>[
+                        const SizedBox(height: BbTokens.sp4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List<Widget>.generate(
+                            3,
+                            (int i) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: BbTokens.sp1,
+                              ),
+                              child: Icon(
+                                i < stars
+                                    ? Icons.star_rounded
+                                    : Icons.star_outline_rounded,
+                                size: i == 1 ? 72 : 58,
+                                color: i < stars
+                                    ? BbTokens.primaryGold
+                                    : BbTokens.textMuted,
+                                shadows: const <Shadow>[
+                                  Shadow(
+                                    color: BbTokens.outlineDark,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                const SizedBox(height: BbTokens.sp3),
-                if (won)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(BbTokens.sp4),
-                    decoration: BoxDecoration(
-                      color: BbTokens.panelNavy,
-                      borderRadius: BorderRadius.circular(BbTokens.rLg),
-                      border: Border.all(
-                        color: BbTokens.textMuted.withValues(alpha: .45),
-                        width: 2,
-                      ),
-                    ),
-                    child: Text(
-                      t.resultScore(_score),
-                      textAlign: TextAlign.center,
-                      style: BbText.score(BbTokens.textPrimary),
-                    ),
-                  )
-                else
-                  Text(
-                    t.resultScore(_score),
-                    style: BbText.h3(BbTokens.trajectoryCyan),
-                  ),
-                if (!_resultDialogueDismissed) ...<Widget>[
-                  const SizedBox(height: BbTokens.sp3),
-                  CharacterDialogue(
-                    id: resultDialogue,
-                    onDismiss: () =>
-                        setState(() => _resultDialogueDismissed = true),
-                  ),
-                ],
-                if (showReminder) ...<Widget>[
-                  const SizedBox(height: BbTokens.sp3),
-                  BbCard(
-                    color: ArenaInk.of(ArenaInk.bgBottom),
-                    padding: const EdgeInsets.all(BbTokens.sp3),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            losses >= kSkipOfferAfterLosses &&
-                                    !progress.isCompleted(_arena.id)
-                                ? t.stuckReminderHintAndSkip(
-                                    kHintCost,
-                                    kSkipCost,
-                                  )
-                                : t.stuckReminderHint(kHintCost),
-                            style: BbText.small(ArenaInk.of(ArenaInk.cream)),
                           ),
-                        ),
-                        BbIconButton(
-                          icon: Icons.close_rounded,
-                          diameter: BbTokens.tapMin,
-                          variant: BbVariant.danger,
-                          semanticLabel: t.backCta,
-                          onPressed: () =>
-                              setState(() => _dismissedAtLossCount = losses),
                         ),
                       ],
-                    ),
-                  ),
-                ],
-                const SizedBox(height: BbTokens.sp6),
-                if (won && hasNext) ...<Widget>[
-                  BbButton.primary(
-                    label: t.nextArenaCta,
-                    size: won ? BbSize.lg : BbSize.md,
-                    icon: Icons.double_arrow_rounded,
-                    expand: true,
-                    onPressed: () => setState(() {
-                      _guideVisible = false;
-                      _load(index + 1);
-                    }),
-                  ),
-                  const SizedBox(height: BbTokens.sp3),
-                ] else ...<Widget>[
-                  BbButton.primary(
-                    label: won ? t.retryCta : t.stuckReminderRetryCta,
-                    size: BbSize.lg,
-                    icon: Icons.refresh_rounded,
-                    expand: true,
-                    onPressed: () => setState(() => _load(index)),
-                  ),
-                  const SizedBox(height: BbTokens.sp3),
-                ],
-                if (maySkip) ...<Widget>[
-                  BbButton.secondary(
-                    key: const Key('skip-arena-button'),
-                    label: t.skipArenaLabel,
-                    expand: true,
-                    onPressed: canSkip ? () => _confirmSkip(t, index) : null,
-                  ),
-                  const SizedBox(height: BbTokens.sp2),
-                  BbBadge(
-                    canSkip
-                        ? t.skipArenaCostBadge(kSkipCost)
-                        : t.skipArenaInsufficientCoins(
-                            progress.coins < kSkipCost
-                                ? kSkipCost - progress.coins
-                                : 0,
-                          ),
-                    color: ArenaInk.of(ArenaInk.bgTop),
-                    fg: ArenaInk.of(ArenaInk.primaryGold),
-                  ),
-                  const SizedBox(height: BbTokens.sp3),
-                ],
-                if (won && hasNext) ...<Widget>[
-                  BbButton.secondary(
-                    label: t.retryCta,
-                    icon: Icons.refresh_rounded,
-                    expand: true,
-                    onPressed: () => setState(() => _load(index)),
-                  ),
-                  const SizedBox(height: BbTokens.sp3),
-                ],
-                BbButton.light(
-                  label: won ? t.arenaSelectCta : t.menuCta,
-                  icon: won ? Icons.grid_view_rounded : Icons.home_rounded,
-                  expand: true,
-                  onPressed: won
-                      ? () => Navigator.of(context).pushReplacement(
-                          MaterialPageRoute<void>(
-                            builder: (_) => ArenaMapScreen(
-                              targetArenaId: hasNext
-                                  ? kArenas[index + 1].id
-                                  : _arena.id,
+                      const SizedBox(height: BbTokens.sp3),
+                      if (won)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(BbTokens.sp4),
+                          decoration: BoxDecoration(
+                            color: BbTokens.panelNavy,
+                            borderRadius: BorderRadius.circular(BbTokens.rLg),
+                            border: Border.all(
+                              color: BbTokens.textMuted.withValues(alpha: .45),
+                              width: 2,
                             ),
                           ),
+                          child: Text(
+                            t.resultScore(_score),
+                            textAlign: TextAlign.center,
+                            style: BbText.score(BbTokens.textPrimary),
+                          ),
                         )
-                      : () => Navigator.of(context).pop(),
+                      else
+                        Text(
+                          t.resultScore(_score),
+                          style: BbText.h3(BbTokens.trajectoryCyan),
+                        ),
+                      if (!_resultDialogueDismissed) ...<Widget>[
+                        const SizedBox(height: BbTokens.sp3),
+                        CharacterDialogue(
+                          id: resultDialogue,
+                          onDismiss: () =>
+                              setState(() => _resultDialogueDismissed = true),
+                        ),
+                      ],
+                      if (showReminder) ...<Widget>[
+                        const SizedBox(height: BbTokens.sp3),
+                        BbCard(
+                          color: ArenaInk.of(ArenaInk.bgBottom),
+                          padding: const EdgeInsets.all(BbTokens.sp3),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  losses >= kSkipOfferAfterLosses &&
+                                          !progress.isCompleted(_arena.id)
+                                      ? t.stuckReminderHintAndSkip(
+                                          kHintCost,
+                                          kSkipCost,
+                                        )
+                                      : t.stuckReminderHint(kHintCost),
+                                  style: BbText.small(
+                                    ArenaInk.of(ArenaInk.cream),
+                                  ),
+                                ),
+                              ),
+                              BbIconButton(
+                                icon: Icons.close_rounded,
+                                diameter: BbTokens.tapMin,
+                                variant: BbVariant.danger,
+                                semanticLabel: t.backCta,
+                                onPressed: () => setState(
+                                  () => _dismissedAtLossCount = losses,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: BbTokens.sp6),
+                      if (won && hasNext) ...<Widget>[
+                        FractionallySizedBox(
+                          widthFactor: .64,
+                          child: BbButton.primary(
+                            label: t.nextArenaCta,
+                            size: won ? BbSize.lg : BbSize.md,
+                            icon: Icons.double_arrow_rounded,
+                            expand: true,
+                            onPressed: () => setState(() {
+                              _guideVisible = false;
+                              _load(index + 1);
+                            }),
+                          ),
+                        ),
+                        const SizedBox(height: BbTokens.sp3),
+                      ] else ...<Widget>[
+                        FractionallySizedBox(
+                          widthFactor: .64,
+                          child: BbButton.primary(
+                            label: won ? t.retryCta : t.stuckReminderRetryCta,
+                            size: BbSize.lg,
+                            icon: Icons.refresh_rounded,
+                            expand: true,
+                            onPressed: () => setState(() => _load(index)),
+                          ),
+                        ),
+                        const SizedBox(height: BbTokens.sp3),
+                      ],
+                      if (maySkip) ...<Widget>[
+                        FractionallySizedBox(
+                          widthFactor: .64,
+                          child: BbButton.karst(
+                            key: const Key('skip-arena-button'),
+                            label: t.skipArenaLabel,
+                            expand: true,
+                            onPressed: canSkip
+                                ? () => _confirmSkip(t, index)
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(height: BbTokens.sp2),
+                        BbBadge(
+                          canSkip
+                              ? t.skipArenaCostBadge(kSkipCost)
+                              : t.skipArenaInsufficientCoins(
+                                  progress.coins < kSkipCost
+                                      ? kSkipCost - progress.coins
+                                      : 0,
+                                ),
+                          color: ArenaInk.of(ArenaInk.bgTop),
+                          fg: ArenaInk.of(ArenaInk.primaryGold),
+                        ),
+                        const SizedBox(height: BbTokens.sp3),
+                      ],
+                      if (won && hasNext) ...<Widget>[
+                        FractionallySizedBox(
+                          widthFactor: .64,
+                          child: BbButton.karst(
+                            label: t.retryCta,
+                            icon: Icons.refresh_rounded,
+                            expand: true,
+                            onPressed: () => setState(() => _load(index)),
+                          ),
+                        ),
+                        const SizedBox(height: BbTokens.sp3),
+                      ],
+                      FractionallySizedBox(
+                        widthFactor: .64,
+                        child: BbButton.karst(
+                          label: won ? t.arenaSelectCta : t.menuCta,
+                          icon: won
+                              ? Icons.grid_view_rounded
+                              : Icons.home_rounded,
+                          expand: true,
+                          onPressed: won
+                              ? () => Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => ArenaMapScreen(
+                                      targetArenaId: hasNext
+                                          ? kArenas[index + 1].id
+                                          : _arena.id,
+                                    ),
+                                  ),
+                                )
+                              : () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -1008,16 +1094,22 @@ class _GameScreenState extends ConsumerState<GameScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: BbTokens.sp5),
-            BbButton.primary(
-              label: t.skipArenaConfirmCta,
-              expand: true,
-              onPressed: () => Navigator.of(dialogContext).pop(true),
+            FractionallySizedBox(
+              widthFactor: .64,
+              child: BbButton.primary(
+                label: t.skipArenaConfirmCta,
+                expand: true,
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+              ),
             ),
             const SizedBox(height: BbTokens.sp3),
-            BbButton.secondary(
-              label: t.backCta,
-              expand: true,
-              onPressed: () => Navigator.of(dialogContext).pop(false),
+            FractionallySizedBox(
+              widthFactor: .64,
+              child: BbButton.karst(
+                label: t.backCta,
+                expand: true,
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+              ),
             ),
           ],
         ),
