@@ -60,5 +60,7 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/brand/
+    - assets/images/backgrounds/
     - assets/images/mascot/
     - assets/images/ui/galaxy/
+    - assets/images/ui/karst/

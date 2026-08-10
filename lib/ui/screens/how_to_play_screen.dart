@@ -7,6 +7,7 @@ import '../../core/bb_tokens.dart';
 import '../../domain/character.dart';
 import '../../l10n/app_localizations.dart';
 import '../character_dialogue.dart';
+import '../pangolin_ball_art.dart';
 import '../widgets/bb_widgets.dart';
 
 abstract final class _TutorialArt {
@@ -387,18 +388,11 @@ class _MiniTarget extends StatelessWidget {
       BbTokens.primaryGold,
       BbTokens.dangerRed,
     ];
-    return Container(
+    return SizedBox(
       width: 31,
       height: 31,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: colors[number - 1],
-        border: Border.all(color: BbTokens.outlineDark, width: 2),
-      ),
-      child: Text(
-        '$number',
-        style: BbText.button(Colors.white).copyWith(fontSize: 14),
+      child: CustomPaint(
+        painter: PangolinBallPainter(color: colors[number - 1], number: number),
       ),
     );
   }
@@ -523,8 +517,14 @@ class _RuleDiagram extends CustomPainter {
 
     void target(Offset c, int number, Color color) {
       canvas.drawCircle(c, 19, Paint()..color = color.withValues(alpha: .25));
-      canvas.drawCircle(c, 15, Paint()..color = color);
-      _diagramText(canvas, '$number', c + const Offset(0, 2), 18, Colors.white);
+      paintPangolinBall(
+        canvas,
+        center: c,
+        radius: 15,
+        shellColor: color,
+        number: number,
+        showFace: false,
+      );
     }
 
     switch (art) {

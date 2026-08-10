@@ -22,7 +22,9 @@ class SettingsScreen extends ConsumerWidget {
       backgroundColor: BbTokens.nightIndigo,
       body: Stack(
         children: <Widget>[
-          const Positioned.fill(child: BbStarfield(opacity: .35)),
+          const Positioned.fill(
+            child: BbCanyonBackdrop(scrim: .52, bottomShade: .72),
+          ),
           SafeArea(
             child: Center(
               child: ConstrainedBox(

@@ -4,6 +4,53 @@ import 'package:flutter/material.dart';
 
 import '../../core/bb_tokens.dart';
 
+const String kVietnamKarstBackdrop =
+    'assets/images/backgrounds/vietnam_karst_canyon_v2.png';
+
+/// Premium illustrated Vietnamese karst landscape. The gradient keeps bright
+/// UI readable while preserving the generated painting's atmospheric depth.
+class BbCanyonBackdrop extends StatelessWidget {
+  const BbCanyonBackdrop({
+    super.key,
+    this.scrim = .16,
+    this.bottomShade = .38,
+    this.alignment = Alignment.center,
+  });
+
+  final double scrim;
+  final double bottomShade;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+    child: Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Image.asset(
+          kVietnamKarstBackdrop,
+          fit: BoxFit.cover,
+          alignment: alignment,
+          filterQuality: FilterQuality.medium,
+        ),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                const Color(0xFF063E46).withValues(alpha: scrim * .45),
+                const Color(0xFF063E46).withValues(alpha: scrim),
+                const Color(0xFF061F23).withValues(alpha: bottomShade),
+              ],
+              stops: const <double>[0, .55, 1],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 /// Signature candy-dot texture — a faint staggered grid of soft circles that
 /// gives every screen the same "bubble wrapper" feel. Purely decorative and
 /// non-interactive.
@@ -35,9 +82,8 @@ class BbDotPattern extends StatelessWidget {
   );
 }
 
-/// Layered galaxy atmosphere used behind arcade-night screens. Everything is
-/// deterministic so golden tests stay stable, while the soft nebulae, star
-/// clusters and diffraction flares read as deep space instead of dotted paper.
+/// Layered Vietnamese karst-canyon atmosphere used behind adventure screens.
+/// The public name is kept for compatibility with existing screen layouts.
 class BbStarfield extends StatelessWidget {
   const BbStarfield({super.key, this.opacity = 0.5});
 
@@ -60,93 +106,88 @@ class _StarfieldPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect bounds = Offset.zero & size;
-
-    void nebula(Alignment center, double radius, Color color, double alpha) {
-      final Offset c = center.alongSize(size);
-      final double r = size.longestSide * radius;
-      canvas.drawCircle(
-        c,
-        r,
-        Paint()
-          ..shader = RadialGradient(
-            colors: <Color>[
-              color.withValues(alpha: opacity * alpha),
-              color.withValues(alpha: opacity * alpha * .28),
-              color.withValues(alpha: 0),
-            ],
-            stops: const <double>[0, .38, 1],
-          ).createShader(Rect.fromCircle(center: c, radius: r)),
-      );
-    }
-
-    nebula(const Alignment(-.9, -.72), .34, const Color(0xFF7B3FF2), .24);
-    nebula(const Alignment(.92, -.05), .42, const Color(0xFF00B8D9), .17);
-    nebula(const Alignment(-.55, .92), .38, const Color(0xFFE349B7), .12);
-
-    // A faint diagonal Milky-Way band breaks the uniform dot-field silhouette.
-    canvas.save();
-    canvas.clipRect(bounds);
-    canvas.translate(size.width * .52, size.height * .48);
-    canvas.rotate(-.34);
-    final Rect band = Rect.fromCenter(
-      center: Offset.zero,
-      width: size.longestSide * 1.7,
-      height: size.shortestSide * .28,
-    );
-    canvas.drawOval(
-      band,
+    canvas.drawRect(
+      bounds,
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: <Color>[
-            Colors.transparent,
-            const Color(0xFF93DFFF).withValues(alpha: opacity * .045),
-            const Color(0xFFD7B5FF).withValues(alpha: opacity * .085),
-            Colors.transparent,
+            const Color(0xFF38A9D8).withValues(alpha: opacity * .78),
+            const Color(0xFF78C8CF).withValues(alpha: opacity * .52),
+            const Color(0xFF163C43).withValues(alpha: opacity * .88),
           ],
-        ).createShader(band),
+        ).createShader(bounds),
     );
-    canvas.restore();
 
-    final Paint dot = Paint()
-      ..color = Colors.white.withValues(alpha: opacity * .42);
-    final Paint cyan = Paint()
-      ..color = BbTokens.trajectoryCyan.withValues(alpha: opacity * .55);
-    final Paint gold = Paint()
-      ..color = BbTokens.primaryGold.withValues(alpha: opacity * .65);
-    for (int i = 0; i < 86; i++) {
-      final double x = ((i * 83 + 29) % 997) / 997 * size.width;
-      final double y = ((i * 137 + 47) % 991) / 991 * size.height;
-      canvas.drawCircle(
-        Offset(x, y),
-        i % 17 == 0 ? 1.7 : (i % 5 == 0 ? 1.05 : .58),
-        i % 13 == 0 ? cyan : dot,
+    void ridge(double baseY, Color color, List<double> peaks) {
+      final Path path = Path()..moveTo(0, size.height);
+      for (int i = 0; i < peaks.length; i++) {
+        final double x = size.width * i / (peaks.length - 1);
+        final double y = size.height * (baseY - peaks[i]);
+        path.lineTo(x, y);
+      }
+      path
+        ..lineTo(size.width, size.height)
+        ..close();
+      canvas.drawPath(path, Paint()..color = color.withValues(alpha: opacity));
+    }
+
+    ridge(.72, const Color(0xFF5A8E7A), <double>[
+      .03,
+      .13,
+      .08,
+      .23,
+      .05,
+      .16,
+      .02,
+    ]);
+    ridge(.84, const Color(0xFF315D50), <double>[
+      .02,
+      .20,
+      .06,
+      .29,
+      .10,
+      .24,
+      .03,
+    ]);
+    ridge(.96, const Color(0xFF153D37), <double>[
+      .07,
+      .28,
+      .12,
+      .34,
+      .06,
+      .25,
+      .09,
+    ]);
+
+    final Paint mist = Paint()
+      ..color = const Color(0xFFD9F2DD).withValues(alpha: opacity * .13);
+    for (int i = 0; i < 6; i++) {
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(
+            size.width * (i * .21 - .03),
+            size.height * (.70 + (i % 2) * .06),
+          ),
+          width: size.width * .42,
+          height: size.height * .055,
+        ),
+        mist,
       );
     }
-    for (int i = 0; i < 8; i++) {
-      final Offset p = Offset(
-        ((i * 151 + 61) % 947) / 947 * size.width,
-        ((i * 211 + 89) % 953) / 953 * size.height,
-      );
-      final double r = i.isEven ? 3.5 : 2.5;
+
+    final Paint mote = Paint()
+      ..color = const Color(0xFFFFE6A8).withValues(alpha: opacity * .58);
+    for (int i = 0; i < 32; i++) {
       canvas.drawCircle(
-        p,
-        r * 2.6,
-        Paint()
-          ..shader = RadialGradient(
-            colors: <Color>[
-              BbTokens.trajectoryCyan.withValues(alpha: opacity * .18),
-              Colors.transparent,
-            ],
-          ).createShader(Rect.fromCircle(center: p, radius: r * 2.6)),
+        Offset(
+          ((i * 83 + 29) % 997) / 997 * size.width,
+          ((i * 137 + 47) % 991) / 991 * size.height * .72,
+        ),
+        i % 9 == 0 ? 1.5 : .65,
+        mote,
       );
-      canvas.drawLine(
-        p - Offset(r, 0),
-        p + Offset(r, 0),
-        gold..strokeWidth = .8,
-      );
-      canvas.drawLine(p - Offset(0, r), p + Offset(0, r), gold);
     }
   }
 

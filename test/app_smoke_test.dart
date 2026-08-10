@@ -58,12 +58,32 @@ void main() {
 
       final Finder logo = find.byKey(const Key('main-logo'));
       final Finder play = find.byKey(const Key('menu-play'));
+      final Finder arenaSelect = find.byKey(const Key('menu-arena-select'));
+      final Finder howToPlay = find.byKey(const Key('menu-how-to-play'));
+      final Finder tagline = find.byKey(const Key('menu-tagline'));
+      final Finder playerAvatar = find.byKey(const Key('menu-player-avatar'));
+      final Finder playerCopy = find.byKey(const Key('menu-player-copy'));
       expect(logo, findsOneWidget);
       expect(play, findsOneWidget);
+      expect(arenaSelect, findsOneWidget);
+      expect(howToPlay, findsOneWidget);
+      expect(tagline, findsOneWidget);
+      expect(playerAvatar, findsOneWidget);
+      expect(playerCopy, findsOneWidget);
       expect(tester.getRect(logo).left, greaterThanOrEqualTo(0));
       expect(tester.getRect(logo).right, lessThanOrEqualTo(size.width));
       expect(tester.getRect(play).left, greaterThanOrEqualTo(0));
       expect(tester.getRect(play).right, lessThanOrEqualTo(size.width));
+      expect(
+        tester.getRect(arenaSelect).bottom,
+        lessThanOrEqualTo(size.height),
+      );
+      expect(tester.getRect(howToPlay).bottom, lessThanOrEqualTo(size.height));
+      expect(tester.getRect(tagline).bottom, lessThanOrEqualTo(size.height));
+      expect(
+        tester.getRect(playerAvatar).right,
+        lessThanOrEqualTo(tester.getRect(playerCopy).left),
+      );
       expect(tester.takeException(), isNull);
     });
   }

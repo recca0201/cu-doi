@@ -1,7 +1,9 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/arena_ink.dart';
@@ -25,6 +27,7 @@ import '../character_dialogue.dart';
 import '../comic_effect_controller.dart';
 import '../fit.dart';
 import '../widgets/bb_widgets.dart';
+import '../widgets/bb_backdrop.dart';
 import 'arena_map_screen.dart';
 import 'how_to_play_screen.dart';
 
@@ -189,6 +192,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   double _shake = 0;
 
   Size _lastSize = const Size(360, 640);
+  ui.Image? _launcherSprite;
 
   @override
   void initState() {
@@ -197,13 +201,31 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _audio = ref.read(gameAudioProvider);
     _haptics = ref.read(hapticServiceProvider);
     _load(_indexOf(widget.arenaId));
+    _loadLauncherSprite();
     _ticker = createTicker(_onTick)..start();
+  }
+
+  Future<void> _loadLauncherSprite() async {
+    final ByteData data = await rootBundle.load(
+      'assets/images/ui/karst/launcher_bronze.png',
+    );
+    final ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+    );
+    final ui.FrameInfo frame = await codec.getNextFrame();
+    codec.dispose();
+    if (!mounted) {
+      frame.image.dispose();
+      return;
+    }
+    setState(() => _launcherSprite = frame.image);
   }
 
   @override
   void dispose() {
     _ticker.dispose();
     _audio.stopGameplayEffects();
+    _launcherSprite?.dispose();
     super.dispose();
   }
 
@@ -408,6 +430,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                   return Stack(
                     fit: StackFit.expand,
                     children: <Widget>[
+                      const BbCanyonBackdrop(scrim: .46, bottomShade: .70),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTapUp: (TapUpDetails d) => setState(() {
@@ -480,6 +503,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
       shake: _reducedMotion ? 0 : _shake,
       effects: _effects.elements,
       reducedMotion: _reducedMotion,
+      illustratedBackdrop: true,
+      launcherSprite: _launcherSprite,
     );
   }
 

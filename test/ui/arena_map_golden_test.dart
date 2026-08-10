@@ -24,27 +24,27 @@ void main() {
     await tester.runAsync(
       () => Future.wait(<Future<void>>[
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/back_button.png'),
+          const AssetImage('assets/images/ui/karst/back_button.png'),
           context,
         ),
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/select_title.png'),
+          const AssetImage('assets/images/ui/karst/select_title_frame.png'),
           context,
         ),
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/chapter_tab_selected.png'),
+          const AssetImage('assets/images/ui/karst/chapter_tab_selected.png'),
           context,
         ),
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/level_card_frame.png'),
+          const AssetImage('assets/images/ui/karst/level_card_frame.png'),
           context,
         ),
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/detail_panel.png'),
+          const AssetImage('assets/images/ui/karst/detail_panel.png'),
           context,
         ),
         precacheImage(
-          const AssetImage('assets/images/ui/galaxy/play_button_vi.png'),
+          const AssetImage('assets/images/ui/karst/play_button.png'),
           context,
         ),
       ]),

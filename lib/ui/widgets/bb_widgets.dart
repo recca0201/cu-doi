@@ -590,6 +590,7 @@ class BbAssetButton extends StatefulWidget {
     required this.onPressed,
     this.width = double.infinity,
     this.fit = BoxFit.fill,
+    this.horizontalScale = 1,
     this.hiddenText,
   });
 
@@ -599,6 +600,7 @@ class BbAssetButton extends StatefulWidget {
   final String semanticLabel;
   final VoidCallback? onPressed;
   final BoxFit fit;
+  final double horizontalScale;
   final String? hiddenText;
 
   @override
@@ -642,10 +644,15 @@ class _BbAssetButtonState extends State<BbAssetButton> {
               child: Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
-                  Image.asset(
-                    widget.asset,
-                    fit: widget.fit,
-                    filterQuality: FilterQuality.high,
+                  ClipRect(
+                    child: Transform.scale(
+                      scaleX: widget.horizontalScale,
+                      child: Image.asset(
+                        widget.asset,
+                        fit: widget.fit,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
                   ),
                   if (widget.hiddenText != null)
                     Opacity(

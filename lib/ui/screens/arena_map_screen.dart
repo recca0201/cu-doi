@@ -15,6 +15,7 @@ import '../../sim/shot_runner.dart';
 import '../../state/providers.dart';
 import '../localized_text.dart';
 import '../map_sections.dart';
+import '../pangolin_ball_art.dart';
 import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 import 'game_screen.dart';
@@ -81,7 +82,9 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
       backgroundColor: BbTokens.nightIndigo,
       body: Stack(
         children: <Widget>[
-          const Positioned.fill(child: BbStarfield(opacity: .82)),
+          const Positioned.fill(
+            child: BbCanyonBackdrop(scrim: .30, bottomShade: .58),
+          ),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -89,7 +92,7 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
                   center: const Alignment(0, -.45),
                   radius: 1.1,
                   colors: <Color>[
-                    const Color(0xFF6D39D8).withValues(alpha: .22),
+                    const Color(0xFFFFC56A).withValues(alpha: .16),
                     Colors.transparent,
                   ],
                 ),
@@ -223,20 +226,19 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
 }
 
 abstract final class _MapArt {
-  static const String backButton = 'assets/images/ui/galaxy/back_button.png';
-  static const String selectTitle = 'assets/images/ui/galaxy/select_title.png';
+  static const String backButton = 'assets/images/ui/karst/back_button.png';
+  static const String selectTitle =
+      'assets/images/ui/karst/select_title_frame.png';
   static const String chapterTabSelected =
-      'assets/images/ui/galaxy/chapter_tab_selected.png';
+      'assets/images/ui/karst/chapter_tab_selected.png';
   static const String levelCardFrame =
-      'assets/images/ui/galaxy/level_card_frame.png';
-  static const String detailPanel = 'assets/images/ui/galaxy/detail_panel.png';
-  static const String playButtonVi =
-      'assets/images/ui/galaxy/play_button_vi.png';
+      'assets/images/ui/karst/level_card_frame.png';
+  static const String detailPanel = 'assets/images/ui/karst/detail_panel.png';
+  static const String playButton = 'assets/images/ui/karst/play_button.png';
 }
 
 class _MapSpriteButton extends StatelessWidget {
   const _MapSpriteButton({
-    super.key,
     required this.asset,
     required this.width,
     required this.height,
@@ -280,6 +282,64 @@ class _MapSpriteButton extends StatelessWidget {
   );
 }
 
+class _MapImageTextButton extends StatelessWidget {
+  const _MapImageTextButton({
+    super.key,
+    required this.asset,
+    required this.height,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String asset;
+  final double height;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: onPressed != null,
+    label: label,
+    child: ExcludeSemantics(
+      child: Opacity(
+        opacity: onPressed == null ? .48 : 1,
+        child: SizedBox(
+          height: height,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(height / 2),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.asset(
+                    asset,
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.high,
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: height * .62),
+                      child: Text(
+                        label,
+                        style: BbText.button(
+                          const Color(0xFF572600),
+                        ).copyWith(fontSize: 25),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 class _MapAppBar extends StatelessWidget {
   const _MapAppBar({required this.progress});
 
@@ -288,14 +348,12 @@ class _MapAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations t = AppLocalizations.of(context);
-    final bool isVietnamese =
-        Localizations.localeOf(context).languageCode.toLowerCase() == 'vi';
     return Container(
       key: const Key('arena-map-header'),
       height: 104,
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       decoration: const BoxDecoration(
-        color: BbTokens.panelNavy,
+        color: Color(0xFF073E3B),
         border: Border(
           bottom: BorderSide(color: BbTokens.outlineDark, width: 4),
         ),
@@ -342,17 +400,27 @@ class _MapAppBar extends StatelessWidget {
                 child: SizedBox(
                   key: const Key('arena-map-title'),
                   height: 68,
-                  child: isVietnamese
-                      ? Image.asset(
-                          _MapArt.selectTitle,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.high,
-                        )
-                      : BbGameTitle(
-                          label: t.arenaSelectTitle,
-                          height: 62,
-                          fontSize: 48,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      Image.asset(
+                        _MapArt.selectTitle,
+                        fit: BoxFit.fill,
+                        filterQuality: FilterQuality.high,
+                      ),
+                      Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            t.arenaSelectTitle.toUpperCase(),
+                            style: BbText.h2(
+                              const Color(0xFFFFE7A0),
+                            ).copyWith(fontSize: 27),
+                          ),
                         ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -375,9 +443,9 @@ class _ResourcePill extends StatelessWidget {
     height: 34,
     padding: const EdgeInsets.symmetric(horizontal: 7),
     decoration: BoxDecoration(
-      color: BbTokens.nightIndigo,
+      color: const Color(0xFF0B4C47),
       borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: BbTokens.secondaryBlue, width: 2),
+      border: Border.all(color: const Color(0xFFD99A38), width: 2),
     ),
     child: Row(
       children: <Widget>[
@@ -411,7 +479,7 @@ class _ChapterTabs extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     height: 70,
     padding: const EdgeInsets.fromLTRB(9, 8, 9, 8),
-    color: BbTokens.nightIndigo.withValues(alpha: .96),
+    color: const Color(0xFF073E3B).withValues(alpha: .96),
     child: Row(
       children: List<Widget>.generate(sections.length, (int index) {
         final ChapterSection section = sections[index];
@@ -435,24 +503,20 @@ class _ChapterTabs extends StatelessWidget {
                   duration: BbTokens.durBase,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    gradient: selected
-                        ? null
-                        : const LinearGradient(
-                            colors: <Color>[
-                              Color(0xFF174B8D),
-                              Color(0xFF102A63),
-                            ],
-                          ),
-                    image: selected
-                        ? const DecorationImage(
-                            image: AssetImage(_MapArt.chapterTabSelected),
-                            fit: BoxFit.fill,
-                          )
-                        : null,
+                    image: DecorationImage(
+                      image: const AssetImage(_MapArt.chapterTabSelected),
+                      fit: BoxFit.fill,
+                      colorFilter: selected
+                          ? null
+                          : const ColorFilter.mode(
+                              Color(0xFF345E52),
+                              BlendMode.modulate,
+                            ),
+                    ),
                     borderRadius: BorderRadius.circular(12),
                     border: selected
                         ? null
-                        : Border.all(color: BbTokens.secondaryBlue, width: 2),
+                        : Border.all(color: const Color(0xFF9B7437), width: 2),
                     boxShadow: selected ? null : BbTokens.sticker(3),
                   ),
                   child: Column(
@@ -573,7 +637,7 @@ class _ArenaCard extends StatelessWidget {
           child: AnimatedContainer(
             duration: BbTokens.durBase,
             decoration: BoxDecoration(
-              color: BbTokens.panelNavy,
+              color: const Color(0xFF123C37),
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
                 image: const AssetImage(_MapArt.levelCardFrame),
@@ -777,23 +841,18 @@ class _ArenaDetailPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          if (localeCode == 'vi')
-            _MapSpriteButton(
-              key: const Key('selected-arena-play'),
-              asset: _MapArt.playButtonVi,
-              width: double.infinity,
-              height: 54,
-              semanticLabel: t.playCta,
-              onPressed: onPlay,
-            )
-          else
-            BbButton.primary(
-              key: const Key('selected-arena-play'),
-              label: t.playCta.toUpperCase(),
-              icon: Icons.play_arrow_rounded,
-              expand: true,
-              onPressed: onPlay,
+          Align(
+            child: SizedBox(
+              width: MediaQuery.sizeOf(context).width * .72,
+              child: _MapImageTextButton(
+                key: const Key('selected-arena-play'),
+                asset: _MapArt.playButton,
+                height: 46,
+                label: t.playCta.toUpperCase(),
+                onPressed: onPlay,
+              ),
             ),
+          ),
         ],
       ),
     );
@@ -876,22 +935,26 @@ class _ArenaPreviewPainter extends CustomPainter {
     canvas.drawRect(
       Offset.zero & size,
       Paint()
-        ..shader = const RadialGradient(
-          center: Alignment(-.45, -.55),
-          colors: <Color>[Color(0xFF321B70), Color(0xFF07102D)],
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[Color(0xFF4EADC0), Color(0xFF173D42)],
         ).createShader(Offset.zero & size),
     );
-    final Paint star = Paint()..color = Colors.white.withValues(alpha: .34);
-    for (int i = 0; i < 18; i++) {
-      canvas.drawCircle(
-        Offset(
-          ((i * 43 + 9) % 181) / 181 * size.width,
-          ((i * 67 + 17) % 179) / 179 * size.height,
-        ),
-        i % 6 == 0 ? 1.1 : .45,
-        star,
-      );
-    }
+    final Path ridge = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * .62)
+      ..lineTo(size.width * .18, size.height * .48)
+      ..lineTo(size.width * .31, size.height * .67)
+      ..lineTo(size.width * .54, size.height * .43)
+      ..lineTo(size.width * .72, size.height * .64)
+      ..lineTo(size.width, size.height * .51)
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(
+      ridge,
+      Paint()..color = const Color(0xFF24564C).withValues(alpha: .66),
+    );
     final double scale = math.min(size.width / 100, size.height / 160);
     final double dx = (size.width - 100 * scale) / 2;
     final double dy = (size.height - 160 * scale) / 2;
@@ -943,25 +1006,13 @@ class _ArenaPreviewPainter extends CustomPainter {
     for (final TargetSpec target in arena.targets) {
       final Offset center = point(target.pos);
       final double radius = math.max(5, scale * 7);
-      canvas.drawCircle(
-        center,
-        radius,
-        Paint()..color = colors[target.palette % colors.length],
-      );
-      canvas.drawCircle(
-        center,
-        radius,
-        Paint()
-          ..color = BbTokens.outlineDark
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = math.max(1, scale),
-      );
-      _previewText(
+      paintPangolinBall(
         canvas,
-        '${target.requiredBanks}',
-        center,
-        radius * 1.1,
-        Colors.white,
+        center: center,
+        radius: radius,
+        shellColor: colors[target.palette % colors.length],
+        number: target.requiredBanks,
+        showFace: false,
       );
     }
     final Offset launcher = point(kShooterOrigin);
@@ -1005,29 +1056,6 @@ void _dashed(Canvas canvas, Offset from, Offset to, Paint paint) {
       paint,
     );
   }
-}
-
-void _previewText(
-  Canvas canvas,
-  String value,
-  Offset center,
-  double size,
-  Color color,
-) {
-  final TextPainter painter = TextPainter(
-    text: TextSpan(
-      text: value,
-      style: TextStyle(
-        color: color,
-        fontFamily: BbText.displayFamily,
-        fontSize: size,
-        fontWeight: FontWeight.w800,
-        height: 1,
-      ),
-    ),
-    textDirection: TextDirection.ltr,
-  )..layout();
-  painter.paint(canvas, center - Offset(painter.width / 2, painter.height / 2));
 }
 
 class ArenaSkippedBadge extends StatelessWidget {
