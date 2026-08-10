@@ -748,8 +748,8 @@ class _BbKarstPlayButtonState extends State<BbKarstPlayButton> {
                   Positioned(
                     left: widget.height * .92,
                     right: widget.height * .28,
-                    top: widget.height * .10,
-                    bottom: widget.height * .18,
+                    top: widget.height * .04,
+                    bottom: widget.height * .22,
                     child: Center(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,

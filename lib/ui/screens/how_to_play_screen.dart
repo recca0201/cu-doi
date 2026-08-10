@@ -12,7 +12,8 @@ import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 
 abstract final class _TutorialArt {
-  static const String title = 'assets/images/ui/karst/select_title_frame.png';
+  static const String title =
+      'assets/images/ui/karst/rules_title_banner_v2.png';
   static const String cardFrame = 'assets/images/ui/karst/detail_panel.png';
 }
 
@@ -154,40 +155,11 @@ class _RulesHeader extends StatelessWidget {
           top: 8,
           child: SizedBox(
             key: const Key('how-to-title'),
-            height: 82,
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Image.asset(
-                  _TutorialArt.title,
-                  fit: BoxFit.fill,
-                  filterQuality: FilterQuality.high,
-                ),
-                Padding(
-                  // The medallions and curved rails are decoration; align the
-                  // title to the clear green centre of the artwork.
-                  padding: const EdgeInsets.fromLTRB(82, 17, 82, 20),
-                  child: Center(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        title.toUpperCase(),
-                        maxLines: 1,
-                        style: BbText.h1(const Color(0xFFFFF0C5)).copyWith(
-                          fontSize: 34,
-                          height: 1,
-                          shadows: const <Shadow>[
-                            Shadow(
-                              color: Color(0xFF5B2A0C),
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            height: 92,
+            child: Image.asset(
+              _TutorialArt.title,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
             ),
           ),
         ),
@@ -361,9 +333,9 @@ class _TargetNote extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: const Color(0xF20A1B46),
+      color: const Color(0xF2074542),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: BbTokens.secondaryBlue, width: 2),
+      border: Border.all(color: BbTokens.karstBronze, width: 2),
     ),
     child: Column(
       children: <Widget>[

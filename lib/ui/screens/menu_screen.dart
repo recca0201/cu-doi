@@ -83,17 +83,17 @@ class MenuScreen extends ConsumerWidget {
                     .clamp(0, 460)
                     .toDouble();
                 final double playAssetWidth =
-                    actionWidth * (compact ? .54 : .60);
+                    actionWidth * (compact ? .54 : .60) * 1.60;
                 final double playAssetHeight = playAssetWidth / 2.85;
-                final double scoreWidth = (actionWidth * .58)
-                    .clamp(compact ? 160 : 190, 330)
+                final double scoreWidth = (actionWidth * (compact ? .52 : .58))
+                    .clamp(compact ? 145 : 190, 330)
                     .toDouble();
                 // The plaque artwork is visually dense at its native aspect
                 // ratio. Give the two text rows a little more vertical room.
-                final double scoreHeight = scoreWidth / 1.95;
+                final double scoreHeight = scoreWidth / 1.95 + 4;
                 final double logoHeight = tablet
                     ? responsiveHeight(136, 200)
-                    : responsiveHeight(112, 176);
+                    : (compact ? 64 : responsiveHeight(80, 176));
 
                 return SingleChildScrollView(
                   padding: EdgeInsets.only(
@@ -134,8 +134,10 @@ class MenuScreen extends ConsumerWidget {
                             ),
                             SizedBox(height: responsiveHeight(6, 12)),
                             SizedBox(
-                              width: actionWidth,
-                              child: Center(
+                              height: playAssetHeight,
+                              child: OverflowBox(
+                                maxWidth: contentWidth,
+                                alignment: Alignment.center,
                                 child: SizedBox(
                                   width: playAssetWidth,
                                   child: BbKarstPlayButton(
@@ -150,12 +152,11 @@ class MenuScreen extends ConsumerWidget {
                             SizedBox(height: responsiveHeight(5, 9)),
                             SizedBox(
                               width: actionWidth * .60,
-                              child: BbButton.karst(
+                              child: _MenuSecondaryButton(
                                 key: const Key('menu-arena-select'),
                                 label: t.arenaSelectCta,
                                 icon: Icons.track_changes_rounded,
-                                size: compact ? BbSize.sm : BbSize.md,
-                                expand: true,
+                                compact: compact,
                                 onPressed: () => Navigator.of(context).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) => const ArenaMapScreen(),
@@ -166,12 +167,11 @@ class MenuScreen extends ConsumerWidget {
                             SizedBox(height: responsiveHeight(5, 9)),
                             SizedBox(
                               width: actionWidth * .60,
-                              child: BbButton.karst(
+                              child: _MenuSecondaryButton(
                                 key: const Key('menu-how-to-play'),
                                 label: t.howToCta,
                                 icon: Icons.route_rounded,
-                                size: compact ? BbSize.sm : BbSize.md,
-                                expand: true,
+                                compact: compact,
                                 onPressed: () => Navigator.of(context).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) => HowToPlayScreen(
@@ -204,6 +204,67 @@ class MenuScreen extends ConsumerWidget {
   }
 }
 
+class _MenuSecondaryButton extends StatelessWidget {
+  const _MenuSecondaryButton({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.compact,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool compact;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool tablet =
+        MediaQuery.sizeOf(context).shortestSide >= BbTokens.tabletBreakpoint;
+    final double controlScale = tablet ? 1.18 : 1;
+    final double baseHeight =
+        (compact ? BbTokens.btnHSm : BbTokens.btnHMd) * controlScale;
+    final double height = baseHeight + 3;
+
+    return SizedBox(
+      height: height,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: <Widget>[
+          Positioned.fill(
+            child: Transform.scale(
+              scaleY: height / baseHeight,
+              child: BbButton.karst(
+                label: label,
+                size: compact ? BbSize.sm : BbSize.md,
+                expand: true,
+                onPressed: onPressed,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 18 * controlScale,
+            top: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              child: Icon(
+                icon,
+                color: const Color(0xFFFFF3D7),
+                size: (compact ? 19 : 21) * controlScale,
+                shadows: const <Shadow>[
+                  Shadow(color: Colors.black45, offset: Offset(0, 2)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PlayerHud extends StatelessWidget {
   const _PlayerHud({
     required this.t,
@@ -221,10 +282,11 @@ class _PlayerHud extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints constraints) {
       final bool narrow = constraints.maxWidth < 330;
-      final double hudHeight = narrow ? 60 : 84;
-      final double panelHeight = narrow ? 52 : 72;
-      final double avatarSize = narrow ? 56 : 78;
-      final double avatarPadding = narrow ? 64 : 86;
+      // Compact counters need 28 + 2 + 28 logical pixels.
+      final double hudHeight = narrow ? 58 : 72;
+      final double panelHeight = narrow ? 46 : 62;
+      final double avatarSize = narrow ? 50 : 68;
+      final double avatarPadding = narrow ? 58 : 76;
       // Give the identity panel priority: its two text lines need horizontal
       // breathing room more than the compact numeric counters do.
       final double counterWidth = narrow ? 86 : 98;
@@ -235,23 +297,21 @@ class _PlayerHud extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: Container(
-                height: panelHeight,
-                padding: EdgeInsets.fromLTRB(
-                  avatarPadding,
-                  6,
-                  narrow ? 6 : 10,
-                  6,
-                ),
-                decoration: _karstPanel(radius: 18),
+              child: SizedBox(
+                height: hudHeight,
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[
                     Positioned(
-                      // Keep the circular frame flush with the panel edge.
-                      // The previous extra -4 offset made it bleed left.
-                      left: -avatarPadding,
-                      top: narrow ? -7 : -9,
+                      left: avatarSize / 2,
+                      right: 0,
+                      top: (hudHeight - panelHeight) / 2,
+                      height: panelHeight,
+                      child: DecoratedBox(decoration: _karstPanel(radius: 18)),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: (hudHeight - avatarSize) / 2,
                       child: Container(
                         key: const Key('menu-player-avatar'),
                         width: avatarSize,
@@ -271,45 +331,55 @@ class _PlayerHud extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const ClipOval(
-                          child: Image(
-                            image: AssetImage(
-                              'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
+                        child: ClipOval(
+                          child: Transform.scale(
+                            scale: 1.18,
+                            alignment: const Alignment(.08, .04),
+                            child: const Image(
+                              image: AssetImage(
+                                'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     ),
-                    Column(
-                      key: const Key('menu-player-copy'),
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        FittedBox(
-                          alignment: Alignment.centerLeft,
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            t.characterName.toUpperCase(),
-                            maxLines: 1,
-                            style: BbText.h3(
-                              Colors.white,
-                            ).copyWith(fontSize: narrow ? 14 : 17),
-                          ),
-                        ),
-                        if (!narrow)
+                    Positioned(
+                      left: avatarPadding,
+                      right: narrow ? 6 : 10,
+                      top: (hudHeight - panelHeight) / 2 + 6,
+                      height: panelHeight - 12,
+                      child: Column(
+                        key: const Key('menu-player-copy'),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
                           FittedBox(
                             alignment: Alignment.centerLeft,
                             fit: BoxFit.scaleDown,
                             child: Text(
-                              '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
+                              t.characterName.toUpperCase(),
                               maxLines: 1,
-                              style: BbText.tiny(
-                                BbTokens.textMuted,
-                              ).copyWith(letterSpacing: 0, fontSize: 10),
+                              style: BbText.h3(
+                                Colors.white,
+                              ).copyWith(fontSize: narrow ? 14 : 17),
                             ),
                           ),
-                      ],
+                          if (!narrow)
+                            FittedBox(
+                              alignment: Alignment.centerLeft,
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
+                                maxLines: 1,
+                                style: BbText.tiny(
+                                  BbTokens.textMuted,
+                                ).copyWith(letterSpacing: 0, fontSize: 10),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -488,7 +558,10 @@ class _ScorePlaque extends StatelessWidget {
             image: AssetImage(
               'assets/images/ui/karst/high_score_plaque_v2.png',
             ),
-            fit: BoxFit.contain,
+            // The visible artwork is much flatter than the PNG canvas. Fill
+            // the allotted box so increasing scoreHeight actually opens the
+            // plaque vertically instead of leaving transparent letterboxing.
+            fit: BoxFit.fill,
             filterQuality: FilterQuality.high,
           ),
           Padding(
@@ -536,7 +609,7 @@ class _MascotStage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints constraints) {
-      final double scale = (constraints.maxHeight / 300).clamp(.33, 1.0);
+      final double scale = (constraints.maxHeight / 300).clamp(.18, 1.0);
       return Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[

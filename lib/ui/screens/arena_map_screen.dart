@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +10,6 @@ import '../../domain/chapters.dart';
 import '../../domain/player_progress.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
-import '../../sim/arenas.dart';
 import '../../sim/geometry.dart';
 import '../../sim/shot_runner.dart';
 import '../../state/providers.dart';
@@ -82,8 +82,11 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
       backgroundColor: BbTokens.karstDeep,
       body: Stack(
         children: <Widget>[
-          const Positioned.fill(
-            child: BbCanyonBackdrop(scrim: .30, bottomShade: .58),
+          Positioned.fill(
+            child: ImageFiltered(
+              imageFilter: ui.ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: const BbCanyonBackdrop(scrim: .42, bottomShade: .66),
+            ),
           ),
           Positioned.fill(
             child: DecoratedBox(
@@ -105,7 +108,7 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Column(
                   children: <Widget>[
-                    _MapAppBar(progress: progress),
+                    const _MapAppBar(),
                     _ChapterTabs(
                       sections: _sections,
                       selectedIndex: _chapterIndex,
@@ -228,7 +231,7 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
 abstract final class _MapArt {
   static const String backButton = 'assets/images/ui/karst/back_button.png';
   static const String selectTitle =
-      'assets/images/ui/karst/select_title_frame.png';
+      'assets/images/ui/karst/stage_title_banner_v2.png';
   static const String chapterTabSelected =
       'assets/images/ui/karst/chapter_tab_selected.png';
   static const String levelCardFrame =
@@ -322,8 +325,8 @@ class _MapImageTextButton extends StatelessWidget {
                   Positioned(
                     left: height * .82,
                     right: height * .22,
-                    top: height * .04,
-                    bottom: height * .16,
+                    top: 0,
+                    bottom: height * .20,
                     child: Center(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -348,9 +351,7 @@ class _MapImageTextButton extends StatelessWidget {
 }
 
 class _MapAppBar extends StatelessWidget {
-  const _MapAppBar({required this.progress});
-
-  final PlayerProgress progress;
+  const _MapAppBar();
 
   @override
   Widget build(BuildContext context) {
@@ -359,12 +360,6 @@ class _MapAppBar extends StatelessWidget {
       key: const Key('arena-map-header'),
       height: 104,
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-      decoration: const BoxDecoration(
-        color: Color(0xFF073E3B),
-        border: Border(
-          bottom: BorderSide(color: BbTokens.outlineDark, width: 4),
-        ),
-      ),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -380,59 +375,19 @@ class _MapAppBar extends StatelessWidget {
             ),
           ),
           Positioned(
-            right: 0,
-            top: 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                _ResourcePill(
-                  icon: Icons.monetization_on_rounded,
-                  value: '${progress.coins}',
-                ),
-                const SizedBox(height: 5),
-                _ResourcePill(
-                  icon: Icons.star_rounded,
-                  value: '${progress.totalStars}/${kArenas.length * 3}',
-                ),
-              ],
-            ),
-          ),
-          Positioned(
             left: 58,
-            right: 118,
+            right: 58,
             child: Semantics(
               header: true,
               label: t.arenaSelectTitle,
               child: ExcludeSemantics(
                 child: SizedBox(
                   key: const Key('arena-map-title'),
-                  height: 68,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[
-                      Image.asset(
-                        _MapArt.selectTitle,
-                        fit: BoxFit.contain,
-                        filterQuality: FilterQuality.high,
-                      ),
-                      Padding(
-                        // Keep the label inside the green field, away from the
-                        // two decorative Dong Son medallions.
-                        padding: const EdgeInsets.fromLTRB(34, 13, 34, 16),
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              t.arenaSelectTitle.toUpperCase(),
-                              maxLines: 1,
-                              style: BbText.h2(
-                                const Color(0xFFFFE7A0),
-                              ).copyWith(fontSize: 27),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  height: 80,
+                  child: Image.asset(
+                    _MapArt.selectTitle,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
                   ),
                 ),
               ),
@@ -442,37 +397,6 @@ class _MapAppBar extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ResourcePill extends StatelessWidget {
-  const _ResourcePill({required this.icon, required this.value});
-
-  final IconData icon;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 104,
-    height: 34,
-    padding: const EdgeInsets.symmetric(horizontal: 7),
-    decoration: BoxDecoration(
-      color: const Color(0xFF0B4C47),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: const Color(0xFFD99A38), width: 2),
-    ),
-    child: Row(
-      children: <Widget>[
-        Icon(icon, color: BbTokens.primaryGold, size: 20),
-        const SizedBox(width: 5),
-        Expanded(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(value, style: BbText.h3(Colors.white)),
-          ),
-        ),
-      ],
-    ),
-  );
 }
 
 class _ChapterTabs extends StatelessWidget {
@@ -492,7 +416,6 @@ class _ChapterTabs extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     height: 70,
     padding: const EdgeInsets.fromLTRB(9, 8, 9, 8),
-    color: const Color(0xFF073E3B).withValues(alpha: .96),
     child: Row(
       children: List<Widget>.generate(sections.length, (int index) {
         final ChapterSection section = sections[index];
@@ -530,7 +453,6 @@ class _ChapterTabs extends StatelessWidget {
                     border: selected
                         ? null
                         : Border.all(color: const Color(0xFF9B7437), width: 2),
-                    boxShadow: selected ? null : BbTokens.sticker(3),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -653,7 +575,6 @@ class _ArenaCard extends StatelessWidget {
           child: AnimatedContainer(
             duration: BbTokens.durBase,
             decoration: BoxDecoration(
-              color: const Color(0xFF123C37),
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
                 image: const AssetImage(_MapArt.levelCardFrame),
@@ -666,13 +587,11 @@ class _ArenaCard extends StatelessWidget {
               boxShadow: selected
                   ? <BoxShadow>[
                       BoxShadow(
-                        color: BbTokens.primaryGold.withValues(alpha: .45),
-                        blurRadius: 12,
-                        spreadRadius: 2,
+                        color: BbTokens.primaryGold.withValues(alpha: .32),
+                        blurRadius: 10,
                       ),
-                      ...BbTokens.sticker(4),
                     ]
-                  : BbTokens.sticker(3),
+                  : null,
             ),
             child: Stack(
               clipBehavior: Clip.none,
@@ -777,10 +696,7 @@ class _ArenaDetailPanel extends StatelessWidget {
     );
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: BbTokens.sticker(5),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: <Widget>[

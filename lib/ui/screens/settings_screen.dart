@@ -192,18 +192,17 @@ class _SettingsHeader extends StatelessWidget {
         Positioned(
           left: 68,
           right: 68,
-          top: 7,
-          bottom: 7,
-          child: _CroppedHeaderFrame(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                title.toUpperCase(),
+          top: 0,
+          bottom: 0,
+          child: Semantics(
+            header: true,
+            label: title,
+            child: ExcludeSemantics(
+              child: Image.asset(
+                'assets/images/ui/karst/settings_title_banner_v2.png',
                 key: const Key('settings-title'),
-                maxLines: 1,
-                style: BbText.h2(
-                  const Color(0xFFFFF0C5),
-                ).copyWith(fontSize: 27),
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
               ),
             ),
           ),
@@ -225,36 +224,6 @@ class _SettingsHeader extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _CroppedHeaderFrame extends StatelessWidget {
-  const _CroppedHeaderFrame({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => ClipRect(
-    child: Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          height: 92,
-          child: Image.asset(
-            'assets/images/ui/karst/select_title_frame.png',
-            fit: BoxFit.fill,
-            filterQuality: FilterQuality.high,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(36, 8, 36, 14),
-          child: child,
         ),
       ],
     ),
