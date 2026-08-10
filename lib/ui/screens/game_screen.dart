@@ -419,6 +419,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
       body: SafeArea(
         child: Stack(
           children: <Widget>[
+            const Positioned.fill(
+              child: BbCanyonBackdrop(scrim: .46, bottomShade: .70),
+            ),
+            const Positioned.fill(child: BbKarstFrameOverlay()),
             Column(
               children: <Widget>[
                 _hud(t),
@@ -433,10 +437,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           return Stack(
                             fit: StackFit.expand,
                             children: <Widget>[
-                              const BbCanyonBackdrop(
-                                scrim: .46,
-                                bottomShade: .70,
-                              ),
                               GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTapUp: (TapUpDetails d) => setState(() {

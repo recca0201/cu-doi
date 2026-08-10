@@ -51,6 +51,67 @@ class BbCanyonBackdrop extends StatelessWidget {
   );
 }
 
+/// Decorative karst frame shared by the rules and gameplay screens.
+///
+/// It never participates in hit testing, so controls and arena gestures below
+/// it remain usable.
+class BbKarstFrameOverlay extends StatelessWidget {
+  const BbKarstFrameOverlay({super.key});
+
+  @override
+  Widget build(BuildContext context) =>
+      const IgnorePointer(child: CustomPaint(painter: _KarstFramePainter()));
+}
+
+class _KarstFramePainter extends CustomPainter {
+  const _KarstFramePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Offset.zero & size;
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(0, -.5),
+          radius: 1.1,
+          colors: <Color>[Color(0x442C806A), Color(0xB8042528)],
+        ).createShader(rect),
+    );
+    final Paint rail = Paint()
+      ..color = const Color(0xFF0B675B)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8;
+    final RRect frame = RRect.fromRectAndRadius(
+      Rect.fromLTRB(5, 5, size.width - 5, size.height - 5),
+      const Radius.circular(22),
+    );
+    canvas.drawRRect(frame, rail);
+    canvas.drawRRect(
+      frame,
+      Paint()
+        ..color = BbTokens.primaryGold.withValues(alpha: .58)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+    final Paint mote = Paint()
+      ..color = BbTokens.primaryGold.withValues(alpha: .11);
+    for (int i = 0; i < 34; i++) {
+      canvas.drawCircle(
+        Offset(
+          ((i * 83 + 17) % 401) / 401 * size.width,
+          ((i * 137 + 23) % 409) / 409 * size.height,
+        ),
+        i % 8 == 0 ? 2 : .8,
+        mote,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _KarstFramePainter oldDelegate) => false;
+}
+
 /// Signature candy-dot texture — a faint staggered grid of soft circles that
 /// gives every screen the same "bubble wrapper" feel. Purely decorative and
 /// non-interactive.

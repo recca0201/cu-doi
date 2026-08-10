@@ -76,9 +76,7 @@ class HowToPlayPanel extends StatelessWidget {
         const Positioned.fill(
           child: BbCanyonBackdrop(scrim: .34, bottomShade: .62),
         ),
-        const Positioned.fill(
-          child: IgnorePointer(child: CustomPaint(painter: _RulesBackdrop())),
-        ),
+        const Positioned.fill(child: BbKarstFrameOverlay()),
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
@@ -386,55 +384,6 @@ class _MiniTarget extends StatelessWidget {
       ),
     );
   }
-}
-
-class _RulesBackdrop extends CustomPainter {
-  const _RulesBackdrop();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Rect rect = Offset.zero & size;
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..shader = const RadialGradient(
-          center: Alignment(0, -.5),
-          radius: 1.1,
-          colors: <Color>[Color(0x442C806A), Color(0xB8042528)],
-        ).createShader(rect),
-    );
-    final Paint rail = Paint()
-      ..color = const Color(0xFF0B675B)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
-    final RRect frame = RRect.fromRectAndRadius(
-      Rect.fromLTRB(5, 5, size.width - 5, size.height - 5),
-      const Radius.circular(22),
-    );
-    canvas.drawRRect(frame, rail);
-    canvas.drawRRect(
-      frame,
-      Paint()
-        ..color = BbTokens.primaryGold.withValues(alpha: .58)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
-    );
-    final Paint mote = Paint()
-      ..color = BbTokens.primaryGold.withValues(alpha: .11);
-    for (int i = 0; i < 34; i++) {
-      canvas.drawCircle(
-        Offset(
-          ((i * 83 + 17) % 401) / 401 * size.width,
-          ((i * 137 + 23) % 409) / 409 * size.height,
-        ),
-        i % 8 == 0 ? 2 : .8,
-        mote,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _RulesBackdrop oldDelegate) => false;
 }
 
 class _RuleDiagram extends CustomPainter {
