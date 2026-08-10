@@ -100,7 +100,7 @@ không có thiết bị, và bản dịch sang JS là dịch trực tiếp chứ
 
 **(b) `lib/sim/arenas.dart` là output, không phải source.**
 417 dòng, được sinh ra. Hình học hand-authored trong `tools/solver/campaign.js`;
-`requiredBanks`, `shots`, `starThresholds` do solver chạy mô phỏng thật trên 361
+`requiredBanks`, `shots`, `starThresholds` do solver chạy mô phỏng thật trên 721
 góc bắn cho từng trạng thái bàn mà ra. Hệ quả kiến trúc: **có một tầng build ngoài
 Flutter mà không có bước build nào tự động gọi.** Nó chạy bằng tay, và không có
 thứ gì trong repo phát hiện được `arenas.dart` đã lệch khỏi `campaign.js`.
@@ -575,7 +575,7 @@ dữ liệu chứ không phải ý kiến.
 flowchart TD
     Author["campaign.js<br/>hình học hand-authored:<br/>vị trí mục tiêu, block, deflector"]
     Sim["sim.js<br/>bản port JS của lib/sim"]
-    Sweep["vét cạn 361 góc bắn<br/>cho từng trạng thái bàn"]
+    Sweep["vét cạn 721 góc bắn<br/>cho từng trạng thái bàn"]
     Check{"Có màn nào<br/>dọn sạch bằng 1 cú?"}
     Bump["tự nâng requiredBanks"]
     Tune["tune.js<br/>dò tham số toàn cục,<br/>đánh dấu cấu hình suy biến"]

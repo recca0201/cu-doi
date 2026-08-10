@@ -1,0 +1,1004 @@
+[
+  {
+    "id": 1,
+    "name": "Bắn thẳng không tính",
+    "nameEn": "Straight shots don't count",
+    "hint": "Bắn thẳng thì chúng nó cười. Phải dội tường trước đã!",
+    "hintEn": "Shoot one head-on and it laughs. Bank off a wall first!",
+    "shots": 3,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 104,
+        "req": 1,
+        "pal": 0
+      },
+      {
+        "x": 22,
+        "y": 44,
+        "req": 1,
+        "pal": 1
+      },
+      {
+        "x": 78,
+        "y": 44,
+        "req": 1,
+        "pal": 2
+      }
+    ],
+    "blocks": [
+      {
+        "left": 40,
+        "top": 60,
+        "right": 60,
+        "bottom": 68
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 2,
+    "name": "Ba đứa trên cao",
+    "nameEn": "Three up top",
+    "hint": "Không có vật cản. Chỉ có tường và góc bắn của bạn.",
+    "hintEn": "No obstacles. Just walls and your angle.",
+    "shots": 3,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 20,
+        "y": 36,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 28,
+        "req": 3,
+        "pal": 2
+      },
+      {
+        "x": 80,
+        "y": 36,
+        "req": 4,
+        "pal": 3
+      }
+    ],
+    "blocks": [],
+    "deflectors": []
+  },
+  {
+    "id": 3,
+    "name": "Sát tường",
+    "nameEn": "Hugging the wall",
+    "hint": "Đứa sát tường khó ăn hơn đứa giữa sân.",
+    "hintEn": "The ones against the wall are harder than the ones in the middle.",
+    "shots": 3,
+    "starThresholds": [
+      650,
+      950,
+      1150
+    ],
+    "targets": [
+      {
+        "x": 11,
+        "y": 112,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 89,
+        "y": 112,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 40,
+        "req": 1,
+        "pal": 2
+      }
+    ],
+    "blocks": [],
+    "deflectors": []
+  },
+  {
+    "id": 4,
+    "name": "Hình thoi",
+    "nameEn": "Diamond",
+    "hint": "Một cú đi xuyên được mấy đứa?",
+    "hintEn": "How many can one shot punch through?",
+    "shots": 3,
+    "starThresholds": [
+      950,
+      1350,
+      1700
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 30,
+        "req": 1,
+        "pal": 0
+      },
+      {
+        "x": 28,
+        "y": 60,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 72,
+        "y": 60,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 50,
+        "y": 92,
+        "req": 1,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 44,
+        "top": 44,
+        "right": 56,
+        "bottom": 50
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 5,
+    "name": "Sau cây cột",
+    "nameEn": "Behind the pillar",
+    "hint": "Cột giữa sân không cho bạn đi đường thẳng.",
+    "hintEn": "The pillar takes the straight line away from you.",
+    "shots": 3,
+    "starThresholds": [
+      650,
+      950,
+      1150
+    ],
+    "targets": [
+      {
+        "x": 26,
+        "y": 52,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 74,
+        "y": 52,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 22,
+        "req": 2,
+        "pal": 2
+      }
+    ],
+    "blocks": [
+      {
+        "left": 44,
+        "top": 66,
+        "right": 56,
+        "bottom": 118
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 6,
+    "name": "Ngóc ngách",
+    "nameEn": "Pockets",
+    "hint": "Mấy đứa trong hốc chỉ ăn cú dội từ trên xuống thôi.",
+    "hintEn": "The ones in the alcoves only take a bank from above.",
+    "shots": 3,
+    "starThresholds": [
+      900,
+      1300,
+      1600
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 100,
+        "req": 1,
+        "pal": 0
+      },
+      {
+        "x": 15,
+        "y": 54,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 85,
+        "y": 54,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 50,
+        "y": 24,
+        "req": 3,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 0,
+        "top": 66,
+        "right": 30,
+        "bottom": 73
+      },
+      {
+        "left": 70,
+        "top": 66,
+        "right": 100,
+        "bottom": 73
+      }
+    ],
+    "deflectors": [
+      {
+        "ax": 40,
+        "ay": 38,
+        "bx": 60,
+        "by": 38
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Mái che",
+    "nameEn": "The awning",
+    "hint": "Có mái thì đi vòng, đừng đi thẳng.",
+    "hintEn": "There is a roof. Go around it.",
+    "shots": 3,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 24,
+        "y": 30,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 76,
+        "y": 30,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 78,
+        "req": 2,
+        "pal": 2
+      }
+    ],
+    "blocks": [
+      {
+        "left": 32,
+        "top": 46,
+        "right": 68,
+        "bottom": 54
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 8,
+    "name": "Bậc thang",
+    "nameEn": "Staircase",
+    "hint": "Bậc thang bên trái là tường phụ, dùng nó đi.",
+    "hintEn": "Those steps on the left are extra walls. Use them.",
+    "shots": 3,
+    "starThresholds": [
+      700,
+      1000,
+      1250
+    ],
+    "targets": [
+      {
+        "x": 80,
+        "y": 100,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 80,
+        "y": 62,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 78,
+        "y": 26,
+        "req": 2,
+        "pal": 2
+      }
+    ],
+    "blocks": [
+      {
+        "left": 0,
+        "top": 112,
+        "right": 30,
+        "bottom": 119
+      },
+      {
+        "left": 0,
+        "top": 74,
+        "right": 22,
+        "bottom": 81
+      },
+      {
+        "left": 0,
+        "top": 36,
+        "right": 14,
+        "bottom": 43
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 9,
+    "name": "Hai cái hốc",
+    "nameEn": "Two nooks",
+    "hint": "Hai bên là hốc. Giữa là đường vào.",
+    "hintEn": "Nooks on both sides. The middle is the way in.",
+    "shots": 3,
+    "starThresholds": [
+      900,
+      1300,
+      1600
+    ],
+    "targets": [
+      {
+        "x": 14,
+        "y": 90,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 86,
+        "y": 90,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 34,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 50,
+        "y": 118,
+        "req": 1,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 0,
+        "top": 104,
+        "right": 28,
+        "bottom": 110
+      },
+      {
+        "left": 72,
+        "top": 104,
+        "right": 100,
+        "bottom": 110
+      },
+      {
+        "left": 40,
+        "top": 60,
+        "right": 60,
+        "bottom": 66
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 10,
+    "name": "Kẹp giữa",
+    "nameEn": "Squeezed",
+    "hint": "Khe giữa hai cột hẹp hơn bạn tưởng.",
+    "hintEn": "The gap between the pillars is tighter than it looks.",
+    "shots": 4,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 42,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 20,
+        "y": 100,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 80,
+        "y": 100,
+        "req": 2,
+        "pal": 2
+      }
+    ],
+    "blocks": [
+      {
+        "left": 32,
+        "top": 60,
+        "right": 40,
+        "bottom": 120
+      },
+      {
+        "left": 60,
+        "top": 60,
+        "right": 68,
+        "bottom": 120
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 11,
+    "name": "Chuỗi dội",
+    "nameEn": "Bank chain",
+    "hint": "Càng dội càng nhân điểm. Một cú ăn hết bốn đứa được không?",
+    "hintEn": "More banks, bigger multiplier. Can one shot take all four?",
+    "shots": 3,
+    "starThresholds": [
+      800,
+      1150,
+      1450
+    ],
+    "targets": [
+      {
+        "x": 14,
+        "y": 118,
+        "req": 1,
+        "pal": 0
+      },
+      {
+        "x": 86,
+        "y": 96,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 14,
+        "y": 74,
+        "req": 3,
+        "pal": 2
+      },
+      {
+        "x": 86,
+        "y": 52,
+        "req": 4,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 46,
+        "top": 84,
+        "right": 54,
+        "bottom": 112
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 12,
+    "name": "Leo thang",
+    "nameEn": "Climbing",
+    "hint": "Đi zig-zag lên. Đừng tham đứa trên cùng ngay.",
+    "hintEn": "Zig-zag your way up. Do not grab for the top one first.",
+    "shots": 3,
+    "starThresholds": [
+      1150,
+      1650,
+      2050
+    ],
+    "targets": [
+      {
+        "x": 12,
+        "y": 108,
+        "req": 1,
+        "pal": 0
+      },
+      {
+        "x": 88,
+        "y": 82,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 12,
+        "y": 56,
+        "req": 3,
+        "pal": 2
+      },
+      {
+        "x": 88,
+        "y": 30,
+        "req": 4,
+        "pal": 3
+      },
+      {
+        "x": 50,
+        "y": 128,
+        "req": 1,
+        "pal": 0
+      }
+    ],
+    "blocks": [],
+    "deflectors": []
+  },
+  {
+    "id": 13,
+    "name": "Hành lang",
+    "nameEn": "The corridor",
+    "hint": "Hành lang hẹp: bi vào được thì dội rất nhanh.",
+    "hintEn": "A narrow corridor: once the ball is in, banks come fast.",
+    "shots": 4,
+    "starThresholds": [
+      900,
+      1300,
+      1600
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 24,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 50,
+        "y": 56,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 18,
+        "y": 122,
+        "req": 1,
+        "pal": 2
+      },
+      {
+        "x": 82,
+        "y": 122,
+        "req": 1,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 34,
+        "top": 74,
+        "right": 42,
+        "bottom": 132
+      },
+      {
+        "left": 58,
+        "top": 74,
+        "right": 66,
+        "bottom": 132
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 14,
+    "name": "Dán tường",
+    "nameEn": "Wallflowers",
+    "hint": "Cả bốn đứa đều dán tường. Vui đấy.",
+    "hintEn": "All four are stuck to the walls. Have fun.",
+    "shots": 3,
+    "starThresholds": [
+      900,
+      1300,
+      1600
+    ],
+    "targets": [
+      {
+        "x": 10,
+        "y": 120,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 10,
+        "y": 60,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 90,
+        "y": 120,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 90,
+        "y": 60,
+        "req": 3,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 42,
+        "top": 40,
+        "right": 58,
+        "bottom": 130
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 15,
+    "name": "Chữ thập",
+    "nameEn": "The cross",
+    "hint": "Bốn góc, một cây thập ở giữa.",
+    "hintEn": "Four corners, one cross in the middle.",
+    "shots": 3,
+    "starThresholds": [
+      900,
+      1300,
+      1600
+    ],
+    "targets": [
+      {
+        "x": 18,
+        "y": 40,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 82,
+        "y": 40,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 18,
+        "y": 110,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 82,
+        "y": 110,
+        "req": 2,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 44,
+        "top": 44,
+        "right": 56,
+        "bottom": 106
+      },
+      {
+        "left": 28,
+        "top": 70,
+        "right": 72,
+        "bottom": 80
+      }
+    ],
+    "deflectors": []
+  },
+  {
+    "id": 16,
+    "name": "Chéo giữa sân",
+    "nameEn": "Diagonal",
+    "hint": "Vật cản chéo đổi hướng bi kiểu khác tường.",
+    "hintEn": "A diagonal bumper turns the ball differently from a wall.",
+    "shots": 3,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 20,
+        "y": 44,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 80,
+        "y": 44,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 110,
+        "req": 1,
+        "pal": 2
+      }
+    ],
+    "blocks": [],
+    "deflectors": [
+      {
+        "ax": 34,
+        "ay": 84,
+        "bx": 66,
+        "by": 68
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Cái phễu",
+    "nameEn": "The funnel",
+    "hint": "Phễu đẩy bi ra hai bên. Đừng chống lại nó.",
+    "hintEn": "The funnel pushes the ball out to the sides. Do not fight it.",
+    "shots": 3,
+    "starThresholds": [
+      750,
+      1100,
+      1350
+    ],
+    "targets": [
+      {
+        "x": 14,
+        "y": 62,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 86,
+        "y": 62,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 50,
+        "y": 26,
+        "req": 2,
+        "pal": 2
+      }
+    ],
+    "blocks": [],
+    "deflectors": [
+      {
+        "ax": 30,
+        "ay": 96,
+        "bx": 48,
+        "by": 116
+      },
+      {
+        "ax": 70,
+        "ay": 96,
+        "bx": 52,
+        "by": 116
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Nóc nhà",
+    "nameEn": "The rooftop",
+    "hint": "Đứa trên nóc chỉ vào được từ bên sườn.",
+    "hintEn": "The one on the roof can only be entered from a flank.",
+    "shots": 4,
+    "starThresholds": [
+      1000,
+      1450,
+      1800
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 20,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 22,
+        "y": 74,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 78,
+        "y": 74,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 50,
+        "y": 116,
+        "req": 1,
+        "pal": 3
+      }
+    ],
+    "blocks": [
+      {
+        "left": 30,
+        "top": 34,
+        "right": 70,
+        "bottom": 40
+      }
+    ],
+    "deflectors": [
+      {
+        "ax": 12,
+        "ay": 52,
+        "bx": 30,
+        "by": 40
+      },
+      {
+        "ax": 88,
+        "ay": 52,
+        "bx": 70,
+        "by": 40
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Hai lưỡi dao",
+    "nameEn": "Two blades",
+    "hint": "Hai lưỡi chéo hai bên. Bi sẽ đi lối bạn không định.",
+    "hintEn": "Two blades on the flanks. The ball goes where you did not plan.",
+    "shots": 4,
+    "starThresholds": [
+      850,
+      1200,
+      1550
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 34,
+        "req": 3,
+        "pal": 0
+      },
+      {
+        "x": 16,
+        "y": 108,
+        "req": 2,
+        "pal": 1
+      },
+      {
+        "x": 84,
+        "y": 108,
+        "req": 2,
+        "pal": 2
+      },
+      {
+        "x": 50,
+        "y": 74,
+        "req": 2,
+        "pal": 3
+      }
+    ],
+    "blocks": [],
+    "deflectors": [
+      {
+        "ax": 6,
+        "ay": 88,
+        "bx": 34,
+        "by": 62
+      },
+      {
+        "ax": 94,
+        "ay": 88,
+        "bx": 66,
+        "by": 62
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Bừa hết cỡ",
+    "nameEn": "Full send",
+    "hint": "Tất cả cùng lúc. Bắn bừa đúng chỗ đi.",
+    "hintEn": "Everything at once. Be reckless in the right place.",
+    "shots": 4,
+    "starThresholds": [
+      1300,
+      1850,
+      2350
+    ],
+    "targets": [
+      {
+        "x": 50,
+        "y": 18,
+        "req": 4,
+        "pal": 0
+      },
+      {
+        "x": 14,
+        "y": 52,
+        "req": 3,
+        "pal": 1
+      },
+      {
+        "x": 86,
+        "y": 52,
+        "req": 3,
+        "pal": 2
+      },
+      {
+        "x": 26,
+        "y": 106,
+        "req": 2,
+        "pal": 3
+      },
+      {
+        "x": 74,
+        "y": 106,
+        "req": 2,
+        "pal": 0
+      },
+      {
+        "x": 50,
+        "y": 128,
+        "req": 1,
+        "pal": 1
+      }
+    ],
+    "blocks": [
+      {
+        "left": 38,
+        "top": 34,
+        "right": 62,
+        "bottom": 40
+      },
+      {
+        "left": 44,
+        "top": 70,
+        "right": 56,
+        "bottom": 92
+      }
+    ],
+    "deflectors": [
+      {
+        "ax": 8,
+        "ay": 78,
+        "bx": 30,
+        "by": 62
+      },
+      {
+        "ax": 92,
+        "ay": 78,
+        "bx": 70,
+        "by": 62
+      }
+    ]
+  }
+]

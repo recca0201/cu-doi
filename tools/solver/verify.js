@@ -13,6 +13,7 @@ const { V2, fly, buildSegments, arenaWalls, kArenas, target,
 
 let pass = 0, fail = 0;
 const failures = [];
+let campaignFail = 0;
 
 function check(name, cond, detail = '') {
   if (cond) { pass++; }
@@ -192,18 +193,25 @@ for (const arena of kArenas) {
   console.log(`\n--- Màn ${arena.id}: ${arena.name} (ngân sách ${arena.shots} cú) ---`);
   arena.targets.forEach((t, k) => {
     const sr = res.singleReach[k];
+    if (!sr) campaignFail++;
     console.log(`  target ${k} @(${t.pos.x},${t.pos.y}) cần ${t.requiredBanks} dội: ` +
       (sr ? `OK (góc ${sr.angle}°, ${sr.banks} dội)` : `KHÔNG THỂ PHÁ từ bàn đầy  <-- LỖI THIẾT KẾ`));
   });
   if (res.solvedIn === null) {
+    campaignFail++;
     console.log(`  DỌN SẠCH: KHÔNG THỂ trong ${arena.shots} cú  <-- LỖI THIẾT KẾ`);
   } else {
+    if (res.solvedIn === 1) campaignFail++;
     const stars = arena.starThresholds.filter(t => res.solvedScore >= t).length;
     console.log(`  DỌN SẠCH: được, tối thiểu ${res.solvedIn}/${arena.shots} cú, điểm tốt nhất ~${res.solvedScore} (${stars}/3 sao)`);
     console.log(`  mốc sao: ${arena.starThresholds.join(' / ')}`);
   }
   console.log(`  cú đơn mạnh nhất: ${res.heroScore} điểm, phá ${res.heroBroke} mục tiêu (góc ${res.heroAngle}°)`);
+  if (res.solvedIn === 1) {
+    console.log('  ONE-SHOT CLEAR  <-- LỖI CÂN BẰNG');
+  }
   console.log(`  (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
 }
 
-console.log(`\n=== TỔNG: ${pass} assertion passed, ${fail} failed ===`);
+console.log(`\n=== TỔNG: ${pass} assertion passed, ${fail} mechanic failed, ${campaignFail} campaign failed ===`);
+if (fail > 0 || campaignFail > 0) process.exit(1);

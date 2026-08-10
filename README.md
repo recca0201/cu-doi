@@ -81,7 +81,7 @@ ghi lý do vì sao màu được lưu dạng int `0xRRGGBB` thay vì `Color`.
 `lib/sim/arenas.dart` là **file được sinh ra**. Hình học (vị trí mục tiêu, khối
 chắn, vật cản chéo) là hand-authored trong `tools/solver/campaign.js`. Mọi **con
 số** ảnh hưởng độ khó thì không: `requiredBanks`, `shots` và `starThresholds` đều
-do chạy mô phỏng thật trên 361 góc bắn cho từng trạng thái bàn mà ra.
+do chạy mô phỏng thật trên 721 góc bắn cho từng trạng thái bàn mà ra.
 
 Pipeline đảm bảo cho **từng** màn:
 
@@ -96,25 +96,25 @@ Pipeline đảm bảo cho **từng** màn:
 | Màn | Tên | Mục tiêu | req | Cú bắn | Mốc sao |
 |---|---|---|---|---|---|
 | 1 | Bắn thẳng không tính | 3 | 1/1/1 | 3 | 750/1100/1350 |
-| 2 | Ba đứa trên cao | 3 | 3/2/3 | 3 | 750/1100/1350 |
-| 3 | Sát tường | 3 | 2/2/1 | 3 | 550/800/1000 |
-| 4 | Hình thoi | 4 | 1/2/2/1 | 3 | 850/1200/1550 |
-| 5 | Sau cây cột | 3 | 2/2/1 | 3 | 650/950/1150 |
-| 6 | Ngóc ngách | 4 | 1/2/2/3 | 4 | 950/1350/1700 |
-| 7 | Mái che | 3 | 2/2/2 | 3 | 700/1000/1250 |
+| 2 | Ba đứa trên cao | 3 | 3/3/4 | 3 | 750/1100/1350 |
+| 3 | Sát tường | 3 | 2/2/1 | 3 | 650/950/1150 |
+| 4 | Hình thoi | 4 | 1/2/2/1 | 3 | 950/1350/1700 |
+| 5 | Sau cây cột | 3 | 3/3/2 | 3 | 650/950/1150 |
+| 6 | Ngóc ngách | 4 | 1/2/2/3 | 3 | 900/1300/1600 |
+| 7 | Mái che | 3 | 2/2/2 | 3 | 750/1100/1350 |
 | 8 | Bậc thang | 3 | 2/3/2 | 3 | 700/1000/1250 |
 | 9 | Hai cái hốc | 4 | 2/2/2/1 | 3 | 900/1300/1600 |
 | 10 | Kẹp giữa | 3 | 3/2/2 | 4 | 750/1100/1350 |
 | 11 | Chuỗi dội | 4 | 1/2/3/4 | 3 | 800/1150/1450 |
-| 12 | Leo thang | 5 | 1/2/3/4/1 | 4 | 1150/1650/2050 |
+| 12 | Leo thang | 5 | 1/2/3/4/1 | 3 | 1150/1650/2050 |
 | 13 | Hành lang | 4 | 3/2/1/1 | 4 | 900/1300/1600 |
 | 14 | Dán tường | 4 | 2/3/2/3 | 3 | 900/1300/1600 |
 | 15 | Chữ thập | 4 | 2/2/2/2 | 3 | 900/1300/1600 |
 | 16 | Chéo giữa sân | 3 | 2/2/1 | 3 | 750/1100/1350 |
 | 17 | Cái phễu | 3 | 3/3/2 | 3 | 750/1100/1350 |
-| 18 | Nóc nhà | 4 | 3/2/2/1 | 4 | 950/1350/1700 |
-| 19 | Hai lưỡi dao | 4 | 3/2/2/2 | 4 | 800/1150/1450 |
-| 20 | Bừa hết cỡ | 6 | 4/3/3/2/2/1 | 5 | 1300/1850/2350 |
+| 18 | Nóc nhà | 4 | 3/2/2/1 | 4 | 1000/1450/1800 |
+| 19 | Hai lưỡi dao | 4 | 3/2/2/2 | 4 | 850/1200/1550 |
+| 20 | Bừa hết cỡ | 6 | 4/3/3/2/2/1 | 4 | 1300/1850/2350 |
 
 Chương: 1–5 học luật dội · 6–10 kệ và hốc · 11–15 zig-zag · 16–20 vật cản chéo.
 

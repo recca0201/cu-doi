@@ -124,30 +124,30 @@ trong hình không được đưa vào production nếu chưa có luồng chức
 |---|---|---|---|---|---|
 | **Chương 1 — Học luật dội** | | | | | |
 | 1 | Bắn thẳng không tính | 3 | 1/1/1 | 3 | 750/1100/1350 |
-| 2 | Ba đứa trên cao | 3 | 3/2/3 | 3 | 750/1100/1350 |
-| 3 | Sát tường | 3 | 2/2/1 | 3 | 550/800/1000 |
-| 4 | Hình thoi | 4 | 1/2/2/1 | 3 | 850/1200/1550 |
-| 5 | Sau cây cột | 3 | 2/2/1 | 3 | 650/950/1150 |
+| 2 | Ba đứa trên cao | 3 | 3/3/4 | 3 | 750/1100/1350 |
+| 3 | Sát tường | 3 | 2/2/1 | 3 | 650/950/1150 |
+| 4 | Hình thoi | 4 | 1/2/2/1 | 3 | 950/1350/1700 |
+| 5 | Sau cây cột | 3 | 3/3/2 | 3 | 650/950/1150 |
 | **Chương 2 — Kệ và hốc** | | | | | |
-| 6 | Ngóc ngách | 4 | 1/2/2/3 | 4 | 950/1350/1700 |
-| 7 | Mái che | 3 | 2/2/2 | 3 | 700/1000/1250 |
+| 6 | Ngóc ngách | 4 | 1/2/2/3 | 3 | 900/1300/1600 |
+| 7 | Mái che | 3 | 2/2/2 | 3 | 750/1100/1350 |
 | 8 | Bậc thang | 3 | 2/3/2 | 3 | 700/1000/1250 |
 | 9 | Hai cái hốc | 4 | 2/2/2/1 | 3 | 900/1300/1600 |
 | 10 | Kẹp giữa | 3 | 3/2/2 | 4 | 750/1100/1350 |
 | **Chương 3 — Zig-zag** | | | | | |
 | 11 | Chuỗi dội | 4 | 1/2/3/4 | 3 | 800/1150/1450 |
-| 12 | Leo thang | 5 | 1/2/3/4/1 | 4 | 1150/1650/2050 |
+| 12 | Leo thang | 5 | 1/2/3/4/1 | 3 | 1150/1650/2050 |
 | 13 | Hành lang | 4 | 3/2/1/1 | 4 | 900/1300/1600 |
 | 14 | Dán tường | 4 | 2/3/2/3 | 3 | 900/1300/1600 |
 | 15 | Chữ thập | 4 | 2/2/2/2 | 3 | 900/1300/1600 |
 | **Chương 4 — Vật cản chéo** | | | | | |
 | 16 | Chéo giữa sân | 3 | 2/2/1 | 3 | 750/1100/1350 |
 | 17 | Cái phễu | 3 | 3/3/2 | 3 | 750/1100/1350 |
-| 18 | Nóc nhà | 4 | 3/2/2/1 | 4 | 950/1350/1700 |
-| 19 | Hai lưỡi dao | 4 | 3/2/2/2 | 4 | 800/1150/1450 |
-| 20 | Bừa hết cỡ | 6 | 4/3/3/2/2/1 | 5 | 1300/1850/2350 |
+| 18 | Nóc nhà | 4 | 3/2/2/1 | 4 | 1000/1450/1800 |
+| 19 | Hai lưỡi dao | 4 | 3/2/2/2 | 4 | 850/1200/1550 |
+| 20 | Bừa hết cỡ | 6 | 4/3/3/2/2/1 | 4 | 1300/1850/2350 |
 
-Tổng: 74 mục tiêu, 68 lượt bắn. `lib/sim/arenas.dart` là **file được sinh ra** —
+Tổng: 74 mục tiêu, 65 lượt bắn. `lib/sim/arenas.dart` là **file được sinh ra** —
 hình học hand-authored trong `tools/solver/campaign.js`, còn mọi con số độ khó do
 solver chạy mô phỏng thật sinh ra. Đừng sửa tay các con số đã tune.
 
@@ -213,7 +213,7 @@ mạng, bảng xếp hạng, editor màn trong app.
 - **Vui hay không thì chưa ai biết.** Solver chứng minh được "giải được", không
   chứng minh được "vui". Câu hỏi số một: khoảnh khắc cú bắn thẳng đầu tiên bị nảy
   ra gây tò mò hay gây khó hiểu? Nếu là khó hiểu thì cả hướng này sai.
-- **Máy tìm được cú bắn sau 361 góc không có nghĩa người tìm được.** Cần playtest
+- **Máy tìm được cú bắn sau 721 góc không có nghĩa người tìm được.** Cần playtest
   để biết độ khó thật.
 - **Puzzle dội tường có thể làm người chơi tắc hẳn**, khác với ghép-3 nơi luôn còn
   một nước đi hợp lệ. Gợi ý/bỏ qua màn là bắt buộc, không phải tuỳ chọn.
