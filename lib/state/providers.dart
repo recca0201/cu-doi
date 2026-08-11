@@ -1,15 +1,24 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 import '../core/game_audio_service.dart';
 import '../core/haptic_service.dart';
 import '../data/progress_repository.dart';
+import '../data/local_player_store.dart';
+import '../data/firebase_bootstrap.dart';
+import '../data/firebase_account_repository.dart';
+import '../data/account_deletion_repository.dart';
+import 'account_controller.dart';
 import '../data/dialogue_seen_repository.dart';
 import '../data/settings_repository.dart';
 import '../domain/character.dart';
 import '../domain/economy.dart';
 import '../domain/player_progress.dart';
 import 'hint_controller.dart';
+import 'profile_controller.dart';
 
 /// Overridden in `main()` after `SharedPreferences.getInstance()` resolves, so
 /// nothing downstream has to be async. Reading it without the override is a
@@ -20,6 +29,24 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
     'or in a test ProviderScope.',
   ),
 );
+
+final firebaseBootstrapProvider = Provider<FirebaseBootstrapResult>(
+  (ref) => const FirebaseBootstrapResult.guest(),
+);
+
+class _GuestOnlyAccountRepository implements AccountRepository {
+  @override
+  Future<Set<AuthProviderKind>> link(AuthProviderKind provider) =>
+      Future.error(StateError('Firebase is not configured'));
+  @override
+  Future<AccountIdentity?> signIn(AuthProviderKind provider) =>
+      Future.error(StateError('Firebase is not configured'));
+  @override
+  Future<void> signOut() async {}
+  @override
+  Future<ReauthenticationProof> reauthenticate(AuthProviderKind provider) =>
+      Future.error(StateError('Firebase is not configured'));
+}
 
 final settingsRepositoryProvider = Provider<SettingsRepository>(
   (ref) => SettingsRepository(ref.watch(sharedPreferencesProvider)),
@@ -59,6 +86,7 @@ class ProgressController extends StateNotifier<PlayerProgress> {
   }
 
   final ProgressRepository _repo;
+  Future<void> _tail = Future<void>.value();
   bool _spending = false;
 
   Future<void> _restore() async {
@@ -68,18 +96,24 @@ class ProgressController extends StateNotifier<PlayerProgress> {
   /// Records a finished arena. Arena ids reuse the parent project's level-id
   /// keyspace, so `PlayerProgress` needed no changes at all.
   Future<void> record(int arenaId, int stars, int score) async {
-    state = state.withResult(arenaId, stars, score);
-    await _repo.save(state);
+    await _enqueue<void>(() async {
+      final next = state.withResult(arenaId, stars, score);
+      if (await _repo.save(next)) state = next;
+    });
   }
 
   Future<void> reset() async {
-    state = const PlayerProgress();
-    await _repo.save(state);
+    await _enqueue<void>(() async {
+      const next = PlayerProgress();
+      if (await _repo.save(next)) state = next;
+    });
   }
 
   Future<void> recordLoss(int arenaId) async {
-    state = state.withLoss(arenaId);
-    await _repo.save(state);
+    await _enqueue<void>(() async {
+      final next = state.withLoss(arenaId);
+      if (await _repo.save(next)) state = next;
+    });
   }
 
   Future<SpendResult> spendOnHint() =>
@@ -98,13 +132,28 @@ class ProgressController extends StateNotifier<PlayerProgress> {
     if (!state.canAfford(cost)) return SpendResult.insufficientCoins;
     _spending = true;
     try {
-      final PlayerProgress next = transform(state).withCoinsSpent(cost);
-      if (!await _repo.save(next)) return SpendResult.writeFailed;
-      state = next;
-      return SpendResult.ok;
+      return await _enqueue<SpendResult>(() async {
+        if (!state.canAfford(cost)) return SpendResult.insufficientCoins;
+        final PlayerProgress next = transform(state).withCoinsSpent(cost);
+        if (!await _repo.save(next)) return SpendResult.writeFailed;
+        state = next;
+        return SpendResult.ok;
+      });
     } finally {
       _spending = false;
     }
+  }
+
+  Future<T> _enqueue<T>(Future<T> Function() operation) {
+    final completer = Completer<T>();
+    _tail = _tail.then((_) async {
+      try {
+        completer.complete(await operation());
+      } catch (error, stack) {
+        completer.completeError(error, stack);
+      }
+    });
+    return completer.future;
   }
 }
 
@@ -112,6 +161,39 @@ final progressProvider =
     StateNotifierProvider<ProgressController, PlayerProgress>(
       (ref) => ProgressController(ref.watch(progressRepositoryProvider)),
     );
+
+final localPlayerStoreProvider = Provider<LocalPlayerStore>(
+  (ref) => LocalPlayerStore(ref.watch(sharedPreferencesProvider)),
+);
+
+final profileProvider = StateNotifierProvider<ProfileController, ProfileState>(
+  (ref) => ProfileController(
+    ref.watch(localPlayerStoreProvider),
+    const OwnerKey.guest(),
+  ),
+);
+
+final accountRepositoryProvider = Provider<AccountRepository>((ref) {
+  if (!ref.watch(firebaseBootstrapProvider).enabled) {
+    return _GuestOnlyAccountRepository();
+  }
+  return FirebaseAccountRepository(FirebaseAuth.instance);
+});
+
+final accountDeletionRepositoryProvider = Provider<AccountDeletionRepository?>((
+  ref,
+) {
+  if (!ref.watch(firebaseBootstrapProvider).enabled) return null;
+  return FirebaseAccountDeletionRepository(FirebaseFunctions.instance);
+});
+
+final accountProvider = StateNotifierProvider<AccountController, AccountState>(
+  (ref) => AccountController(
+    ref.watch(accountRepositoryProvider),
+    store: ref.watch(localPlayerStoreProvider),
+    deletionRepository: ref.watch(accountDeletionRepositoryProvider),
+  ),
+);
 
 final dialogueSeenRepositoryProvider = Provider<DialogueSeenRepository>(
   (ref) => LocalDialogueSeenRepository(ref.watch(sharedPreferencesProvider)),

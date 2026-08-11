@@ -5,16 +5,19 @@ import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 import '../../domain/character.dart';
 import '../../domain/player_progress.dart';
+import '../../state/profile_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
 import '../../state/providers.dart';
 import '../widgets/bb_widgets.dart';
+import '../widgets/player_avatar.dart';
 import '../widgets/bb_backdrop.dart';
 import 'arena_map_screen.dart';
 import 'game_screen.dart';
 import 'how_to_play_screen.dart';
 import 'settings_screen.dart';
+import 'profile_screen.dart';
 
 /// Galaxy-arcade launcher inspired by the product key art. Only real product
 /// flows are surfaced; decorative shop/event/mission buttons stay out.
@@ -25,6 +28,7 @@ class MenuScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations t = AppLocalizations.of(context);
     final PlayerProgress progress = ref.watch(progressProvider);
+    final ProfileState profile = ref.watch(profileProvider);
     ref.watch(dialogueSeenProvider);
 
     final int firstUnfinished = kArenas
@@ -116,10 +120,16 @@ class MenuScreen extends ConsumerWidget {
                             _PlayerHud(
                               t: t,
                               progress: progress,
+                              profile: profile,
                               currentArena: firstUnfinished,
                               onSettings: () => Navigator.of(context).push(
                                 MaterialPageRoute<void>(
                                   builder: (_) => const SettingsScreen(),
+                                ),
+                              ),
+                              onProfile: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const ProfileScreen(),
                                 ),
                               ),
                             ),
@@ -269,14 +279,18 @@ class _PlayerHud extends StatelessWidget {
   const _PlayerHud({
     required this.t,
     required this.progress,
+    required this.profile,
     required this.currentArena,
     required this.onSettings,
+    required this.onProfile,
   });
 
   final AppLocalizations t;
   final PlayerProgress progress;
+  final ProfileState profile;
   final int currentArena;
   final VoidCallback onSettings;
+  final VoidCallback onProfile;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -297,91 +311,77 @@ class _PlayerHud extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: SizedBox(
-                height: hudHeight,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    Positioned(
-                      left: avatarSize / 2,
-                      right: 0,
-                      top: (hudHeight - panelHeight) / 2,
-                      height: panelHeight,
-                      child: DecoratedBox(decoration: _karstPanel(radius: 18)),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: (hudHeight - avatarSize) / 2,
-                      child: Container(
-                        key: const Key('menu-player-avatar'),
-                        width: avatarSize,
-                        height: avatarSize,
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: BbTokens.primaryGold,
-                          border: Border.all(
-                            color: const Color(0xFF3D210E),
-                            width: 3,
-                          ),
-                          boxShadow: const <BoxShadow>[
-                            BoxShadow(
-                              color: Color(0x993D210E),
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Transform.scale(
-                            scale: 1.18,
-                            alignment: const Alignment(.08, .04),
-                            child: const Image(
-                              image: AssetImage(
-                                'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
-                              ),
-                              fit: BoxFit.cover,
-                            ),
+              child: Semantics(
+                button: true,
+                label: t.openProfileCta,
+                child: GestureDetector(
+                  key: const Key('menu-profile-entry'),
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onProfile,
+                  child: SizedBox(
+                    height: hudHeight,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: <Widget>[
+                        Positioned(
+                          left: avatarSize / 2,
+                          right: 0,
+                          top: (hudHeight - panelHeight) / 2,
+                          height: panelHeight,
+                          child: DecoratedBox(
+                            decoration: _karstPanel(radius: 18),
                           ),
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      left: avatarPadding,
-                      right: narrow ? 6 : 10,
-                      top: (hudHeight - panelHeight) / 2 + 6,
-                      height: panelHeight - 12,
-                      child: Column(
-                        key: const Key('menu-player-copy'),
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          FittedBox(
-                            alignment: Alignment.centerLeft,
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              t.characterName.toUpperCase(),
-                              maxLines: 1,
-                              style: BbText.h3(
-                                Colors.white,
-                              ).copyWith(fontSize: narrow ? 14 : 17),
-                            ),
+                        Positioned(
+                          left: 0,
+                          top: (hudHeight - avatarSize) / 2,
+                          child: PlayerAvatar(
+                            key: const Key('menu-player-avatar'),
+                            avatar: profile.profile.avatar,
+                            size: avatarSize,
                           ),
-                          if (!narrow)
-                            FittedBox(
-                              alignment: Alignment.centerLeft,
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
-                                maxLines: 1,
-                                style: BbText.tiny(
-                                  BbTokens.textMuted,
-                                ).copyWith(letterSpacing: 0, fontSize: 10),
+                        ),
+                        Positioned(
+                          left: avatarPadding,
+                          right: narrow ? 6 : 10,
+                          top: (hudHeight - panelHeight) / 2 + 6,
+                          height: panelHeight - 12,
+                          child: Column(
+                            key: const Key('menu-player-copy'),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              FittedBox(
+                                alignment: Alignment.centerLeft,
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  profile.profile
+                                      .displayName(t.defaultPlayerName)
+                                      .toUpperCase(),
+                                  maxLines: 1,
+                                  style: BbText.h3(
+                                    Colors.white,
+                                  ).copyWith(fontSize: narrow ? 14 : 17),
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
+                              if (!narrow)
+                                FittedBox(
+                                  alignment: Alignment.centerLeft,
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    '${t.currentLevelBadge} · ${t.arenaSelectTitle} $currentArena',
+                                    maxLines: 1,
+                                    style: BbText.tiny(
+                                      BbTokens.textMuted,
+                                    ).copyWith(letterSpacing: 0, fontSize: 10),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

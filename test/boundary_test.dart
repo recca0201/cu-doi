@@ -7,6 +7,7 @@ void main() {
   test('simulation and domain dependency boundaries remain intact', () {
     for (final file in Directory('lib/sim').listSync().whereType<File>()) {
       expect(file.readAsStringSync(), isNot(contains('package:flutter')));
+      expect(file.readAsStringSync(), isNot(contains('firebase')));
     }
     for (final file in Directory('lib/domain').listSync().whereType<File>()) {
       expect(file.readAsStringSync(), isNot(contains('/l10n/')));
@@ -16,6 +17,17 @@ void main() {
     final chapters = File('lib/domain/chapters.dart').readAsStringSync();
     expect(chapters, isNot(contains('withResult(')));
     expect(chapters, isNot(contains('withSkipped(')));
+  });
+
+  test('profile feature introduces no analytics or gameplay event log', () {
+    final pubspec = File('pubspec.yaml').readAsStringSync();
+    expect(pubspec, isNot(contains('firebase_analytics')));
+    for (final directory in <String>['lib/domain', 'lib/data', 'lib/state']) {
+      for (final file in Directory(directory).listSync().whereType<File>()) {
+        expect(file.readAsStringSync(), isNot(contains('eventLog')));
+        expect(file.readAsStringSync(), isNot(contains('logShot')));
+      }
+    }
   });
 
   test('linear unlock rule is unchanged', () {

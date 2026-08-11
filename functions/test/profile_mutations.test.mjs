@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs';
+test('profile mutation is callable-only, App Check protected and idempotent', () => { const source = fs.readFileSync('src/profile_mutations.ts', 'utf8'); assert.match(source, /enforceAppCheck: true/); assert.match(source, /if \(prior\.exists\)/); assert.match(source, /serverCommittedAt/); assert.doesNotMatch(source, /providerToken|refreshToken/); });

@@ -637,6 +637,234 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!'**
   String get dialogueFinalVictory;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hồ sơ người chơi'**
+  String get profileTitle;
+
+  /// No description provided for @defaultPlayerName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Người chơi'**
+  String get defaultPlayerName;
+
+  /// No description provided for @changeAvatarCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi ảnh đại diện'**
+  String get changeAvatarCta;
+
+  /// No description provided for @editNameCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa tên'**
+  String get editNameCta;
+
+  /// No description provided for @saveCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu'**
+  String get saveCta;
+
+  /// No description provided for @cancelCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy'**
+  String get cancelCta;
+
+  /// No description provided for @invalidNameError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên phải có từ 1 đến 20 ký tự nhìn thấy.'**
+  String get invalidNameError;
+
+  /// No description provided for @guestStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chơi với tư cách khách'**
+  String get guestStatus;
+
+  /// No description provided for @profileStars.
+  ///
+  /// In vi, this message translates to:
+  /// **'sao'**
+  String get profileStars;
+
+  /// No description provided for @profileCompleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'đã hoàn thành'**
+  String get profileCompleted;
+
+  /// No description provided for @profileEncouragement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cú dội hay đầu tiên đang chờ bạn.'**
+  String get profileEncouragement;
+
+  /// No description provided for @profileChapter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chương {number}'**
+  String profileChapter(int number);
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảo vệ tiến trình'**
+  String get accountTitle;
+
+  /// No description provided for @guestAccountBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có thể đăng nhập để đồng bộ hồ sơ giữa các thiết bị.'**
+  String get guestAccountBody;
+
+  /// No description provided for @signInGoogleCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục với Google'**
+  String get signInGoogleCta;
+
+  /// No description provided for @signInAppleCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục với Apple'**
+  String get signInAppleCta;
+
+  /// No description provided for @providerConfigRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng nhập sẽ khả dụng sau khi cấu hình provider phát hành.'**
+  String get providerConfigRequired;
+
+  /// No description provided for @avatarPresetsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ảnh dựng sẵn'**
+  String get avatarPresetsTitle;
+
+  /// No description provided for @devicePhotoCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh từ thiết bị'**
+  String get devicePhotoCta;
+
+  /// No description provided for @avatarPrivacyCopy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bộ chọn hệ thống chỉ mở khi bạn chọn và đồng bộ avatar.'**
+  String get avatarPrivacyCopy;
+
+  /// No description provided for @avatarInvalidError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không dùng được ảnh này. Hãy chọn ảnh khác.'**
+  String get avatarInvalidError;
+
+  /// No description provided for @openProfileCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở hồ sơ người chơi'**
+  String get openProfileCta;
+
+  /// No description provided for @badgesTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Huy hiệu'**
+  String get badgesTitle;
+
+  /// No description provided for @badgeUnlocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã mở'**
+  String get badgeUnlocked;
+
+  /// No description provided for @badgeLocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tiến hành'**
+  String get badgeLocked;
+
+  /// No description provided for @signOutCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng xuất'**
+  String get signOutCta;
+
+  /// No description provided for @deleteAccountCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tài khoản'**
+  String get deleteAccountCta;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tài khoản này?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dữ liệu đám mây và quyền đăng nhập sẽ bị xóa. Một bản tiến trình khách vẫn được giữ trên thiết bị.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @confirmDeleteCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xác nhận xóa'**
+  String get confirmDeleteCta;
+
+  /// No description provided for @accountPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang xử lý xóa tài khoản'**
+  String get accountPending;
+
+  /// No description provided for @accountRecovery.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần xác nhận lại nhà cung cấp để tiếp tục xóa'**
+  String get accountRecovery;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa tài khoản'**
+  String get accountDeleted;
+
+  /// No description provided for @syncPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chờ đồng bộ'**
+  String get syncPending;
+
+  /// No description provided for @signedInStatus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đăng nhập'**
+  String get signedInStatus;
+
+  /// No description provided for @signedInResetGuard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy đăng xuất trước khi xóa tiến trình cục bộ để dữ liệu đám mây không khôi phục lại.'**
+  String get signedInResetGuard;
+
+  /// No description provided for @signInReminderBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bảo vệ tiến trình này và khôi phục trên thiết bị khác.'**
+  String get signInReminderBody;
+
+  /// No description provided for @signInReminderCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở tùy chọn đăng nhập'**
+  String get signInReminderCta;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,8 @@ import '../../core/haptic_service.dart';
 import '../../domain/economy.dart';
 import '../../domain/character.dart';
 import '../../domain/player_progress.dart';
+import '../../data/local_player_store.dart';
+import '../../state/account_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
@@ -30,6 +32,7 @@ import '../widgets/bb_widgets.dart';
 import '../widgets/bb_backdrop.dart';
 import 'arena_map_screen.dart';
 import 'how_to_play_screen.dart';
+import 'profile_screen.dart';
 
 enum _Outcome { won, lost }
 
@@ -181,6 +184,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   int? _loadedArenaId;
   late bool _guideVisible;
   bool _resultDialogueDismissed = false;
+  bool _signInReminderDismissed = true;
 
   ShotRunner? _runner;
   List<V2> _ghost = <V2>[];
@@ -199,7 +203,29 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _haptics = ref.read(hapticServiceProvider);
     _load(_indexOf(widget.arenaId));
     _loadLauncherSprite();
+    _restoreSignInReminder();
     _ticker = createTicker(_onTick)..start();
+  }
+
+  Future<void> _restoreSignInReminder() async {
+    final envelope = await ref
+        .read(localPlayerStoreProvider)
+        .load(const OwnerKey.guest());
+    if (mounted) {
+      setState(
+        () => _signInReminderDismissed = envelope.signInReminderDismissed,
+      );
+    }
+  }
+
+  Future<void> _dismissSignInReminder() async {
+    final store = ref.read(localPlayerStoreProvider);
+    final envelope = await store.load(const OwnerKey.guest());
+    await store.save(
+      const OwnerKey.guest(),
+      envelope.copyWith(signInReminderDismissed: true),
+    );
+    if (mounted) setState(() => _signInReminderDismissed = true);
   }
 
   Future<void> _loadLauncherSprite() async {
@@ -970,6 +996,53 @@ class _GameScreenState extends ConsumerState<GameScreen>
                                 onPressed: () => setState(
                                   () => _dismissedAtLossCount = losses,
                                 ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (won &&
+                          _arena.id == 1 &&
+                          !_signInReminderDismissed &&
+                          ref.watch(accountProvider).phase ==
+                              AccountPhase.guest) ...<Widget>[
+                        const SizedBox(height: BbTokens.sp3),
+                        BbCard(
+                          key: const Key('first-win-sign-in-reminder'),
+                          color: ArenaInk.of(ArenaInk.bgBottom),
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                t.signInReminderBody,
+                                textAlign: TextAlign.center,
+                                style: BbText.small(
+                                  ArenaInk.of(ArenaInk.cream),
+                                ),
+                              ),
+                              const SizedBox(height: BbTokens.sp2),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: BbButton(
+                                      label: t.signInReminderCta,
+                                      onPressed: () {
+                                        _dismissSignInReminder();
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => const ProfileScreen(
+                                              focusAccount: true,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  BbIconButton(
+                                    icon: Icons.close_rounded,
+                                    semanticLabel: t.cancelCta,
+                                    onPressed: _dismissSignInReminder,
+                                  ),
+                                ],
                               ),
                             ],
                           ),

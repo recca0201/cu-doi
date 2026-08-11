@@ -101,5 +101,44 @@
   "dialogueWin": "That was a beautiful bank! Keep that rhythm going.",
   "dialogueLose": "The line was just off. Read the last trail, change the angle a little, and try again.",
   "dialogueLoseShort": "Just one angle off—try again!",
-  "dialogueFinalVictory": "All twenty arenas have yielded. The ricochet master title is yours!"
+  "dialogueFinalVictory": "All twenty arenas have yielded. The ricochet master title is yours!",
+  "profileTitle": "Player profile",
+  "defaultPlayerName": "Player",
+  "changeAvatarCta": "Change avatar",
+  "editNameCta": "Edit name",
+  "saveCta": "Save",
+  "cancelCta": "Cancel",
+  "invalidNameError": "Enter a name of 1–20 visible characters.",
+  "guestStatus": "Playing as guest",
+  "profileStars": "stars",
+  "profileCompleted": "completed",
+  "profileEncouragement": "Your first clever bank is waiting.",
+  "profileChapter": "Chapter {number}",
+  "@profileChapter": { "placeholders": { "number": { "type": "int" } } },
+  "accountTitle": "Protect your progress",
+  "guestAccountBody": "Sign in optionally to sync this profile across devices.",
+  "signInGoogleCta": "Continue with Google",
+  "signInAppleCta": "Continue with Apple",
+  "providerConfigRequired": "Sign-in will be available after release provider configuration.",
+  "avatarPresetsTitle": "Choose a preset",
+  "devicePhotoCta": "Photo from device",
+  "avatarPrivacyCopy": "The system picker is opened only to choose and sync your avatar.",
+  "avatarInvalidError": "That image could not be used. Please choose another."
+  ,"openProfileCta": "Open player profile"
+  ,"badgesTitle": "Badges"
+  ,"badgeUnlocked": "Unlocked"
+  ,"badgeLocked": "In progress"
+  ,"signOutCta": "Sign out"
+  ,"deleteAccountCta": "Delete account"
+  ,"deleteAccountTitle": "Delete this account?"
+  ,"deleteAccountBody": "Cloud data and sign-in access will be deleted. A local guest copy of your progress is kept."
+  ,"confirmDeleteCta": "Confirm deletion"
+  ,"accountPending": "Account deletion is in progress"
+  ,"accountRecovery": "Provider confirmation is needed to continue deletion"
+  ,"accountDeleted": "Account deletion completed"
+  ,"syncPending": "Waiting to sync"
+  ,"signedInStatus": "Signed in"
+  ,"signedInResetGuard": "Sign out before resetting local progress so cloud progress cannot restore it."
+  ,"signInReminderBody": "Protect this progress and restore it on another device."
+  ,"signInReminderCta": "Open sign-in options"
 }

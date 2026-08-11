@@ -6,6 +6,7 @@ import '../../core/bb_tokens.dart';
 import '../../data/settings_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/providers.dart';
+import '../../state/account_controller.dart';
 import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 
@@ -17,6 +18,7 @@ class SettingsScreen extends ConsumerWidget {
     final AppLocalizations t = AppLocalizations.of(context);
     final AppSettings settings = ref.watch(settingsProvider);
     final SettingsController controller = ref.read(settingsProvider.notifier);
+    final AccountState account = ref.watch(accountProvider);
 
     return Scaffold(
       backgroundColor: BbTokens.karstDeep,
@@ -110,24 +112,33 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: BbTokens.sp5),
-                            FractionallySizedBox(
-                              widthFactor: .60,
-                              child: BbButton.danger(
-                                label: t.resetProgressCta,
-                                expand: true,
-                                onPressed: () async {
-                                  await ref
-                                      .read(progressProvider.notifier)
-                                      .reset();
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(t.resetProgressDone),
-                                    ),
-                                  );
-                                },
+                            if (!account.blocksLocalReset)
+                              FractionallySizedBox(
+                                widthFactor: .60,
+                                child: BbButton.danger(
+                                  label: t.resetProgressCta,
+                                  expand: true,
+                                  onPressed: () async {
+                                    await ref
+                                        .read(progressProvider.notifier)
+                                        .reset();
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(t.resetProgressDone),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            else
+                              BbCard(
+                                child: Text(
+                                  t.signedInResetGuard,
+                                  textAlign: TextAlign.center,
+                                  style: BbText.body(BbTokens.textPrimary),
+                                ),
                               ),
-                            ),
                             const SizedBox(height: BbTokens.sp6),
                           ],
                         ),

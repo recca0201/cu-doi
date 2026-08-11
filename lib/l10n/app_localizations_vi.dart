@@ -318,4 +318,127 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get dialogueFinalVictory =>
       'Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!';
+
+  @override
+  String get profileTitle => 'Hồ sơ người chơi';
+
+  @override
+  String get defaultPlayerName => 'Người chơi';
+
+  @override
+  String get changeAvatarCta => 'Đổi ảnh đại diện';
+
+  @override
+  String get editNameCta => 'Sửa tên';
+
+  @override
+  String get saveCta => 'Lưu';
+
+  @override
+  String get cancelCta => 'Hủy';
+
+  @override
+  String get invalidNameError => 'Tên phải có từ 1 đến 20 ký tự nhìn thấy.';
+
+  @override
+  String get guestStatus => 'Đang chơi với tư cách khách';
+
+  @override
+  String get profileStars => 'sao';
+
+  @override
+  String get profileCompleted => 'đã hoàn thành';
+
+  @override
+  String get profileEncouragement => 'Cú dội hay đầu tiên đang chờ bạn.';
+
+  @override
+  String profileChapter(int number) {
+    return 'Chương $number';
+  }
+
+  @override
+  String get accountTitle => 'Bảo vệ tiến trình';
+
+  @override
+  String get guestAccountBody =>
+      'Bạn có thể đăng nhập để đồng bộ hồ sơ giữa các thiết bị.';
+
+  @override
+  String get signInGoogleCta => 'Tiếp tục với Google';
+
+  @override
+  String get signInAppleCta => 'Tiếp tục với Apple';
+
+  @override
+  String get providerConfigRequired =>
+      'Đăng nhập sẽ khả dụng sau khi cấu hình provider phát hành.';
+
+  @override
+  String get avatarPresetsTitle => 'Chọn ảnh dựng sẵn';
+
+  @override
+  String get devicePhotoCta => 'Ảnh từ thiết bị';
+
+  @override
+  String get avatarPrivacyCopy =>
+      'Bộ chọn hệ thống chỉ mở khi bạn chọn và đồng bộ avatar.';
+
+  @override
+  String get avatarInvalidError =>
+      'Không dùng được ảnh này. Hãy chọn ảnh khác.';
+
+  @override
+  String get openProfileCta => 'Mở hồ sơ người chơi';
+
+  @override
+  String get badgesTitle => 'Huy hiệu';
+
+  @override
+  String get badgeUnlocked => 'Đã mở';
+
+  @override
+  String get badgeLocked => 'Đang tiến hành';
+
+  @override
+  String get signOutCta => 'Đăng xuất';
+
+  @override
+  String get deleteAccountCta => 'Xóa tài khoản';
+
+  @override
+  String get deleteAccountTitle => 'Xóa tài khoản này?';
+
+  @override
+  String get deleteAccountBody =>
+      'Dữ liệu đám mây và quyền đăng nhập sẽ bị xóa. Một bản tiến trình khách vẫn được giữ trên thiết bị.';
+
+  @override
+  String get confirmDeleteCta => 'Xác nhận xóa';
+
+  @override
+  String get accountPending => 'Đang xử lý xóa tài khoản';
+
+  @override
+  String get accountRecovery => 'Cần xác nhận lại nhà cung cấp để tiếp tục xóa';
+
+  @override
+  String get accountDeleted => 'Đã xóa tài khoản';
+
+  @override
+  String get syncPending => 'Đang chờ đồng bộ';
+
+  @override
+  String get signedInStatus => 'Đã đăng nhập';
+
+  @override
+  String get signedInResetGuard =>
+      'Hãy đăng xuất trước khi xóa tiến trình cục bộ để dữ liệu đám mây không khôi phục lại.';
+
+  @override
+  String get signInReminderBody =>
+      'Bảo vệ tiến trình này và khôi phục trên thiết bị khác.';
+
+  @override
+  String get signInReminderCta => 'Mở tùy chọn đăng nhập';
 }

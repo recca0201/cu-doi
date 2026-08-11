@@ -321,4 +321,128 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dialogueFinalVictory =>
       'All twenty arenas have yielded. The ricochet master title is yours!';
+
+  @override
+  String get profileTitle => 'Player profile';
+
+  @override
+  String get defaultPlayerName => 'Player';
+
+  @override
+  String get changeAvatarCta => 'Change avatar';
+
+  @override
+  String get editNameCta => 'Edit name';
+
+  @override
+  String get saveCta => 'Save';
+
+  @override
+  String get cancelCta => 'Cancel';
+
+  @override
+  String get invalidNameError => 'Enter a name of 1–20 visible characters.';
+
+  @override
+  String get guestStatus => 'Playing as guest';
+
+  @override
+  String get profileStars => 'stars';
+
+  @override
+  String get profileCompleted => 'completed';
+
+  @override
+  String get profileEncouragement => 'Your first clever bank is waiting.';
+
+  @override
+  String profileChapter(int number) {
+    return 'Chapter $number';
+  }
+
+  @override
+  String get accountTitle => 'Protect your progress';
+
+  @override
+  String get guestAccountBody =>
+      'Sign in optionally to sync this profile across devices.';
+
+  @override
+  String get signInGoogleCta => 'Continue with Google';
+
+  @override
+  String get signInAppleCta => 'Continue with Apple';
+
+  @override
+  String get providerConfigRequired =>
+      'Sign-in will be available after release provider configuration.';
+
+  @override
+  String get avatarPresetsTitle => 'Choose a preset';
+
+  @override
+  String get devicePhotoCta => 'Photo from device';
+
+  @override
+  String get avatarPrivacyCopy =>
+      'The system picker is opened only to choose and sync your avatar.';
+
+  @override
+  String get avatarInvalidError =>
+      'That image could not be used. Please choose another.';
+
+  @override
+  String get openProfileCta => 'Open player profile';
+
+  @override
+  String get badgesTitle => 'Badges';
+
+  @override
+  String get badgeUnlocked => 'Unlocked';
+
+  @override
+  String get badgeLocked => 'In progress';
+
+  @override
+  String get signOutCta => 'Sign out';
+
+  @override
+  String get deleteAccountCta => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete this account?';
+
+  @override
+  String get deleteAccountBody =>
+      'Cloud data and sign-in access will be deleted. A local guest copy of your progress is kept.';
+
+  @override
+  String get confirmDeleteCta => 'Confirm deletion';
+
+  @override
+  String get accountPending => 'Account deletion is in progress';
+
+  @override
+  String get accountRecovery =>
+      'Provider confirmation is needed to continue deletion';
+
+  @override
+  String get accountDeleted => 'Account deletion completed';
+
+  @override
+  String get syncPending => 'Waiting to sync';
+
+  @override
+  String get signedInStatus => 'Signed in';
+
+  @override
+  String get signedInResetGuard =>
+      'Sign out before resetting local progress so cloud progress cannot restore it.';
+
+  @override
+  String get signInReminderBody =>
+      'Protect this progress and restore it on another device.';
+
+  @override
+  String get signInReminderCta => 'Open sign-in options';
 }

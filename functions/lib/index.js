@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.accountDeletionWorker = exports.refreshDeletionProof = exports.getAccountDeletionStatus = exports.beginAccountDeletion = exports.avatarCleanup = exports.selectPresetAvatar = exports.uploadAvatar = exports.commitProfileMutation = void 0;
+const app_1 = require("firebase-admin/app");
+(0, app_1.initializeApp)();
+var profile_mutations_js_1 = require("./profile_mutations.js");
+Object.defineProperty(exports, "commitProfileMutation", { enumerable: true, get: function () { return profile_mutations_js_1.commitProfileMutation; } });
+var avatar_service_js_1 = require("./avatar_service.js");
+Object.defineProperty(exports, "uploadAvatar", { enumerable: true, get: function () { return avatar_service_js_1.uploadAvatar; } });
+Object.defineProperty(exports, "selectPresetAvatar", { enumerable: true, get: function () { return avatar_service_js_1.selectPresetAvatar; } });
+var avatar_cleanup_js_1 = require("./avatar_cleanup.js");
+Object.defineProperty(exports, "avatarCleanup", { enumerable: true, get: function () { return avatar_cleanup_js_1.avatarCleanup; } });
+var account_deletion_js_1 = require("./account_deletion.js");
+Object.defineProperty(exports, "beginAccountDeletion", { enumerable: true, get: function () { return account_deletion_js_1.beginAccountDeletion; } });
+Object.defineProperty(exports, "getAccountDeletionStatus", { enumerable: true, get: function () { return account_deletion_js_1.getAccountDeletionStatus; } });
+Object.defineProperty(exports, "refreshDeletionProof", { enumerable: true, get: function () { return account_deletion_js_1.refreshDeletionProof; } });
+Object.defineProperty(exports, "accountDeletionWorker", { enumerable: true, get: function () { return account_deletion_js_1.accountDeletionWorker; } });

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/bb_theme.dart';
 import 'data/settings_repository.dart';
+import 'data/firebase_bootstrap.dart';
 import 'l10n/app_localizations.dart';
 import 'state/providers.dart';
 import 'ui/screens/menu_screen.dart';
@@ -19,9 +20,13 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(_karstSystemUi);
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final FirebaseBootstrapResult firebase = await FirebaseBootstrap.initialize();
   runApp(
     ProviderScope(
-      overrides: <Override>[sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: <Override>[
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        firebaseBootstrapProvider.overrideWithValue(firebase),
+      ],
       child: const BanBuaTuongApp(),
     ),
   );

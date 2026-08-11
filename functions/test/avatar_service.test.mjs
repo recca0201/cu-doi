@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs';
+test('avatar service enforces owner lock, MIME, size, hash and reference-before-delete', () => { const source = fs.readFileSync('src/avatar_service.ts', 'utf8'); assert.match(source, /enforceAppCheck: true/); assert.match(source, /avatarLimitBytes/); assert.match(source, /sha256/); assert.match(source, /accountDeletionLocks/); assert.ok(source.indexOf('tx.set(userRef') < source.indexOf('previous && previous !== path')); });

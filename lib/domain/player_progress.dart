@@ -118,4 +118,29 @@ class PlayerProgress {
       ),
     );
   }
+
+  /// Deterministic account merge. Balances are deliberately max, never sum.
+  static PlayerProgress merge(PlayerProgress a, PlayerProgress b) {
+    final Map<int, LevelResult> merged = <int, LevelResult>{};
+    for (var id = 1; id <= 20; id++) {
+      final x = a.results[id] ?? const LevelResult();
+      final y = b.results[id] ?? const LevelResult();
+      final stars = x.stars > y.stars ? x.stars : y.stars;
+      final score = x.highScore > y.highScore ? x.highScore : y.highScore;
+      final losses = x.losses > y.losses ? x.losses : y.losses;
+      final skipped = stars == 0 && (x.skipped || y.skipped);
+      if (stars != 0 || score != 0 || losses != 0 || skipped) {
+        merged[id] = LevelResult(
+          stars: stars,
+          highScore: score,
+          skipped: skipped,
+          losses: losses,
+        );
+      }
+    }
+    return PlayerProgress(
+      results: merged,
+      coins: (a.coins > b.coins ? a.coins : b.coins).clamp(0, 0x7fffffff),
+    );
+  }
 }

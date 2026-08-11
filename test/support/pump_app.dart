@@ -64,6 +64,7 @@ Future<void> pumpApp(
   Locale locale = const Locale('vi'),
   Size size = const Size(390, 844),
   TextScaler textScaler = TextScaler.noScaling,
+  List<Override> overrides = const <Override>[],
 }) async {
   await _loadFonts();
   SharedPreferences.setMockInitialValues(<String, Object>{
@@ -89,6 +90,7 @@ Future<void> pumpApp(
         dialogueSeenRepositoryProvider.overrideWithValue(
           MemoryDialogueSeenRepository(seen),
         ),
+        ...overrides,
       ],
       child: MaterialApp(
         locale: locale,

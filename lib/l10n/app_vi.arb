@@ -132,5 +132,44 @@
   "dialogueWin": "Đường dội đẹp đấy! Cứ giữ nhịp này nhé.",
   "dialogueLose": "Chưa trúng đường thôi. Nhìn lại vệt bi, đổi một góc nhỏ rồi thử tiếp nhé.",
   "dialogueLoseShort": "Lệch một góc thôi — thử lại nhé!",
-  "dialogueFinalVictory": "Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!"
+  "dialogueFinalVictory": "Hai mươi sân đã chịu thua. Giờ thì danh hiệu cao thủ dội tường là của bạn!",
+  "profileTitle": "Hồ sơ người chơi",
+  "defaultPlayerName": "Người chơi",
+  "changeAvatarCta": "Đổi ảnh đại diện",
+  "editNameCta": "Sửa tên",
+  "saveCta": "Lưu",
+  "cancelCta": "Hủy",
+  "invalidNameError": "Tên phải có từ 1 đến 20 ký tự nhìn thấy.",
+  "guestStatus": "Đang chơi với tư cách khách",
+  "profileStars": "sao",
+  "profileCompleted": "đã hoàn thành",
+  "profileEncouragement": "Cú dội hay đầu tiên đang chờ bạn.",
+  "profileChapter": "Chương {number}",
+  "@profileChapter": { "placeholders": { "number": { "type": "int" } } },
+  "accountTitle": "Bảo vệ tiến trình",
+  "guestAccountBody": "Bạn có thể đăng nhập để đồng bộ hồ sơ giữa các thiết bị.",
+  "signInGoogleCta": "Tiếp tục với Google",
+  "signInAppleCta": "Tiếp tục với Apple",
+  "providerConfigRequired": "Đăng nhập sẽ khả dụng sau khi cấu hình provider phát hành.",
+  "avatarPresetsTitle": "Chọn ảnh dựng sẵn",
+  "devicePhotoCta": "Ảnh từ thiết bị",
+  "avatarPrivacyCopy": "Bộ chọn hệ thống chỉ mở khi bạn chọn và đồng bộ avatar.",
+  "avatarInvalidError": "Không dùng được ảnh này. Hãy chọn ảnh khác."
+  ,"openProfileCta": "Mở hồ sơ người chơi"
+  ,"badgesTitle": "Huy hiệu"
+  ,"badgeUnlocked": "Đã mở"
+  ,"badgeLocked": "Đang tiến hành"
+  ,"signOutCta": "Đăng xuất"
+  ,"deleteAccountCta": "Xóa tài khoản"
+  ,"deleteAccountTitle": "Xóa tài khoản này?"
+  ,"deleteAccountBody": "Dữ liệu đám mây và quyền đăng nhập sẽ bị xóa. Một bản tiến trình khách vẫn được giữ trên thiết bị."
+  ,"confirmDeleteCta": "Xác nhận xóa"
+  ,"accountPending": "Đang xử lý xóa tài khoản"
+  ,"accountRecovery": "Cần xác nhận lại nhà cung cấp để tiếp tục xóa"
+  ,"accountDeleted": "Đã xóa tài khoản"
+  ,"syncPending": "Đang chờ đồng bộ"
+  ,"signedInStatus": "Đã đăng nhập"
+  ,"signedInResetGuard": "Hãy đăng xuất trước khi xóa tiến trình cục bộ để dữ liệu đám mây không khôi phục lại."
+  ,"signInReminderBody": "Bảo vệ tiến trình này và khôi phục trên thiết bị khác."
+  ,"signInReminderCta": "Mở tùy chọn đăng nhập"
 }

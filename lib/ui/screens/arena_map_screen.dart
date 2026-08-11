@@ -103,92 +103,105 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
             ),
           ),
           SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: Column(
-                  children: <Widget>[
-                    const _MapAppBar(),
-                    _ChapterTabs(
-                      sections: _sections,
-                      selectedIndex: _chapterIndex,
-                      progress: progress,
-                      onSelected: (int index) => setState(() {
-                        _chapterIndex = index;
-                        final ChapterSection next = _sections[index];
-                        _selectedArenaId = next.arenas
-                            .firstWhere(
-                              (ArenaSpec arena) =>
-                                  progress.isUnlocked(arena.id),
-                              orElse: () => next.arenas.first,
-                            )
-                            .id;
-                        if (_controller!.hasClients) _controller!.jumpTo(0);
-                      }),
-                    ),
-                    Expanded(
-                      child: CustomScrollView(
-                        key: const Key('arena-map-scroll'),
-                        controller: _controller,
-                        slivers: <Widget>[
-                          SliverToBoxAdapter(
-                            child: _ChapterProgress(
-                              section: section,
-                              progress: progress,
-                            ),
+            child: Stack(
+              children: <Widget>[
+                const Positioned.fill(child: BbKarstFrameOverlay()),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Column(
+                      children: <Widget>[
+                        const _MapAppBar(),
+                        _ChapterTabs(
+                          sections: _sections,
+                          selectedIndex: _chapterIndex,
+                          progress: progress,
+                          onSelected: (int index) => setState(() {
+                            _chapterIndex = index;
+                            final ChapterSection next = _sections[index];
+                            _selectedArenaId = next.arenas
+                                .firstWhere(
+                                  (ArenaSpec arena) =>
+                                      progress.isUnlocked(arena.id),
+                                  orElse: () => next.arenas.first,
+                                )
+                                .id;
+                            if (_controller!.hasClients) _controller!.jumpTo(0);
+                          }),
+                        ),
+                        Expanded(
+                          child: CustomScrollView(
+                            key: const Key('arena-map-scroll'),
+                            controller: _controller,
+                            slivers: <Widget>[
+                              SliverToBoxAdapter(
+                                child: _ChapterProgress(
+                                  section: section,
+                                  progress: progress,
+                                ),
+                              ),
+                              SliverPadding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  12,
+                                  4,
+                                  12,
+                                  0,
+                                ),
+                                sliver: SliverGrid(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        mainAxisExtent: _rowExtent,
+                                        crossAxisSpacing: 9,
+                                        mainAxisSpacing: 10,
+                                      ),
+                                  delegate: SliverChildBuilderDelegate((
+                                    BuildContext context,
+                                    int index,
+                                  ) {
+                                    final ArenaSpec arena =
+                                        section.arenas[index];
+                                    return _ArenaCard(
+                                      key: ValueKey<String>(
+                                        'arena-${arena.id}',
+                                      ),
+                                      arena: arena,
+                                      localeCode: localeCode,
+                                      state: _stateFor(arena.id, progress),
+                                      stars: progress.starsFor(arena.id),
+                                      selected: arena.id == selected.id,
+                                      onTap: () => _selectOrExplain(
+                                        context,
+                                        t,
+                                        arena,
+                                        progress,
+                                      ),
+                                    );
+                                  }, childCount: section.arenas.length),
+                                ),
+                              ),
+                              const SliverToBoxAdapter(
+                                child: SizedBox(height: 150),
+                              ),
+                            ],
                           ),
-                          SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-                            sliver: SliverGrid(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    mainAxisExtent: _rowExtent,
-                                    crossAxisSpacing: 9,
-                                    mainAxisSpacing: 10,
-                                  ),
-                              delegate: SliverChildBuilderDelegate((
-                                BuildContext context,
-                                int index,
-                              ) {
-                                final ArenaSpec arena = section.arenas[index];
-                                return _ArenaCard(
-                                  key: ValueKey<String>('arena-${arena.id}'),
-                                  arena: arena,
-                                  localeCode: localeCode,
-                                  state: _stateFor(arena.id, progress),
-                                  stars: progress.starsFor(arena.id),
-                                  selected: arena.id == selected.id,
-                                  onTap: () => _selectOrExplain(
-                                    context,
-                                    t,
-                                    arena,
-                                    progress,
-                                  ),
-                                );
-                              }, childCount: section.arenas.length),
-                            ),
+                        ),
+                        SizedBox(
+                          height: detailHeight,
+                          child: _ArenaDetailPanel(
+                            arena: selected,
+                            localeCode: localeCode,
+                            progress: progress,
+                            onPlay: progress.isUnlocked(selected.id)
+                                ? () => _play(selected)
+                                : null,
                           ),
-                          const SliverToBoxAdapter(
-                            child: SizedBox(height: 150),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: detailHeight,
-                      child: _ArenaDetailPanel(
-                        arena: selected,
-                        localeCode: localeCode,
-                        progress: progress,
-                        onPlay: progress.isUnlocked(selected.id)
-                            ? () => _play(selected)
-                            : null,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -236,7 +249,8 @@ abstract final class _MapArt {
       'assets/images/ui/karst/chapter_tab_selected.png';
   static const String levelCardFrame =
       'assets/images/ui/karst/level_card_frame.png';
-  static const String detailPanel = 'assets/images/ui/karst/detail_panel.png';
+  static const String detailPanel =
+      'assets/images/ui/karst/detail_panel_rect_v2.png';
   static const String playButton = 'assets/images/ui/karst/play_button.png';
 }
 
@@ -701,22 +715,15 @@ class _ArenaDetailPanel extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: Transform.scale(
-              // The source PNG carries roughly 22% transparent canvas below
-              // its visible frame. Stretch from the top so the lower rail
-              // encloses the CTA instead of ending above it.
-              scaleY: 1.28,
-              alignment: Alignment.topCenter,
-              child: Image.asset(
-                _MapArt.detailPanel,
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.high,
-              ),
+            child: Image.asset(
+              _MapArt.detailPanel,
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.high,
             ),
           ),
           Padding(
-            // These insets follow the clear inner field of detail_panel.png.
-            padding: const EdgeInsets.fromLTRB(46, 28, 46, 27),
+            // Insets follow the larger clear field of the 3:2 panel asset.
+            padding: const EdgeInsets.fromLTRB(34, 25, 34, 24),
             child: Column(
               children: <Widget>[
                 Expanded(
