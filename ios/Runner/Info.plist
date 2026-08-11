@@ -39,6 +39,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Choose and sync your player avatar.</string>
+	<key>NSGKFriendListUsageDescription</key>
+	<string>Show your Game Center friends on per-level leaderboards.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

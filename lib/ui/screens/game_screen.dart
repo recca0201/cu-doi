@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -13,6 +14,7 @@ import '../../core/game_audio_service.dart';
 import '../../core/haptic_service.dart';
 import '../../domain/economy.dart';
 import '../../domain/character.dart';
+import '../../domain/leaderboard_models.dart';
 import '../../domain/player_progress.dart';
 import '../../data/local_player_store.dart';
 import '../../state/account_controller.dart';
@@ -32,6 +34,7 @@ import '../widgets/bb_widgets.dart';
 import '../widgets/bb_backdrop.dart';
 import 'arena_map_screen.dart';
 import 'how_to_play_screen.dart';
+import 'leaderboard_screen.dart';
 import 'profile_screen.dart';
 
 enum _Outcome { won, lost }
@@ -185,6 +188,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
   late bool _guideVisible;
   bool _resultDialogueDismissed = false;
   bool _signInReminderDismissed = true;
+  Future<RecordOutcome>? _recordFuture;
+  int _terminalResultEpoch = 0;
 
   ShotRunner? _runner;
   List<V2> _ghost = <V2>[];
@@ -258,6 +263,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   }
 
   void _load(int index) {
+    _terminalResultEpoch++;
     final int safe = index < 0 || index >= kArenas.length ? 0 : index;
     _arena = kArenas[safe];
     if (_loadedArenaId != _arena.id) _dismissedAtLossCount = null;
@@ -268,6 +274,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _score = 0;
     _outcome = null;
     _recorded = false;
+    _recordFuture = null;
     _lossRecorded = false;
     _resultDialogueDismissed = false;
     _runner = null;
@@ -400,9 +407,67 @@ class _GameScreenState extends ConsumerState<GameScreen>
     if (_recorded) return;
     _recorded = true;
     final int stars = starsFor(_arena, _score);
+    final int arenaId = _arena.id;
+    final int achievedScore = _score;
+    final int epoch = _terminalResultEpoch;
+    final progress = ref.read(progressProvider.notifier);
+    final submissions = ref.read(leaderboardSubmissionProvider.notifier);
+    final Completer<RecordOutcome> completer = Completer<RecordOutcome>();
+    _recordFuture = completer.future;
     _audio.play(GameSound.win, scope: GameAudioScope.terminalResult);
     if (stars >= 3) _audio.play(GameSound.politeClap);
-    ref.read(progressProvider.notifier).record(_arena.id, stars, _score);
+    // Result persistence and leaderboard work are deliberately deferred out of
+    // ShotRunner's ticker callback. The immutable RecordOutcome guarantees the
+    // queue only sees the exact snapshot that was saved locally.
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      unawaited(() async {
+        try {
+          final RecordOutcome outcome = await progress.record(
+            arenaId,
+            stars,
+            achievedScore,
+          );
+          await submissions.onPersistedWin(outcome);
+          if (!completer.isCompleted) completer.complete(outcome);
+        } catch (error, stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(error, stackTrace);
+          }
+        }
+        if (mounted && epoch == _terminalResultEpoch) setState(() {});
+      }());
+    });
+  }
+
+  Future<void> _openWinLeaderboard() async {
+    if (_outcome != _Outcome.won || _runner != null) return;
+    final int epoch = _terminalResultEpoch;
+    final int arenaId = _arena.id;
+    final int achievedScore = _score;
+    final Future<RecordOutcome>? recordFuture = _recordFuture;
+    if (recordFuture == null) return;
+    try {
+      await recordFuture;
+    } catch (_) {
+      // A failed local write never becomes a leaderboard submission. Keep the
+      // terminal result usable and let the player choose Next/Map as before.
+      return;
+    }
+    if (!mounted ||
+        epoch != _terminalResultEpoch ||
+        _outcome != _Outcome.won ||
+        _runner != null) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => LeaderboardScreen(
+          arenaId: arenaId,
+          origin: LeaderboardOrigin.winResult,
+          achievedScore: achievedScore,
+        ),
+      ),
+    );
   }
 
   void _fire() {
@@ -464,6 +529,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                             fit: StackFit.expand,
                             children: <Widget>[
                               GestureDetector(
+                                key: const Key('game-arena-input'),
                                 behavior: HitTestBehavior.opaque,
                                 onTapUp: (TapUpDetails d) => setState(() {
                                   _aimAt(d.localPosition);
@@ -615,13 +681,18 @@ class _GameScreenState extends ConsumerState<GameScreen>
           const SizedBox(height: 9),
           Row(
             children: <Widget>[
-              _GameHudPill(
-                icon: Icons.monetization_on_rounded,
-                iconColor: BbTokens.primaryGold,
-                label: '${progress.coins}',
+              Expanded(
+                flex: 2,
+                child: _GameHudPill(
+                  icon: Icons.monetization_on_rounded,
+                  iconColor: BbTokens.primaryGold,
+                  label: '${progress.coins}',
+                  center: true,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
+                flex: 3,
                 child: _GameHudPill(
                   icon: Icons.auto_awesome_rounded,
                   iconColor: BbTokens.trajectoryCyan,
@@ -630,17 +701,25 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 ),
               ),
               const SizedBox(width: 8),
-              _GameHudPill(
-                icon: Icons.radio_button_checked_rounded,
-                iconColor: BbTokens.dangerRed,
-                label: t.shotsLeft(_shotsLeft),
+              Expanded(
+                flex: 3,
+                child: _GameHudPill(
+                  icon: Icons.radio_button_checked_rounded,
+                  iconColor: BbTokens.dangerRed,
+                  label: t.shotsLeft(_shotsLeft),
+                  center: true,
+                ),
               ),
               if (banks > 0) ...<Widget>[
                 const SizedBox(width: 8),
-                _GameHudPill(
-                  icon: Icons.bolt_rounded,
-                  iconColor: BbTokens.primaryGold,
-                  label: t.multiplier(math.min(1 + banks, kMaxMultiplier)),
+                Expanded(
+                  flex: 2,
+                  child: _GameHudPill(
+                    icon: Icons.bolt_rounded,
+                    iconColor: BbTokens.primaryGold,
+                    label: t.multiplier(math.min(1 + banks, kMaxMultiplier)),
+                    center: true,
+                  ),
                 ),
               ],
             ],
@@ -1049,6 +1128,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         ),
                       ],
                       const SizedBox(height: BbTokens.sp6),
+                      if (won) ...<Widget>[
+                        FractionallySizedBox(
+                          widthFactor: .72,
+                          child: _WinLeaderboardButton(
+                            arenaId: _arena.id,
+                            onPressed: () => unawaited(_openWinLeaderboard()),
+                          ),
+                        ),
+                        const SizedBox(height: BbTokens.sp3),
+                      ],
                       if (won && hasNext) ...<Widget>[
                         FractionallySizedBox(
                           widthFactor: .64,
@@ -1211,5 +1300,33 @@ class _GameScreenState extends ConsumerState<GameScreen>
           context,
         ).showSnackBar(SnackBar(content: Text(t.skipArenaWriteFailed)));
     }
+  }
+}
+
+class _WinLeaderboardButton extends StatelessWidget {
+  const _WinLeaderboardButton({required this.arenaId, required this.onPressed});
+
+  final int arenaId;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations t = AppLocalizations.of(context);
+    final String visibleLabel = t.leaderboardEntryCta;
+    final String semanticLabel = t.leaderboardWinEntrySemantic(arenaId);
+    return Semantics(
+      key: const Key('win-leaderboard-button'),
+      button: true,
+      label: semanticLabel,
+      onTap: onPressed,
+      child: ExcludeSemantics(
+        child: BbButton.karst(
+          label: visibleLabel,
+          icon: Icons.emoji_events_rounded,
+          expand: true,
+          onPressed: onPressed,
+        ),
+      ),
+    );
   }
 }

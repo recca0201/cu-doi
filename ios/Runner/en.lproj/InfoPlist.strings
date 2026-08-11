@@ -1,0 +1,2 @@
+/* Game Center friend-list permission shown by iOS. */
+"NSGKFriendListUsageDescription" = "Show your Game Center friends on per-level leaderboards.";

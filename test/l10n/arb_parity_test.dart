@@ -33,6 +33,67 @@ void main() {
       ]),
     );
 
+    const Set<String> leaderboardKeys = <String>{
+      'leaderboardEntryCta',
+      'leaderboardEntrySemantic',
+      'leaderboardWinEntrySemantic',
+      'leaderboardTitle',
+      'leaderboardLevel',
+      'leaderboardGlobal',
+      'leaderboardFriends',
+      'leaderboardAllTime',
+      'leaderboardYou',
+      'leaderboardOutsideTop100',
+      'leaderboardSelected',
+      'leaderboardNotSelected',
+      'leaderboardScopeAnnouncement',
+      'leaderboardLoadedAnnouncement',
+      'leaderboardTopThreeLabel',
+      'leaderboardListFromRankLabel',
+      'leaderboardRowSemantics',
+      'leaderboardCurrentPlayerSuffix',
+      'leaderboardLoadingAnnouncement',
+      'leaderboardLoadingTitle',
+      'leaderboardLoadingBadge',
+      'leaderboardEmptyTitle',
+      'leaderboardEmptyMessage',
+      'leaderboardServiceErrorTitle',
+      'leaderboardServiceErrorMessage',
+      'leaderboardServiceErrorBadge',
+      'leaderboardRetryCta',
+      'leaderboardStaleTitle',
+      'leaderboardStaleMessage',
+      'leaderboardOfflineBadge',
+      'leaderboardOfflineQueueMessage',
+      'leaderboardOfflineEmptyTitle',
+      'leaderboardOfflineEmptyMessage',
+      'leaderboardFriendsUnavailableTitle',
+      'leaderboardFriendsUnavailableMessage',
+      'leaderboardViewGlobalCta',
+      'leaderboardAuthTitle',
+      'leaderboardAuthDescription',
+      'leaderboardAuthConnectCta',
+      'leaderboardAuthLaterCta',
+      'leaderboardAuthPromptMessage',
+      'leaderboardSubmissionTitle',
+      'leaderboardSubmissionSent',
+      'leaderboardSubmissionSentMessage',
+      'leaderboardSubmissionPending',
+      'leaderboardSubmissionPendingMessage',
+      'leaderboardSubmissionFailed',
+      'leaderboardSubmissionDisconnected',
+      'leaderboardSubmissionDisconnectedMessage',
+      'leaderboardSubmitScoreCta',
+      'leaderboardReconnectCta',
+      'leaderboardRetrySubmissionCta',
+      'leaderboardReasonUnsupported',
+      'leaderboardReasonRestricted',
+      'leaderboardReasonRejected',
+      'leaderboardReasonUnknown',
+      'leaderboardAchievedScore',
+    };
+    expect(english, containsAll(leaderboardKeys));
+
     for (final String path in <String>[
       'lib/l10n/app_en.arb',
       'lib/l10n/app_vi.arb',
@@ -49,5 +110,42 @@ void main() {
         );
       }
     }
+  });
+
+  test('leaderboard copy is localized in both supported locales', () {
+    Map<String, dynamic> arb(String path) =>
+        jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
+
+    final Map<String, dynamic> vi = arb('lib/l10n/app_vi.arb');
+    final Map<String, dynamic> en = arb('lib/l10n/app_en.arb');
+    const List<String> representativeKeys = <String>[
+      'leaderboardEntryCta',
+      'leaderboardGlobal',
+      'leaderboardFriends',
+      'leaderboardAllTime',
+      'leaderboardLoadingTitle',
+      'leaderboardEmptyTitle',
+      'leaderboardServiceErrorTitle',
+      'leaderboardStaleTitle',
+      'leaderboardOfflineEmptyTitle',
+      'leaderboardFriendsUnavailableTitle',
+      'leaderboardAuthTitle',
+      'leaderboardSubmissionSent',
+      'leaderboardSubmissionPending',
+      'leaderboardSubmissionFailed',
+      'leaderboardReasonRestricted',
+      'leaderboardLoadedAnnouncement',
+      'leaderboardRowSemantics',
+    ];
+
+    for (final String key in representativeKeys) {
+      expect(vi[key], isA<String>(), reason: 'Missing VI $key');
+      expect(en[key], isA<String>(), reason: 'Missing EN $key');
+      expect(vi[key], isNot(en[key]), reason: 'Unlocalized $key');
+    }
+    expect(vi['leaderboardAllTime'], 'Mọi thời đại');
+    expect(en['leaderboardAllTime'], 'All time');
+    expect(vi['leaderboardRowSemantics'], startsWith('Hạng {rank}'));
+    expect(en['leaderboardRowSemantics'], startsWith('Rank {rank}'));
   });
 }

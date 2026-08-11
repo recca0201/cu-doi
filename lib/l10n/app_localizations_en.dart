@@ -445,4 +445,225 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signInReminderCta => 'Open sign-in options';
+
+  @override
+  String get leaderboardEntryCta => 'Ranks';
+
+  @override
+  String leaderboardEntrySemantic(int arenaId) {
+    return 'View leaderboard for Level $arenaId';
+  }
+
+  @override
+  String leaderboardWinEntrySemantic(int arenaId) {
+    return 'View leaderboard for completed Level $arenaId';
+  }
+
+  @override
+  String get leaderboardTitle => 'LEADERBOARD';
+
+  @override
+  String leaderboardLevel(int arenaId, String arenaName) {
+    return 'Level $arenaId · $arenaName';
+  }
+
+  @override
+  String get leaderboardGlobal => 'Global';
+
+  @override
+  String get leaderboardFriends => 'Friends';
+
+  @override
+  String get leaderboardAllTime => 'All time';
+
+  @override
+  String get leaderboardYou => 'You';
+
+  @override
+  String get leaderboardOutsideTop100 => 'You are outside the top 100';
+
+  @override
+  String get leaderboardSelected => 'selected';
+
+  @override
+  String get leaderboardNotSelected => 'not selected';
+
+  @override
+  String leaderboardScopeAnnouncement(String scope) {
+    return '$scope leaderboard selected';
+  }
+
+  @override
+  String leaderboardLoadedAnnouncement(String scope, int arenaId) {
+    return '$scope leaderboard loaded for Level $arenaId';
+  }
+
+  @override
+  String get leaderboardTopThreeLabel => 'Top three players';
+
+  @override
+  String leaderboardListFromRankLabel(int rank) {
+    return 'Leaderboard entries from rank $rank';
+  }
+
+  @override
+  String leaderboardRowSemantics(int rank, String playerName, String score) {
+    return 'Rank $rank, $playerName, $score points';
+  }
+
+  @override
+  String get leaderboardCurrentPlayerSuffix => 'current player';
+
+  @override
+  String leaderboardLoadingAnnouncement(int arenaId) {
+    return 'Loading leaderboard for Level $arenaId';
+  }
+
+  @override
+  String get leaderboardLoadingTitle => 'Loading leaderboard…';
+
+  @override
+  String get leaderboardLoadingBadge => 'Loading';
+
+  @override
+  String leaderboardEmptyTitle(int arenaId) {
+    return 'No scores for Level $arenaId yet';
+  }
+
+  @override
+  String leaderboardEmptyMessage(String scope) {
+    return 'Be the first player on the $scope leaderboard.';
+  }
+
+  @override
+  String get leaderboardServiceErrorTitle => 'Could not load the leaderboard';
+
+  @override
+  String get leaderboardServiceErrorMessage =>
+      'Game Center or Google Play Games is not responding right now.';
+
+  @override
+  String get leaderboardServiceErrorBadge => 'Service error';
+
+  @override
+  String get leaderboardRetryCta => 'Try again';
+
+  @override
+  String get leaderboardStaleTitle => 'Data may be out of date';
+
+  @override
+  String leaderboardStaleMessage(String scope, int arenaId) {
+    return 'Showing the most recently saved $scope leaderboard for Level $arenaId.';
+  }
+
+  @override
+  String get leaderboardOfflineBadge => 'Offline';
+
+  @override
+  String get leaderboardOfflineQueueMessage =>
+      'No connection · Pending scores stay on this device';
+
+  @override
+  String get leaderboardOfflineEmptyTitle => 'No offline data';
+
+  @override
+  String leaderboardOfflineEmptyMessage(int arenaId, String scope) {
+    return 'There is no matching saved leaderboard for Level $arenaId · $scope.';
+  }
+
+  @override
+  String get leaderboardFriendsUnavailableTitle =>
+      'Friends leaderboard unavailable';
+
+  @override
+  String get leaderboardFriendsUnavailableMessage =>
+      'The friends list is unavailable because of privacy, account restrictions, or platform settings.';
+
+  @override
+  String get leaderboardViewGlobalCta => 'View Global';
+
+  @override
+  String get leaderboardAuthTitle => 'Connect the leaderboard?';
+
+  @override
+  String get leaderboardAuthDescription =>
+      'Connect Game Center or Google Play Games to view leaderboards and submit records. You can still play completely offline.';
+
+  @override
+  String get leaderboardAuthConnectCta => 'Connect';
+
+  @override
+  String get leaderboardAuthLaterCta => 'Later';
+
+  @override
+  String get leaderboardAuthPromptMessage =>
+      'Your local score, stars, coins, and progress stay on this device if you connect later.';
+
+  @override
+  String get leaderboardSubmissionTitle => 'Score submission';
+
+  @override
+  String get leaderboardSubmissionSent => 'Sent';
+
+  @override
+  String get leaderboardSubmissionSentMessage =>
+      'The platform accepted this record.';
+
+  @override
+  String get leaderboardSubmissionPending => 'Pending';
+
+  @override
+  String get leaderboardSubmissionPendingMessage =>
+      'It will be sent automatically when a connection is available.';
+
+  @override
+  String get leaderboardSubmissionFailed => 'Could not submit';
+
+  @override
+  String get leaderboardSubmissionNotQueued => 'Not submitted';
+
+  @override
+  String get leaderboardSubmissionNotQueuedMessage =>
+      'This result was not a new saved record, so it was not submitted.';
+
+  @override
+  String get leaderboardSubmissionPersistFailedMessage =>
+      'The result or retry queue could not be saved on this device, so the platform has not accepted it.';
+
+  @override
+  String get leaderboardSubmissionDisconnected => 'Not connected';
+
+  @override
+  String get leaderboardSubmissionDisconnectedMessage =>
+      'Connect explicitly before this score can be submitted.';
+
+  @override
+  String get leaderboardSubmitScoreCta => 'Submit score';
+
+  @override
+  String get leaderboardReconnectCta => 'Reconnect';
+
+  @override
+  String get leaderboardRetrySubmissionCta => 'Submit again';
+
+  @override
+  String get leaderboardReasonUnsupported =>
+      'This platform does not support score submission.';
+
+  @override
+  String get leaderboardReasonRestricted =>
+      'This platform account is restricted from submitting scores.';
+
+  @override
+  String get leaderboardReasonRejected =>
+      'The platform did not accept this score.';
+
+  @override
+  String get leaderboardReasonUnknown =>
+      'The platform could not accept this score. Your local record is safe.';
+
+  @override
+  String leaderboardAchievedScore(String score) {
+    return 'Achieved score: $score';
+  }
 }

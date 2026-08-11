@@ -1,7 +1,7 @@
 ---
 artifact_type: requirements
 phase: construction
-status: draft
+status: approved
 created: 2026-08-11
 updated: 2026-08-11
 unit: bang-xep-hang

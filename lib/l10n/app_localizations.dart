@@ -865,6 +865,366 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Mở tùy chọn đăng nhập'**
   String get signInReminderCta;
+
+  /// No description provided for @leaderboardEntryCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xếp hạng'**
+  String get leaderboardEntryCta;
+
+  /// No description provided for @leaderboardEntrySemantic.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem bảng xếp hạng Màn {arenaId}'**
+  String leaderboardEntrySemantic(int arenaId);
+
+  /// No description provided for @leaderboardWinEntrySemantic.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem bảng xếp hạng của Màn {arenaId} vừa hoàn thành'**
+  String leaderboardWinEntrySemantic(int arenaId);
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'BẢNG XẾP HẠNG'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardLevel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Màn {arenaId} · {arenaName}'**
+  String leaderboardLevel(int arenaId, String arenaName);
+
+  /// No description provided for @leaderboardGlobal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Toàn cầu'**
+  String get leaderboardGlobal;
+
+  /// No description provided for @leaderboardFriends.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn bè'**
+  String get leaderboardFriends;
+
+  /// No description provided for @leaderboardAllTime.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mọi thời đại'**
+  String get leaderboardAllTime;
+
+  /// No description provided for @leaderboardYou.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn'**
+  String get leaderboardYou;
+
+  /// No description provided for @leaderboardOutsideTop100.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đang ngoài top 100'**
+  String get leaderboardOutsideTop100;
+
+  /// No description provided for @leaderboardSelected.
+  ///
+  /// In vi, this message translates to:
+  /// **'đã chọn'**
+  String get leaderboardSelected;
+
+  /// No description provided for @leaderboardNotSelected.
+  ///
+  /// In vi, this message translates to:
+  /// **'chưa chọn'**
+  String get leaderboardNotSelected;
+
+  /// No description provided for @leaderboardScopeAnnouncement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chọn bảng {scope}'**
+  String leaderboardScopeAnnouncement(String scope);
+
+  /// No description provided for @leaderboardLoadedAnnouncement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã tải bảng {scope} cho Màn {arenaId}'**
+  String leaderboardLoadedAnnouncement(String scope, int arenaId);
+
+  /// No description provided for @leaderboardTopThreeLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ba người dẫn đầu'**
+  String get leaderboardTopThreeLabel;
+
+  /// No description provided for @leaderboardListFromRankLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Danh sách xếp hạng từ hạng {rank}'**
+  String leaderboardListFromRankLabel(int rank);
+
+  /// No description provided for @leaderboardRowSemantics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hạng {rank}, {playerName}, {score} điểm'**
+  String leaderboardRowSemantics(int rank, String playerName, String score);
+
+  /// No description provided for @leaderboardCurrentPlayerSuffix.
+  ///
+  /// In vi, this message translates to:
+  /// **'người chơi hiện tại'**
+  String get leaderboardCurrentPlayerSuffix;
+
+  /// No description provided for @leaderboardLoadingAnnouncement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tải bảng xếp hạng Màn {arenaId}'**
+  String leaderboardLoadingAnnouncement(int arenaId);
+
+  /// No description provided for @leaderboardLoadingTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tải bảng xếp hạng…'**
+  String get leaderboardLoadingTitle;
+
+  /// No description provided for @leaderboardLoadingBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tải'**
+  String get leaderboardLoadingBadge;
+
+  /// No description provided for @leaderboardEmptyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có điểm cho Màn {arenaId}'**
+  String leaderboardEmptyTitle(int arenaId);
+
+  /// No description provided for @leaderboardEmptyMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hãy là người đầu tiên ghi tên vào bảng {scope}.'**
+  String leaderboardEmptyMessage(String scope);
+
+  /// No description provided for @leaderboardServiceErrorTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tải được bảng xếp hạng'**
+  String get leaderboardServiceErrorTitle;
+
+  /// No description provided for @leaderboardServiceErrorMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Game Center/Google Play Games tạm thời không phản hồi.'**
+  String get leaderboardServiceErrorMessage;
+
+  /// No description provided for @leaderboardServiceErrorBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lỗi dịch vụ'**
+  String get leaderboardServiceErrorBadge;
+
+  /// No description provided for @leaderboardRetryCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử lại'**
+  String get leaderboardRetryCta;
+
+  /// No description provided for @leaderboardStaleTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dữ liệu có thể đã cũ'**
+  String get leaderboardStaleTitle;
+
+  /// No description provided for @leaderboardStaleMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang hiển thị bản {scope} của Màn {arenaId} được lưu gần nhất.'**
+  String leaderboardStaleMessage(String scope, int arenaId);
+
+  /// No description provided for @leaderboardOfflineBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Offline'**
+  String get leaderboardOfflineBadge;
+
+  /// No description provided for @leaderboardOfflineQueueMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có kết nối · Điểm đang chờ sẽ được giữ trên thiết bị'**
+  String get leaderboardOfflineQueueMessage;
+
+  /// No description provided for @leaderboardOfflineEmptyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có dữ liệu offline'**
+  String get leaderboardOfflineEmptyTitle;
+
+  /// No description provided for @leaderboardOfflineEmptyMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có bản lưu phù hợp cho Màn {arenaId} · {scope}.'**
+  String leaderboardOfflineEmptyMessage(int arenaId, String scope);
+
+  /// No description provided for @leaderboardFriendsUnavailableTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể hiển thị bảng Bạn bè'**
+  String get leaderboardFriendsUnavailableTitle;
+
+  /// No description provided for @leaderboardFriendsUnavailableMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Danh sách bạn bè hiện không khả dụng do quyền riêng tư, hạn chế tài khoản hoặc cài đặt nền tảng.'**
+  String get leaderboardFriendsUnavailableMessage;
+
+  /// No description provided for @leaderboardViewGlobalCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem Toàn cầu'**
+  String get leaderboardViewGlobalCta;
+
+  /// No description provided for @leaderboardAuthTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết nối bảng xếp hạng?'**
+  String get leaderboardAuthTitle;
+
+  /// No description provided for @leaderboardAuthDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết nối Game Center hoặc Google Play Games để xem bảng và gửi kỷ lục. Bạn vẫn có thể chơi hoàn toàn offline.'**
+  String get leaderboardAuthDescription;
+
+  /// No description provided for @leaderboardAuthConnectCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết nối'**
+  String get leaderboardAuthConnectCta;
+
+  /// No description provided for @leaderboardAuthLaterCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để sau'**
+  String get leaderboardAuthLaterCta;
+
+  /// No description provided for @leaderboardAuthPromptMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm, sao, xu và tiến trình cục bộ vẫn được giữ nguyên nếu bạn kết nối sau.'**
+  String get leaderboardAuthPromptMessage;
+
+  /// No description provided for @leaderboardSubmissionTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái gửi điểm'**
+  String get leaderboardSubmissionTitle;
+
+  /// No description provided for @leaderboardSubmissionSent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã gửi'**
+  String get leaderboardSubmissionSent;
+
+  /// No description provided for @leaderboardSubmissionSentMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nền tảng đã xác nhận kỷ lục này.'**
+  String get leaderboardSubmissionSentMessage;
+
+  /// No description provided for @leaderboardSubmissionPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chờ'**
+  String get leaderboardSubmissionPending;
+
+  /// No description provided for @leaderboardSubmissionPendingMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sẽ tự gửi khi có mạng và đúng danh tính nền tảng.'**
+  String get leaderboardSubmissionPendingMessage;
+
+  /// No description provided for @leaderboardSubmissionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không gửi được'**
+  String get leaderboardSubmissionFailed;
+
+  /// No description provided for @leaderboardSubmissionNotQueued.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa gửi'**
+  String get leaderboardSubmissionNotQueued;
+
+  /// No description provided for @leaderboardSubmissionNotQueuedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết quả này không phải kỷ lục mới đã lưu nên không được gửi.'**
+  String get leaderboardSubmissionNotQueuedMessage;
+
+  /// No description provided for @leaderboardSubmissionPersistFailedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể lưu kết quả hoặc hàng đợi trên thiết bị, nên nền tảng chưa chấp nhận điểm này.'**
+  String get leaderboardSubmissionPersistFailedMessage;
+
+  /// No description provided for @leaderboardSubmissionDisconnected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa kết nối'**
+  String get leaderboardSubmissionDisconnected;
+
+  /// No description provided for @leaderboardSubmissionDisconnectedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần kết nối rõ ràng trước khi điểm này có thể được gửi.'**
+  String get leaderboardSubmissionDisconnectedMessage;
+
+  /// No description provided for @leaderboardSubmitScoreCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gửi điểm'**
+  String get leaderboardSubmitScoreCta;
+
+  /// No description provided for @leaderboardReconnectCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết nối lại'**
+  String get leaderboardReconnectCta;
+
+  /// No description provided for @leaderboardRetrySubmissionCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gửi lại'**
+  String get leaderboardRetrySubmissionCta;
+
+  /// No description provided for @leaderboardReasonUnsupported.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nền tảng này không hỗ trợ gửi điểm.'**
+  String get leaderboardReasonUnsupported;
+
+  /// No description provided for @leaderboardReasonRestricted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản nền tảng đang bị hạn chế gửi điểm.'**
+  String get leaderboardReasonRestricted;
+
+  /// No description provided for @leaderboardReasonRejected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nền tảng không chấp nhận điểm này.'**
+  String get leaderboardReasonRejected;
+
+  /// No description provided for @leaderboardReasonUnknown.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nền tảng chưa thể nhận điểm này. Kỷ lục cục bộ vẫn an toàn.'**
+  String get leaderboardReasonUnknown;
+
+  /// No description provided for @leaderboardAchievedScore.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điểm vừa đạt: {score}'**
+  String leaderboardAchievedScore(String score);
 }
 
 class _AppLocalizationsDelegate

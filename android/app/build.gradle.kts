@@ -49,3 +49,69 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation("com.google.android.gms:play-services-games-v2:22.0.0")
+    testImplementation("junit:junit:4.13.2")
+}
+
+// The Play Console owns these values. Keep development placeholders explicit,
+// but make it impossible to accidentally ship them in a release artifact.
+val validatePlayGamesReleaseConfiguration =
+    tasks.register("validatePlayGamesReleaseConfiguration") {
+        val catalogFile = layout.projectDirectory.file("src/main/res/values/leaderboards.xml")
+        inputs.file(catalogFile)
+
+        doLast {
+            val source = catalogFile.asFile.readText()
+            fun stringResource(name: String): String {
+                val match = Regex(
+                    """<string\s+[^>]*name=["']${Regex.escape(name)}["'][^>]*>(.*?)</string>""",
+                    setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL),
+                ).find(source)
+                return match?.groupValues?.get(1)?.trim()
+                    ?: throw GradleException("Missing Play Games resource: $name")
+            }
+
+            fun requireProductionValue(name: String, value: String) {
+                val normalized = value.lowercase()
+                val placeholder =
+                    value.isBlank() ||
+                        listOf("replace_with", "placeholder", "todo", "changeme").any {
+                            normalized.contains(it)
+                        }
+                if (placeholder) {
+                    throw GradleException(
+                        "Play Games release configuration contains a placeholder: $name",
+                    )
+                }
+            }
+
+            val projectId = stringResource("game_services_project_id")
+            requireProductionValue("game_services_project_id", projectId)
+            if (!projectId.matches(Regex("[0-9]{6,}"))) {
+                throw GradleException("game_services_project_id must be the numeric Play Games project ID")
+            }
+
+            val configuredApplicationId = stringResource("play_games_android_application_id")
+            requireProductionValue("play_games_android_application_id", configuredApplicationId)
+            val releaseApplicationId = android.defaultConfig.applicationId
+            if (configuredApplicationId != releaseApplicationId) {
+                throw GradleException(
+                    "Play Games application ID does not match Android applicationId",
+                )
+            }
+
+            val leaderboardIds = (1..20).map { arenaId ->
+                val name = "leaderboard_arena_$arenaId"
+                stringResource(name).also { requireProductionValue(name, it) }
+            }
+            if (leaderboardIds.toSet().size != 20) {
+                throw GradleException("Play Games requires 20 unique leaderboard IDs")
+            }
+        }
+    }
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    dependsOn(validatePlayGamesReleaseConfiguration)
+}

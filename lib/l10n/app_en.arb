@@ -141,4 +141,78 @@
   ,"signedInResetGuard": "Sign out before resetting local progress so cloud progress cannot restore it."
   ,"signInReminderBody": "Protect this progress and restore it on another device."
   ,"signInReminderCta": "Open sign-in options"
+
+  ,"leaderboardEntryCta": "Ranks"
+  ,"leaderboardEntrySemantic": "View leaderboard for Level {arenaId}"
+  ,"@leaderboardEntrySemantic": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardWinEntrySemantic": "View leaderboard for completed Level {arenaId}"
+  ,"@leaderboardWinEntrySemantic": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardTitle": "LEADERBOARD"
+  ,"leaderboardLevel": "Level {arenaId} · {arenaName}"
+  ,"@leaderboardLevel": { "placeholders": { "arenaId": { "type": "int" }, "arenaName": { "type": "String" } } }
+  ,"leaderboardGlobal": "Global"
+  ,"leaderboardFriends": "Friends"
+  ,"leaderboardAllTime": "All time"
+  ,"leaderboardYou": "You"
+  ,"leaderboardOutsideTop100": "You are outside the top 100"
+  ,"leaderboardSelected": "selected"
+  ,"leaderboardNotSelected": "not selected"
+  ,"leaderboardScopeAnnouncement": "{scope} leaderboard selected"
+  ,"@leaderboardScopeAnnouncement": { "placeholders": { "scope": { "type": "String" } } }
+  ,"leaderboardLoadedAnnouncement": "{scope} leaderboard loaded for Level {arenaId}"
+  ,"@leaderboardLoadedAnnouncement": { "placeholders": { "scope": { "type": "String" }, "arenaId": { "type": "int" } } }
+  ,"leaderboardTopThreeLabel": "Top three players"
+  ,"leaderboardListFromRankLabel": "Leaderboard entries from rank {rank}"
+  ,"@leaderboardListFromRankLabel": { "placeholders": { "rank": { "type": "int" } } }
+  ,"leaderboardRowSemantics": "Rank {rank}, {playerName}, {score} points"
+  ,"@leaderboardRowSemantics": { "placeholders": { "rank": { "type": "int" }, "playerName": { "type": "String" }, "score": { "type": "String" } } }
+  ,"leaderboardCurrentPlayerSuffix": "current player"
+  ,"leaderboardLoadingAnnouncement": "Loading leaderboard for Level {arenaId}"
+  ,"@leaderboardLoadingAnnouncement": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardLoadingTitle": "Loading leaderboard…"
+  ,"leaderboardLoadingBadge": "Loading"
+  ,"leaderboardEmptyTitle": "No scores for Level {arenaId} yet"
+  ,"@leaderboardEmptyTitle": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardEmptyMessage": "Be the first player on the {scope} leaderboard."
+  ,"@leaderboardEmptyMessage": { "placeholders": { "scope": { "type": "String" } } }
+  ,"leaderboardServiceErrorTitle": "Could not load the leaderboard"
+  ,"leaderboardServiceErrorMessage": "Game Center or Google Play Games is not responding right now."
+  ,"leaderboardServiceErrorBadge": "Service error"
+  ,"leaderboardRetryCta": "Try again"
+  ,"leaderboardStaleTitle": "Data may be out of date"
+  ,"leaderboardStaleMessage": "Showing the most recently saved {scope} leaderboard for Level {arenaId}."
+  ,"@leaderboardStaleMessage": { "placeholders": { "scope": { "type": "String" }, "arenaId": { "type": "int" } } }
+  ,"leaderboardOfflineBadge": "Offline"
+  ,"leaderboardOfflineQueueMessage": "No connection · Pending scores stay on this device"
+  ,"leaderboardOfflineEmptyTitle": "No offline data"
+  ,"leaderboardOfflineEmptyMessage": "There is no matching saved leaderboard for Level {arenaId} · {scope}."
+  ,"@leaderboardOfflineEmptyMessage": { "placeholders": { "arenaId": { "type": "int" }, "scope": { "type": "String" } } }
+  ,"leaderboardFriendsUnavailableTitle": "Friends leaderboard unavailable"
+  ,"leaderboardFriendsUnavailableMessage": "The friends list is unavailable because of privacy, account restrictions, or platform settings."
+  ,"leaderboardViewGlobalCta": "View Global"
+  ,"leaderboardAuthTitle": "Connect the leaderboard?"
+  ,"leaderboardAuthDescription": "Connect Game Center or Google Play Games to view leaderboards and submit records. You can still play completely offline."
+  ,"leaderboardAuthConnectCta": "Connect"
+  ,"leaderboardAuthLaterCta": "Later"
+  ,"leaderboardAuthPromptMessage": "Your local score, stars, coins, and progress stay on this device if you connect later."
+  ,"leaderboardSubmissionTitle": "Score submission"
+  ,"leaderboardSubmissionSent": "Sent"
+  ,"leaderboardSubmissionSentMessage": "The platform accepted this record."
+  ,"leaderboardSubmissionPending": "Pending"
+  ,"leaderboardSubmissionPendingMessage": "It will be sent automatically when a connection is available."
+  ,"leaderboardSubmissionFailed": "Could not submit"
+  ,"leaderboardSubmissionNotQueued": "Not submitted"
+  ,"leaderboardSubmissionNotQueuedMessage": "This result was not a new saved record, so it was not submitted."
+  ,"leaderboardSubmissionPersistFailedMessage": "The result or retry queue could not be saved on this device, so the platform has not accepted it."
+  ,"leaderboardSubmissionDisconnected": "Not connected"
+  ,"leaderboardSubmissionDisconnectedMessage": "Connect explicitly before this score can be submitted."
+  ,"leaderboardSubmitScoreCta": "Submit score"
+  ,"leaderboardReconnectCta": "Reconnect"
+  ,"leaderboardRetrySubmissionCta": "Submit again"
+  ,"leaderboardReasonUnsupported": "This platform does not support score submission."
+  ,"leaderboardReasonRestricted": "This platform account is restricted from submitting scores."
+  ,"leaderboardReasonRejected": "The platform did not accept this score."
+  ,"leaderboardReasonUnknown": "The platform could not accept this score. Your local record is safe."
+  ,"leaderboardAchievedScore": "Achieved score: {score}"
+  ,"@leaderboardAchievedScore": { "placeholders": { "score": { "type": "String" } } }
 }

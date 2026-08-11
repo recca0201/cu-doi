@@ -37,6 +37,9 @@ class BanBuaTuongApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Eager ownership is intentional: identity invalidation and resume retry
+    // must work before, after and entirely without a leaderboard route.
+    ref.watch(leaderboardLifecycleCoordinatorProvider);
     final AppSettings settings = ref.watch(settingsProvider);
     return MaterialApp(
       onGenerateTitle: (BuildContext ctx) => AppLocalizations.of(ctx).appTitle,

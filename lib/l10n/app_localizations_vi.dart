@@ -441,4 +441,224 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get signInReminderCta => 'Mở tùy chọn đăng nhập';
+
+  @override
+  String get leaderboardEntryCta => 'Xếp hạng';
+
+  @override
+  String leaderboardEntrySemantic(int arenaId) {
+    return 'Xem bảng xếp hạng Màn $arenaId';
+  }
+
+  @override
+  String leaderboardWinEntrySemantic(int arenaId) {
+    return 'Xem bảng xếp hạng của Màn $arenaId vừa hoàn thành';
+  }
+
+  @override
+  String get leaderboardTitle => 'BẢNG XẾP HẠNG';
+
+  @override
+  String leaderboardLevel(int arenaId, String arenaName) {
+    return 'Màn $arenaId · $arenaName';
+  }
+
+  @override
+  String get leaderboardGlobal => 'Toàn cầu';
+
+  @override
+  String get leaderboardFriends => 'Bạn bè';
+
+  @override
+  String get leaderboardAllTime => 'Mọi thời đại';
+
+  @override
+  String get leaderboardYou => 'Bạn';
+
+  @override
+  String get leaderboardOutsideTop100 => 'Bạn đang ngoài top 100';
+
+  @override
+  String get leaderboardSelected => 'đã chọn';
+
+  @override
+  String get leaderboardNotSelected => 'chưa chọn';
+
+  @override
+  String leaderboardScopeAnnouncement(String scope) {
+    return 'Đã chọn bảng $scope';
+  }
+
+  @override
+  String leaderboardLoadedAnnouncement(String scope, int arenaId) {
+    return 'Đã tải bảng $scope cho Màn $arenaId';
+  }
+
+  @override
+  String get leaderboardTopThreeLabel => 'Ba người dẫn đầu';
+
+  @override
+  String leaderboardListFromRankLabel(int rank) {
+    return 'Danh sách xếp hạng từ hạng $rank';
+  }
+
+  @override
+  String leaderboardRowSemantics(int rank, String playerName, String score) {
+    return 'Hạng $rank, $playerName, $score điểm';
+  }
+
+  @override
+  String get leaderboardCurrentPlayerSuffix => 'người chơi hiện tại';
+
+  @override
+  String leaderboardLoadingAnnouncement(int arenaId) {
+    return 'Đang tải bảng xếp hạng Màn $arenaId';
+  }
+
+  @override
+  String get leaderboardLoadingTitle => 'Đang tải bảng xếp hạng…';
+
+  @override
+  String get leaderboardLoadingBadge => 'Đang tải';
+
+  @override
+  String leaderboardEmptyTitle(int arenaId) {
+    return 'Chưa có điểm cho Màn $arenaId';
+  }
+
+  @override
+  String leaderboardEmptyMessage(String scope) {
+    return 'Hãy là người đầu tiên ghi tên vào bảng $scope.';
+  }
+
+  @override
+  String get leaderboardServiceErrorTitle => 'Không tải được bảng xếp hạng';
+
+  @override
+  String get leaderboardServiceErrorMessage =>
+      'Game Center/Google Play Games tạm thời không phản hồi.';
+
+  @override
+  String get leaderboardServiceErrorBadge => 'Lỗi dịch vụ';
+
+  @override
+  String get leaderboardRetryCta => 'Thử lại';
+
+  @override
+  String get leaderboardStaleTitle => 'Dữ liệu có thể đã cũ';
+
+  @override
+  String leaderboardStaleMessage(String scope, int arenaId) {
+    return 'Đang hiển thị bản $scope của Màn $arenaId được lưu gần nhất.';
+  }
+
+  @override
+  String get leaderboardOfflineBadge => 'Offline';
+
+  @override
+  String get leaderboardOfflineQueueMessage =>
+      'Không có kết nối · Điểm đang chờ sẽ được giữ trên thiết bị';
+
+  @override
+  String get leaderboardOfflineEmptyTitle => 'Không có dữ liệu offline';
+
+  @override
+  String leaderboardOfflineEmptyMessage(int arenaId, String scope) {
+    return 'Chưa có bản lưu phù hợp cho Màn $arenaId · $scope.';
+  }
+
+  @override
+  String get leaderboardFriendsUnavailableTitle =>
+      'Không thể hiển thị bảng Bạn bè';
+
+  @override
+  String get leaderboardFriendsUnavailableMessage =>
+      'Danh sách bạn bè hiện không khả dụng do quyền riêng tư, hạn chế tài khoản hoặc cài đặt nền tảng.';
+
+  @override
+  String get leaderboardViewGlobalCta => 'Xem Toàn cầu';
+
+  @override
+  String get leaderboardAuthTitle => 'Kết nối bảng xếp hạng?';
+
+  @override
+  String get leaderboardAuthDescription =>
+      'Kết nối Game Center hoặc Google Play Games để xem bảng và gửi kỷ lục. Bạn vẫn có thể chơi hoàn toàn offline.';
+
+  @override
+  String get leaderboardAuthConnectCta => 'Kết nối';
+
+  @override
+  String get leaderboardAuthLaterCta => 'Để sau';
+
+  @override
+  String get leaderboardAuthPromptMessage =>
+      'Điểm, sao, xu và tiến trình cục bộ vẫn được giữ nguyên nếu bạn kết nối sau.';
+
+  @override
+  String get leaderboardSubmissionTitle => 'Trạng thái gửi điểm';
+
+  @override
+  String get leaderboardSubmissionSent => 'Đã gửi';
+
+  @override
+  String get leaderboardSubmissionSentMessage =>
+      'Nền tảng đã xác nhận kỷ lục này.';
+
+  @override
+  String get leaderboardSubmissionPending => 'Đang chờ';
+
+  @override
+  String get leaderboardSubmissionPendingMessage =>
+      'Sẽ tự gửi khi có mạng và đúng danh tính nền tảng.';
+
+  @override
+  String get leaderboardSubmissionFailed => 'Không gửi được';
+
+  @override
+  String get leaderboardSubmissionNotQueued => 'Chưa gửi';
+
+  @override
+  String get leaderboardSubmissionNotQueuedMessage =>
+      'Kết quả này không phải kỷ lục mới đã lưu nên không được gửi.';
+
+  @override
+  String get leaderboardSubmissionPersistFailedMessage =>
+      'Không thể lưu kết quả hoặc hàng đợi trên thiết bị, nên nền tảng chưa chấp nhận điểm này.';
+
+  @override
+  String get leaderboardSubmissionDisconnected => 'Chưa kết nối';
+
+  @override
+  String get leaderboardSubmissionDisconnectedMessage =>
+      'Cần kết nối rõ ràng trước khi điểm này có thể được gửi.';
+
+  @override
+  String get leaderboardSubmitScoreCta => 'Gửi điểm';
+
+  @override
+  String get leaderboardReconnectCta => 'Kết nối lại';
+
+  @override
+  String get leaderboardRetrySubmissionCta => 'Gửi lại';
+
+  @override
+  String get leaderboardReasonUnsupported =>
+      'Nền tảng này không hỗ trợ gửi điểm.';
+
+  @override
+  String get leaderboardReasonRestricted =>
+      'Tài khoản nền tảng đang bị hạn chế gửi điểm.';
+
+  @override
+  String get leaderboardReasonRejected => 'Nền tảng không chấp nhận điểm này.';
+
+  @override
+  String get leaderboardReasonUnknown =>
+      'Nền tảng chưa thể nhận điểm này. Kỷ lục cục bộ vẫn an toàn.';
+
+  @override
+  String leaderboardAchievedScore(String score) {
+    return 'Điểm vừa đạt: $score';
+  }
 }

@@ -172,4 +172,78 @@
   ,"signedInResetGuard": "Hãy đăng xuất trước khi xóa tiến trình cục bộ để dữ liệu đám mây không khôi phục lại."
   ,"signInReminderBody": "Bảo vệ tiến trình này và khôi phục trên thiết bị khác."
   ,"signInReminderCta": "Mở tùy chọn đăng nhập"
+
+  ,"leaderboardEntryCta": "Xếp hạng"
+  ,"leaderboardEntrySemantic": "Xem bảng xếp hạng Màn {arenaId}"
+  ,"@leaderboardEntrySemantic": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardWinEntrySemantic": "Xem bảng xếp hạng của Màn {arenaId} vừa hoàn thành"
+  ,"@leaderboardWinEntrySemantic": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardTitle": "BẢNG XẾP HẠNG"
+  ,"leaderboardLevel": "Màn {arenaId} · {arenaName}"
+  ,"@leaderboardLevel": { "placeholders": { "arenaId": { "type": "int" }, "arenaName": { "type": "String" } } }
+  ,"leaderboardGlobal": "Toàn cầu"
+  ,"leaderboardFriends": "Bạn bè"
+  ,"leaderboardAllTime": "Mọi thời đại"
+  ,"leaderboardYou": "Bạn"
+  ,"leaderboardOutsideTop100": "Bạn đang ngoài top 100"
+  ,"leaderboardSelected": "đã chọn"
+  ,"leaderboardNotSelected": "chưa chọn"
+  ,"leaderboardScopeAnnouncement": "Đã chọn bảng {scope}"
+  ,"@leaderboardScopeAnnouncement": { "placeholders": { "scope": { "type": "String" } } }
+  ,"leaderboardLoadedAnnouncement": "Đã tải bảng {scope} cho Màn {arenaId}"
+  ,"@leaderboardLoadedAnnouncement": { "placeholders": { "scope": { "type": "String" }, "arenaId": { "type": "int" } } }
+  ,"leaderboardTopThreeLabel": "Ba người dẫn đầu"
+  ,"leaderboardListFromRankLabel": "Danh sách xếp hạng từ hạng {rank}"
+  ,"@leaderboardListFromRankLabel": { "placeholders": { "rank": { "type": "int" } } }
+  ,"leaderboardRowSemantics": "Hạng {rank}, {playerName}, {score} điểm"
+  ,"@leaderboardRowSemantics": { "placeholders": { "rank": { "type": "int" }, "playerName": { "type": "String" }, "score": { "type": "String" } } }
+  ,"leaderboardCurrentPlayerSuffix": "người chơi hiện tại"
+  ,"leaderboardLoadingAnnouncement": "Đang tải bảng xếp hạng Màn {arenaId}"
+  ,"@leaderboardLoadingAnnouncement": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardLoadingTitle": "Đang tải bảng xếp hạng…"
+  ,"leaderboardLoadingBadge": "Đang tải"
+  ,"leaderboardEmptyTitle": "Chưa có điểm cho Màn {arenaId}"
+  ,"@leaderboardEmptyTitle": { "placeholders": { "arenaId": { "type": "int" } } }
+  ,"leaderboardEmptyMessage": "Hãy là người đầu tiên ghi tên vào bảng {scope}."
+  ,"@leaderboardEmptyMessage": { "placeholders": { "scope": { "type": "String" } } }
+  ,"leaderboardServiceErrorTitle": "Không tải được bảng xếp hạng"
+  ,"leaderboardServiceErrorMessage": "Game Center/Google Play Games tạm thời không phản hồi."
+  ,"leaderboardServiceErrorBadge": "Lỗi dịch vụ"
+  ,"leaderboardRetryCta": "Thử lại"
+  ,"leaderboardStaleTitle": "Dữ liệu có thể đã cũ"
+  ,"leaderboardStaleMessage": "Đang hiển thị bản {scope} của Màn {arenaId} được lưu gần nhất."
+  ,"@leaderboardStaleMessage": { "placeholders": { "scope": { "type": "String" }, "arenaId": { "type": "int" } } }
+  ,"leaderboardOfflineBadge": "Offline"
+  ,"leaderboardOfflineQueueMessage": "Không có kết nối · Điểm đang chờ sẽ được giữ trên thiết bị"
+  ,"leaderboardOfflineEmptyTitle": "Không có dữ liệu offline"
+  ,"leaderboardOfflineEmptyMessage": "Chưa có bản lưu phù hợp cho Màn {arenaId} · {scope}."
+  ,"@leaderboardOfflineEmptyMessage": { "placeholders": { "arenaId": { "type": "int" }, "scope": { "type": "String" } } }
+  ,"leaderboardFriendsUnavailableTitle": "Không thể hiển thị bảng Bạn bè"
+  ,"leaderboardFriendsUnavailableMessage": "Danh sách bạn bè hiện không khả dụng do quyền riêng tư, hạn chế tài khoản hoặc cài đặt nền tảng."
+  ,"leaderboardViewGlobalCta": "Xem Toàn cầu"
+  ,"leaderboardAuthTitle": "Kết nối bảng xếp hạng?"
+  ,"leaderboardAuthDescription": "Kết nối Game Center hoặc Google Play Games để xem bảng và gửi kỷ lục. Bạn vẫn có thể chơi hoàn toàn offline."
+  ,"leaderboardAuthConnectCta": "Kết nối"
+  ,"leaderboardAuthLaterCta": "Để sau"
+  ,"leaderboardAuthPromptMessage": "Điểm, sao, xu và tiến trình cục bộ vẫn được giữ nguyên nếu bạn kết nối sau."
+  ,"leaderboardSubmissionTitle": "Trạng thái gửi điểm"
+  ,"leaderboardSubmissionSent": "Đã gửi"
+  ,"leaderboardSubmissionSentMessage": "Nền tảng đã xác nhận kỷ lục này."
+  ,"leaderboardSubmissionPending": "Đang chờ"
+  ,"leaderboardSubmissionPendingMessage": "Sẽ tự gửi khi có mạng và đúng danh tính nền tảng."
+  ,"leaderboardSubmissionFailed": "Không gửi được"
+  ,"leaderboardSubmissionNotQueued": "Chưa gửi"
+  ,"leaderboardSubmissionNotQueuedMessage": "Kết quả này không phải kỷ lục mới đã lưu nên không được gửi."
+  ,"leaderboardSubmissionPersistFailedMessage": "Không thể lưu kết quả hoặc hàng đợi trên thiết bị, nên nền tảng chưa chấp nhận điểm này."
+  ,"leaderboardSubmissionDisconnected": "Chưa kết nối"
+  ,"leaderboardSubmissionDisconnectedMessage": "Cần kết nối rõ ràng trước khi điểm này có thể được gửi."
+  ,"leaderboardSubmitScoreCta": "Gửi điểm"
+  ,"leaderboardReconnectCta": "Kết nối lại"
+  ,"leaderboardRetrySubmissionCta": "Gửi lại"
+  ,"leaderboardReasonUnsupported": "Nền tảng này không hỗ trợ gửi điểm."
+  ,"leaderboardReasonRestricted": "Tài khoản nền tảng đang bị hạn chế gửi điểm."
+  ,"leaderboardReasonRejected": "Nền tảng không chấp nhận điểm này."
+  ,"leaderboardReasonUnknown": "Nền tảng chưa thể nhận điểm này. Kỷ lục cục bộ vẫn an toàn."
+  ,"leaderboardAchievedScore": "Điểm vừa đạt: {score}"
+  ,"@leaderboardAchievedScore": { "placeholders": { "score": { "type": "String" } } }
 }

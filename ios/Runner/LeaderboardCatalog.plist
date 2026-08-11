@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Release inputs owned by App Store Connect. The native validator and
+	     Release build phase reject these explicit placeholders. -->
+	<key>ExpectedBundleIdentifier</key>
+	<string>REPLACE_WITH_GAME_CENTER_BUNDLE_IDENTIFIER</string>
+	<key>Leaderboards</key>
+	<dict>
+		<key>1</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_01</string>
+		<key>2</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_02</string>
+		<key>3</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_03</string>
+		<key>4</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_04</string>
+		<key>5</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_05</string>
+		<key>6</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_06</string>
+		<key>7</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_07</string>
+		<key>8</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_08</string>
+		<key>9</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_09</string>
+		<key>10</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_10</string>
+		<key>11</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_11</string>
+		<key>12</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_12</string>
+		<key>13</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_13</string>
+		<key>14</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_14</string>
+		<key>15</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_15</string>
+		<key>16</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_16</string>
+		<key>17</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_17</string>
+		<key>18</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_18</string>
+		<key>19</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_19</string>
+		<key>20</key>
+		<string>REPLACE_WITH_GAME_CENTER_LEADERBOARD_ID_ARENA_20</string>
+	</dict>
+</dict>
+</plist>

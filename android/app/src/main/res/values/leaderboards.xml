@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Release inputs owned by the Play Games Console. The release Gradle
+         guard and native validateConfiguration method reject these explicit
+         placeholders; do not invent console IDs in source control. -->
+    <string name="game_services_project_id" translatable="false">REPLACE_WITH_PLAY_GAMES_PROJECT_ID</string>
+    <string name="play_games_android_application_id" translatable="false">REPLACE_WITH_RELEASE_APPLICATION_ID</string>
+
+    <string name="leaderboard_arena_1" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_01</string>
+    <string name="leaderboard_arena_2" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_02</string>
+    <string name="leaderboard_arena_3" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_03</string>
+    <string name="leaderboard_arena_4" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_04</string>
+    <string name="leaderboard_arena_5" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_05</string>
+    <string name="leaderboard_arena_6" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_06</string>
+    <string name="leaderboard_arena_7" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_07</string>
+    <string name="leaderboard_arena_8" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_08</string>
+    <string name="leaderboard_arena_9" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_09</string>
+    <string name="leaderboard_arena_10" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_10</string>
+    <string name="leaderboard_arena_11" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_11</string>
+    <string name="leaderboard_arena_12" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_12</string>
+    <string name="leaderboard_arena_13" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_13</string>
+    <string name="leaderboard_arena_14" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_14</string>
+    <string name="leaderboard_arena_15" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_15</string>
+    <string name="leaderboard_arena_16" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_16</string>
+    <string name="leaderboard_arena_17" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_17</string>
+    <string name="leaderboard_arena_18" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_18</string>
+    <string name="leaderboard_arena_19" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_19</string>
+    <string name="leaderboard_arena_20" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_20</string>
+</resources>

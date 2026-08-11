@@ -19,6 +19,7 @@ import '../pangolin_ball_art.dart';
 import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 import 'game_screen.dart';
+import 'leaderboard_screen.dart';
 
 class ArenaMapScreen extends ConsumerStatefulWidget {
   const ArenaMapScreen({this.targetArenaId, super.key});
@@ -195,6 +196,9 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
                             onPlay: progress.isUnlocked(selected.id)
                                 ? () => _play(selected)
                                 : null,
+                            onLeaderboard: progress.isUnlocked(selected.id)
+                                ? () => _openLeaderboard(selected)
+                                : null,
                           ),
                         ),
                       ],
@@ -236,6 +240,17 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => GameScreen(arenaId: arena.id),
+      ),
+    );
+  }
+
+  void _openLeaderboard(ArenaSpec arena) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => LeaderboardScreen(
+          arenaId: arena.id,
+          origin: LeaderboardOrigin.arenaMap,
+        ),
       ),
     );
   }
@@ -693,12 +708,14 @@ class _ArenaDetailPanel extends StatelessWidget {
     required this.localeCode,
     required this.progress,
     required this.onPlay,
+    required this.onLeaderboard,
   });
 
   final ArenaSpec arena;
   final String localeCode;
   final PlayerProgress progress;
   final VoidCallback? onPlay;
+  final VoidCallback? onLeaderboard;
 
   @override
   Widget build(BuildContext context) {
@@ -813,20 +830,65 @@ class _ArenaDetailPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                FractionallySizedBox(
-                  widthFactor: .68,
-                  child: _MapImageTextButton(
-                    key: const Key('selected-arena-play'),
-                    asset: _MapArt.playButton,
-                    height: 54,
-                    label: t.playCta.toUpperCase(),
-                    onPressed: onPlay,
-                  ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 6,
+                      child: _MapImageTextButton(
+                        key: const Key('selected-arena-play'),
+                        asset: _MapArt.playButton,
+                        height: 54,
+                        label: t.playCta.toUpperCase(),
+                        onPressed: onPlay,
+                      ),
+                    ),
+                    if (onLeaderboard != null) ...<Widget>[
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 5,
+                        child: _ArenaLeaderboardButton(
+                          arenaId: arena.id,
+                          onPressed: onLeaderboard!,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ArenaLeaderboardButton extends StatelessWidget {
+  const _ArenaLeaderboardButton({
+    required this.arenaId,
+    required this.onPressed,
+  });
+
+  final int arenaId;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations t = AppLocalizations.of(context);
+    final String visibleLabel = t.leaderboardEntryCta;
+    final String semanticLabel = t.leaderboardEntrySemantic(arenaId);
+    return Semantics(
+      key: const Key('selected-arena-leaderboard'),
+      button: true,
+      label: semanticLabel,
+      onTap: onPressed,
+      child: ExcludeSemantics(
+        child: BbButton.karst(
+          label: visibleLabel,
+          icon: Icons.emoji_events_rounded,
+          expand: true,
+          onPressed: onPressed,
+        ),
       ),
     );
   }
