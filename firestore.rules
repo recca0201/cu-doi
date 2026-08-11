@@ -3,8 +3,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function signedInAs(uid) { return request.auth != null && request.auth.uid == uid; }
     function unlocked(uid) { return !exists(/databases/$(database)/documents/accountDeletionLocks/$(uid)); }
-    function validLevel(v) { return v.keys().hasOnly(['stars','highScore','skipped','losses']) && v.stars is int && v.stars >= 0 && v.stars <= 3 && v.highScore is int && v.highScore >= 0 && v.highScore <= 2147483647 && v.skipped is bool && v.losses is int && v.losses >= 0 && v.losses <= 2147483647; }
-    function validLevels(v) { return v.keys().hasOnly(['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']) && v.keys().size() == 20 && validLevel(v['1']) && validLevel(v['2']) && validLevel(v['3']) && validLevel(v['4']) && validLevel(v['5']) && validLevel(v['6']) && validLevel(v['7']) && validLevel(v['8']) && validLevel(v['9']) && validLevel(v['10']) && validLevel(v['11']) && validLevel(v['12']) && validLevel(v['13']) && validLevel(v['14']) && validLevel(v['15']) && validLevel(v['16']) && validLevel(v['17']) && validLevel(v['18']) && validLevel(v['19']) && validLevel(v['20']); }
+    // Keep this predicate below Firestore's 1,000-expression ceiling when it is
+    // evaluated for all 20 dense level entries. The client codec and callable
+    // repeat the integer/32-bit validation before accepting cloud data.
+    function validLevel(v) { return v.size() == 4 && v.stars is int && v.stars >= 0 && v.stars <= 3 && v.highScore >= 0 && v.skipped is bool && v.losses >= 0; }
+    function validLevels(v) { return v.size() == 20 && validLevel(v['1']) && validLevel(v['2']) && validLevel(v['3']) && validLevel(v['4']) && validLevel(v['5']) && validLevel(v['6']) && validLevel(v['7']) && validLevel(v['8']) && validLevel(v['9']) && validLevel(v['10']) && validLevel(v['11']) && validLevel(v['12']) && validLevel(v['13']) && validLevel(v['14']) && validLevel(v['15']) && validLevel(v['16']) && validLevel(v['17']) && validLevel(v['18']) && validLevel(v['19']) && validLevel(v['20']); }
     match /users/{uid} {
       allow read: if signedInAs(uid);
       allow create: if signedInAs(uid) && unlocked(uid) && request.resource.data.keys().hasOnly(['schemaVersion','coins','levels','updatedAt']) && request.resource.data.schemaVersion == 2 && request.resource.data.coins is int && request.resource.data.coins >= 0 && request.resource.data.coins <= 2147483647 && validLevels(request.resource.data.levels);

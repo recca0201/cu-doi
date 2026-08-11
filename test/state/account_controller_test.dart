@@ -28,6 +28,7 @@ class FakeAccountRepository implements AccountRepository {
 
 class FakeDeletionRepository implements AccountDeletionRepository {
   DeletionServerPhase phase = DeletionServerPhase.queued;
+  int refreshed = 0;
   @override
   Future<DeletionReceipt> begin(
     ReauthenticationProof proof,
@@ -40,7 +41,10 @@ class FakeDeletionRepository implements AccountDeletionRepository {
   Future<void> refreshProviderProof(
     DeletionReceipt receipt,
     ReauthenticationProof proof,
-  ) async {}
+  ) async {
+    refreshed++;
+  }
+
   @override
   Future<DeletionStatus> status(DeletionReceipt receipt) async =>
       DeletionStatus(phase);
@@ -106,9 +110,15 @@ void main() {
       deletion.phase = DeletionServerPhase.providerRecoveryRequired;
       await controller.pollDeletion();
       expect(controller.state.phase, AccountPhase.providerRecoveryRequired);
+      expect(
+        await controller.refreshDeletionProof(AuthProviderKind.google),
+        isTrue,
+      );
+      expect(deletion.refreshed, 1);
       deletion.phase = DeletionServerPhase.completed;
       await controller.pollDeletion();
       expect(controller.state.phase, AccountPhase.deleted);
+      expect((await store.load(OwnerKey.account('uid-one'))).progress.coins, 0);
     },
   );
 }

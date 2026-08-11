@@ -80,6 +80,7 @@ class AccountController extends StateNotifier<AccountState> {
   bool _busy = false;
   int _ownerEpoch = 0;
   Timer? _pollTimer;
+  int _pollAttempt = 0;
   int get ownerEpoch => _ownerEpoch;
 
   Future<void> signIn(AuthProviderKind provider) async {
@@ -216,6 +217,7 @@ class AccountController extends StateNotifier<AccountState> {
         requestId: receipt.requestId,
         deletionReceipt: receipt,
       );
+      _pollAttempt = 0;
       _schedulePoll();
       return true;
     } catch (_) {
@@ -261,20 +263,61 @@ class AccountController extends StateNotifier<AccountState> {
           deletionReceipt: receipt,
         );
       } else if (status.terminal) {
+        final deletedUid = state.uid;
+        if (deletedUid != null) {
+          await _store?.clear(OwnerKey.account(deletedUid));
+        }
+        _ownerEpoch++;
         state = AccountState(
           phase: AccountPhase.deleted,
           requestId: receipt.requestId,
         );
         _pollTimer?.cancel();
+        return;
       }
     } catch (_) {
       /* durable receipt remains retryable */
     }
+    _pollAttempt++;
+    _schedulePoll();
   }
 
   void _schedulePoll() {
     _pollTimer?.cancel();
-    _pollTimer = Timer(const Duration(seconds: 5), pollDeletion);
+    final seconds = min(60, 5 * (1 << min(_pollAttempt, 4)));
+    _pollTimer = Timer(Duration(seconds: seconds), pollDeletion);
+  }
+
+  Future<bool> refreshDeletionProof(AuthProviderKind provider) async {
+    final receipt = state.deletionReceipt;
+    if (receipt == null || _deletionRepository == null || _busy) return false;
+    _busy = true;
+    try {
+      final proof = await _repository.reauthenticate(provider);
+      await _deletionRepository.refreshProviderProof(receipt, proof);
+      _pollAttempt = 0;
+      state = AccountState(
+        phase: AccountPhase.deletionPending,
+        uid: state.uid,
+        providers: state.providers,
+        requestId: receipt.requestId,
+        deletionReceipt: receipt,
+      );
+      _schedulePoll();
+      return true;
+    } catch (_) {
+      state = AccountState(
+        phase: AccountPhase.providerRecoveryRequired,
+        uid: state.uid,
+        providers: state.providers,
+        errorCode: 'providerRecoveryFailed',
+        requestId: receipt.requestId,
+        deletionReceipt: receipt,
+      );
+      return false;
+    } finally {
+      _busy = false;
+    }
   }
 
   String _randomId() => base64Url

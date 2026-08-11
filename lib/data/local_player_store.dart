@@ -230,6 +230,18 @@ class LocalPlayerStore {
     return guest;
   }
 
+  Future<void> clear(OwnerKey owner) async {
+    final key = owner.storageId;
+    await (_tails[key] ?? Future<void>.value());
+    final prefix = _prefix(owner);
+    await Future.wait([
+      _prefs.remove('${prefix}_active'),
+      _prefs.remove('${prefix}_0'),
+      _prefs.remove('${prefix}_1'),
+    ]);
+    invalidate(owner, deletion: true);
+  }
+
   Future<bool> _commit(OwnerKey owner, PlayerEnvelope envelope) async {
     final prefix = _prefix(owner);
     final active = _prefs.getInt('${prefix}_active') ?? 0;

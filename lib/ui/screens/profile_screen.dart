@@ -127,6 +127,10 @@ class ProfileScreen extends ConsumerWidget {
                                         style: BbText.body(Colors.white),
                                       ),
                                     ),
+                                  if (focusAccount) ...[
+                                    const SizedBox(height: 12),
+                                    _AccountCard(account: account, t: t),
+                                  ],
                                   const SizedBox(height: 12),
                                   ...summary.chapters.map(
                                     (c) => _ChapterPanel(
@@ -138,7 +142,8 @@ class ProfileScreen extends ConsumerWidget {
                                   const SizedBox(height: 12),
                                   _Badges(summary: summary, t: t),
                                   const SizedBox(height: 12),
-                                  _AccountCard(account: account, t: t),
+                                  if (!focusAccount)
+                                    _AccountCard(account: account, t: t),
                                 ],
                               ),
                             ),
@@ -331,6 +336,16 @@ class _AccountCard extends ConsumerWidget {
               label: t.retryCta,
               expand: true,
               onPressed: controller.pollDeletion,
+            )
+          else if (account.phase == AccountPhase.providerRecoveryRequired)
+            BbButton(
+              label: t.retryCta,
+              expand: true,
+              onPressed: () => controller.refreshDeletionProof(
+                account.providers.contains(AuthProviderKind.apple)
+                    ? AuthProviderKind.apple
+                    : AuthProviderKind.google,
+              ),
             ),
         ],
       ),

@@ -46,15 +46,20 @@ class PlayerAvatar extends StatelessWidget {
       child: ClipOval(child: image),
     );
     if (onTap == null) return ExcludeSemantics(child: visual);
-    return Semantics(
-      button: true,
-      label: semanticLabel,
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-          child: visual,
+    final controlSize = size < 48 ? 48.0 : size;
+    return SizedBox(
+      width: controlSize,
+      height: controlSize,
+      child: Semantics(
+        button: true,
+        label: semanticLabel,
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: Center(child: visual),
+          ),
         ),
       ),
     );

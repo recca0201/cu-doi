@@ -2,12 +2,14 @@ import { createHash, randomBytes } from 'node:crypto';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
+import { getFunctions } from 'firebase-admin/functions';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 import { region } from './runtime_config.js';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 const jobs = () => getFirestore().collection('accountDeletionJobs');
+const queue = () => getFunctions().taskQueue(`locations/${region}/functions/accountDeletionWorker`);
 
 export const beginAccountDeletion = onCall({ region, enforceAppCheck: true }, async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Authentication required');
@@ -19,6 +21,7 @@ export const beginAccountDeletion = onCall({ region, enforceAppCheck: true }, as
   const receipt = randomBytes(32).toString('base64url');
   if (existing.exists) {
     const job = jobs().doc(existing.get('jobId') as string); await job.set({ receiptHash: hash(receipt), updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    await queue().enqueue({ jobId: job.id });
     return { receipt, requestId: existing.get('requestId') };
   }
   const jobRef = jobs().doc(); const requestId = `DEL-${randomBytes(6).toString('hex').toUpperCase()}`;
@@ -27,7 +30,7 @@ export const beginAccountDeletion = onCall({ region, enforceAppCheck: true }, as
     tx.create(lockRef, { jobId: jobRef.id, requestId, createdAt: FieldValue.serverTimestamp() });
     tx.create(jobRef, { uid, uidHash: hash(uid), requestId, idempotencyKeyHash: hash(idempotencyKey), receiptHash: hash(receipt), phase: 'queued', checkpoint: 0, createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
   });
-  // Queue delivery is deployment-owned. The task handler can also be invoked by emulator tests.
+  await queue().enqueue({ jobId: jobRef.id });
   return { receipt, requestId };
 });
 
@@ -56,7 +59,7 @@ export const accountDeletionWorker = onTaskDispatched({ region, retryConfig: { m
   // Provider grant revocation hooks are intentionally deployment integrations; no token is stored in profile documents.
   if (checkpoint < 3) { checkpoint = 3; await ref.update({ checkpoint, providersRevokedAt: FieldValue.serverTimestamp() }); }
   if (checkpoint < 4) { await getAuth().revokeRefreshTokens(uid); await getAuth().updateUser(uid, { disabled: true }); checkpoint = 4; await ref.update({ checkpoint }); }
-  if (checkpoint < 5) { await getAuth().deleteUser(uid); checkpoint = 5; await ref.update({ checkpoint, phase: 'finalSweep', sweepAfter: Timestamp.fromMillis(Date.now() + 70 * 60 * 1000) }); return; }
+  if (checkpoint < 5) { await getAuth().deleteUser(uid); checkpoint = 5; await ref.update({ checkpoint, phase: 'finalSweep', sweepAfter: Timestamp.fromMillis(Date.now() + 70 * 60 * 1000) }); await queue().enqueue({ jobId }, { scheduleDelaySeconds: 70 * 60 }); return; }
   if (Date.now() < (data.sweepAfter?.toMillis?.() ?? 0)) return;
   const [files] = await getStorage().bucket().getFiles({ prefix: `avatars/${uid}/` }); await Promise.all(files.map((file) => file.delete({ ignoreNotFound: true })));
   await getFirestore().recursiveDelete(getFirestore().doc(`users/${uid}`)); await getFirestore().doc(`accountDeletionLocks/${uid}`).delete();

@@ -33,6 +33,11 @@ migrate_working_dir/
 /build/
 /coverage/
 /.firebase/
+/node_modules/
+/functions/node_modules/
+/functions/lib/
+*-debug.log
+/android/hs_err_pid*.log
 
 # Symbolication related
 app.*.symbols

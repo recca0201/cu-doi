@@ -30,9 +30,8 @@ class AvatarCacheRepository {
   // ignore: prefer_initializing_formals
   AvatarCacheRepository({
     Future<Directory> Function()? root,
-    FirebaseStorage? storage,
-  }) : _root = root ?? getApplicationSupportDirectory,
-       _storage = storage;
+    this._storage,
+  }) : _root = root ?? getApplicationSupportDirectory;
   final Future<Directory> Function() _root;
   final FirebaseStorage? _storage;
   Future<String> pathFor(String ownerHash) async =>
