@@ -4,13 +4,16 @@ document: project-overview-pdr
 project: ban_bua_tuong
 status: draft
 created: 2026-08-04
-updated: 2026-08-09
+updated: 2026-08-11
 source_artifacts:
   - ../../../ban_bua/aidlc-docs/brainstorming/0003-ricochet-core-loop-reconcept.md
   - lib/sim/shot_runner.dart
   - lib/sim/arenas.dart
   - tools/solver/campaign.js
   - Cu_Doi_UI_UX_Design_Spec.docx
+  - test/ui/goldens/arena_map_390x844.png
+  - assets/images/backgrounds/vietnam_karst_canyon_v2.png
+  - assets/images/ui/karst/
 ---
 
 # Bắn Bừa — Cú Dội · Mô tả sản phẩm
@@ -108,11 +111,18 @@ tường, không cho đáp án.
 
 ### Hướng hình ảnh đã chốt
 
-UI/UX Design Spec 1.0 ngày 09/08/2026 chốt toàn app theo phong cách **arcade đêm**:
-nền indigo/navy, panel tối, CTA vàng, CTA phụ xanh, quỹ đạo cyan và viền comic dày.
-Định hướng này thay mô hình “vỏ ngoài sáng, chỉ sân đấu tối” trước đây. Chi tiết,
-screen states và quy tắc migration nằm ở
-[`uiux-guideline.md`](./uiux-guideline.md).
+Ngày 11/08/2026, art direction đang render trong app được duyệt làm nguồn chuẩn:
+**Vietnamese karst adventure arcade** — phong cảnh núi đá vôi sáng và sương xanh,
+panel sơn mài xanh ngọc/teal, khung đồng-vàng chạm khắc, chữ Baloo 2/Nunito, viền
+dày và bóng sticker cứng. CTA chính vẫn là vàng; cyan chỉ là accent cho quỹ đạo,
+va chạm và thông tin cần nổi bật. Vùng gameplay/HUD được phép tối để giữ tương
+phản, nhưng không biến shell toàn app thành nền indigo/navy/galaxy.
+
+Nguồn hình ảnh ưu tiên là golden đang pass, asset `assets/images/ui/karst/`,
+backdrop `vietnam_karst_canyon_v2.png` và code đang render. UI/UX Design Spec 1.0
+ngày 09/08/2026 cùng asset `ui/galaxy/` chỉ còn giá trị lịch sử/tham khảo cấu
+trúc; chúng không được dùng để ghi đè style karst hiện hành. Chi tiết và quy tắc
+xử lý xung đột nằm ở [`uiux-guideline.md`](./uiux-guideline.md).
 
 Hình tham chiếu chỉ quyết art direction và hierarchy. Mọi con số màn, vị trí hình
 học, luật dội, mở màn và mốc sao vẫn lấy từ model/solver; các nút shop/event/mission

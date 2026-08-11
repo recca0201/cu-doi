@@ -201,7 +201,7 @@ khe hiệu ứng nằm ngay sau vệt ma — thứ tự tương đối giữa hi
   - Add coverage cho hàng công tắc rung.
   - Test file: `test/ui/settings_haptics_test.dart`
   - Expected assertion: công tắc nằm sau Nhạc nền và trước Ngôn ngữ trong cùng
-    panel `panelNavy`; lật ⇒ áp ngay và lưu; mở lại ⇒ khôi phục;
+    panel karst jade/teal hiện hành; lật ⇒ áp ngay và lưu; mở lại ⇒ khôi phục;
     `Semantics.toggled` đúng; vùng chạm ≥48dp; state không chỉ dựa vào màu.
 - [x] 9.2 Run test to verify it fails
   - Reference: US-5 AC-1.1, US-5 AC-1.3, US-5 AC-1.4, US-5 AC-2.2, US-5 AC-2.3

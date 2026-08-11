@@ -22,6 +22,12 @@ source_artifacts:
 
 # Requirements: giong-va-cau-truc-ngoai-san-dau
 
+> **Visual authority override — 2026-08-11:** các mô tả `nightIndigo`,
+> `panelNavy`, “grid nền navy” hoặc UI/UX Design Spec 1.0 trong tài liệu lịch sử
+> này đã bị supersede về art direction. Giữ behavior/IA, nhưng mọi thay đổi UI
+> mới phải theo karst source order trong `foundation/uiux-guideline.md` và golden
+> `test/ui/goldens/arena_map_390x844.png`.
+
 **Unit**: Unit 3 — Giọng và cấu trúc ngoài sân đấu
 **Feature**: 20 màn nhóm theo 4 chương có tên, tiến độ sao theo chương, bản đồ mở ở chỗ đang chơi, và một nhân vật có tên dẫn dắt ở các khoảnh khắc quan trọng
 **Created**: 2026-08-05
@@ -78,7 +84,7 @@ một cho danh sách phẳng, một cho bố cục chương.
 | C3 | `totalStars` = tổng `stars` của mọi màn. Unit 1 AC-3.2 cố tình giữ tổng này **sạch** (màn bỏ qua đóng góp 0 sao), nên tiến độ sao theo chương không cần biết gì về bỏ qua màn | `player_progress.dart:20`, Unit 1 US-2 AC-3.2 |
 | C4 | `kArenas` có 20 phần tử với `id` 1..20 và `name`/`nameEn` mỗi màn. **Không có field chương nào** — nhóm chương phải được định nghĩa mới | `arenas.dart`, `arena.dart` |
 | C5 | Chạm màn đã khoá hiện phản hồi bằng `SnackBar` (`arenaLockedHint`) và không điều hướng; target thêm shake ngắn + tooltip/snackbar | `arena_map_screen.dart`, `uiux-guideline.md` §6.2 |
-| C6 | Overlay hướng dẫn và kết quả hiện tự dựng bằng `Container`. Unit không tạo popup thứ tư, nhưng mọi phần nó chạm tới phải migrate sang panel navy/scrim/hierarchy CTA đích | `game_screen.dart`, `uiux-guideline.md` §4.2, §6.8–6.10 |
+| C6 | Overlay hướng dẫn và kết quả hiện tự dựng bằng `Container`. Unit không tạo popup thứ tư, nhưng mọi phần nó chạm tới phải dùng panel karst/scrim/hierarchy CTA đích | `game_screen.dart`, `uiux-guideline.md` §4.2, §6.8–6.10 |
 | C7 | Mascot `assets/images/mascot/ban_bua_mascot_v2.png` đã khai báo trong `pubspec.yaml` nhưng chưa được dùng | `pubspec.yaml` |
 | C8 | Biểu cảm target đang là một kênh bắt buộc của tín hiệu `armed`; nhân vật có tên bổ sung giọng kể, không thay tín hiệu gameplay | `uiux-guideline.md` §4.3, §5.2 |
 | C9 | Shell hiện dùng `BbTokens.screenMax = 440`; target giữ maxWidth 440dp cho nội dung ngoài sân và kiểm phone/tablet/text scale | `uiux-guideline.md` §8 |
@@ -92,7 +98,7 @@ một cho danh sách phẳng, một cho bố cục chương.
 | D2 | **Giữ nguyên** luật mở màn tuyến tính — chương **không** phải một cửa khoá mới | Đã chốt ở Inception (A5b) |
 | D3 | Tên chương và mọi chuỗi mới có ở **cả** `app_vi.arb` và `app_en.arb`, VI mặc định | Đã chốt ở Inception (A8) |
 | D4 | **US-4 chỉ đặc tả hệ thống thoại**: khi nào hiện, ở đâu, không chặn gameplay, song ngữ, dùng mascot sẵn có. **Tên nhân vật và lời thoại cụ thể là việc của Phase 4** | **Đã chốt** với người dùng 2026-08-05 (xác nhận giả định A7) |
-| D5 | Bản đồ dùng **grid node trên nền navy**, 4 cột ở điện thoại; không dùng đường mòn uốn lượn của `ban_bua` | Đã chốt từ UI/UX Design Spec 1.0 ngày 2026-08-09 |
+| D5 | Bản đồ dùng **grid card trên backdrop karst**, 4 cột ở điện thoại; không dùng đường mòn uốn lượn của `ban_bua` | Cập nhật theo art direction được duyệt 2026-08-11 |
 | A-open | **Tên nhân vật và nội dung từng câu thoại chưa được viết.** Đây là open decision cố ý, không phải sót. Phase 4 SHALL không tự đặt tên rồi coi là đã chốt — xem US-4 AC-1.3 | Mở — cần nội dung trước khi cài US-4 |
 
 ---
@@ -172,9 +178,9 @@ trong **một** vùng cuộn, và SHALL không lồng vùng cuộn trong vùng c
 `unlocked`, `current`, `completed` và `skipped` bằng nhiều hơn một kênh:
 outline/glow/icon/chữ/sao, không chỉ bằng hue.
 
-3.7 WHEN màn hình chọn màn được dựng THEN system SHALL dùng nền `nightIndigo`,
-panel/header `panelNavy`, current outline `primaryGold` và chữ tương phản theo
-`uiux-guideline.md`; SHALL không dùng nền sky/cream của thiết kế cũ.
+3.7 WHEN màn hình chọn màn được dựng THEN system SHALL dùng `BbCanyonBackdrop`,
+panel jade/teal, khung bronze/gold, current outline `primaryGold` và chữ tương
+phản theo `uiux-guideline.md`; SHALL không dùng shell galaxy/indigo/navy.
 
 3.8 WHEN một chapter có 5 màn THEN system SHALL giữ node thứ 5 canh theo lưới của
 chapter, không kéo giãn để lấp đủ 4 cột và không trộn node của chapter kế tiếp vào

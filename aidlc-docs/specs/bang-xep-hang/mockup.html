@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bảng xếp hạng theo màn · Implementation Mockup</title>
+  <!--
+  AIDLC UI Handoff
+  workflow: aidlc-uiux-design
+  artifact_type: mockup
+  design_approval: approved:2026-08-11:karst-v2
+  figma_source: none
+  figma_file_key: none
+  figma_node_id: none
+  figma_extraction: unavailable:no-figma-source
+  figma_handoff: none
+  design_image_source: aidlc-docs/specs/bang-xep-hang/design-assets/leaderboard-reference-v2.png
+  visual_scope: single-screen
+  visual_qa: skipped:no-browser-tool
+  visual_qa_reason: in-app Browser URL policy blocked localhost revalidation after the handoff audit
+  attempted_browser_tool: built-in browser
+  primary_design_viewport: 853px wide
+  prior_visual_qa_evidence: captured-and-compared 8 state tabs against karst reference v2 before this handoff audit
+  -->
+  <style>
+    :root {
+      --karst-mist: #063e46;
+      --karst-deep: #042d31;
+      --karst-panel: #073736;
+      --karst-teal: #07504a;
+      --primary-gold: #ffc21c;
+      --secondary-blue: #087064;
+      --danger-red: #f04444;
+      --trajectory-cyan: #4eadc0;
+      --success-green: #7ed321;
+      --cream: #fff3d7;
+      --text-primary: #ffffff;
+      --text-muted: #d8e4cf;
+      --outline-dark: #3d210e;
+      --focus: #fff3d7;
+      --radius-panel: 22px;
+      --radius-control: 16px;
+      --shadow-hard: 0 5px 0 #3d210e;
+      color-scheme: dark;
+      font-family: Nunito, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 20% 5%, rgba(78, 173, 192, 0.18), transparent 28rem),
+        linear-gradient(180deg, #063e46, #041f23);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, a:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 50;
+      top: 8px;
+      left: 8px;
+      transform: translateY(-150%);
+      border-radius: 10px;
+      background: var(--cream);
+      color: var(--outline-dark);
+      padding: 10px 14px;
+      font-weight: 900;
+    }
+    .skip-link:focus { transform: translateY(0); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 3px; font-size: clamp(1.35rem, 3vw, 1.8rem); line-height: 1.1; }
+    h2 { margin-bottom: 8px; font-size: 1.15rem; }
+    h3 { margin-bottom: 6px; font-size: 1rem; }
+    p { margin-bottom: 8px; }
+    p:last-child { margin-bottom: 0; }
+    code { border-radius: 5px; background: var(--karst-deep); padding: 1px 4px; color: var(--cream); }
+    .shell { width: min(1180px, 100%); margin: 0 auto; padding: 12px; }
+    .stack { display: grid; gap: 12px; }
+    .handoff-card {
+      border: 2px solid #0b675b;
+      border-radius: 14px;
+      background: rgba(7, 55, 54, 0.96);
+      box-shadow: 0 5px 0 #3d210e;
+    }
+    .hero { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 10px 14px; }
+    .hero p { color: var(--text-muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      display: inline-flex;
+      min-height: 24px;
+      align-items: center;
+      border: 1px solid #d99a38;
+      border-radius: 999px;
+      background: #07504a;
+      padding: 2px 9px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .tab-shell { padding: 12px; }
+    .shell, .handoff-card, .tab-shell, [data-tabs], .tab-list { min-width: 0; max-width: 100%; }
+    .tab-list {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 2px 2px 9px;
+      scrollbar-color: var(--secondary-blue) transparent;
+    }
+    .tab {
+      min-height: 44px;
+      flex: 0 0 auto;
+      border: 2px solid #9b7437;
+      border-radius: 999px;
+      background: #07504a;
+      padding: 0 14px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 900;
+    }
+    .tab[aria-selected="true"] {
+      border-color: var(--primary-gold);
+      background: #15947f;
+      color: var(--text-primary);
+      box-shadow: 0 3px 0 #3d210e;
+    }
+    .state-panel[hidden] { display: none; }
+    .stage { min-height: 760px; display: grid; place-items: start center; padding: 12px 6px 18px; }
+    .phone {
+      position: relative;
+      width: min(414px, 100%);
+      overflow: hidden;
+      border: 4px solid #d99a38;
+      border-radius: 32px;
+      background:
+        linear-gradient(180deg, rgba(255, 246, 220, 0.10), rgba(4, 45, 49, 0.74)),
+        url("../../../assets/images/backgrounds/vietnam_karst_canyon_v2.png") center / cover no-repeat;
+      box-shadow: 0 8px 0 #3d210e, 0 22px 50px rgba(0, 0, 0, 0.35);
+    }
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.23;
+      background-image: radial-gradient(circle, #ffe6a8 0 1px, transparent 1.5px);
+      background-size: 18px 18px;
+      mask-image: linear-gradient(to bottom, black, transparent 58%);
+    }
+    .phone-inner { position: relative; z-index: 1; padding: 16px 14px 20px; }
+    .screen-header { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .icon-button {
+      width: 48px;
+      min-height: 48px;
+      border: 3px solid #d99a38;
+      border-radius: 15px;
+      background: linear-gradient(#15947f, #07504a);
+      box-shadow: inset 0 0 0 2px #ffd36a, var(--shadow-hard);
+      cursor: pointer;
+      font-size: 1.55rem;
+      font-weight: 1000;
+    }
+    .screen-title { border: 3px solid #d99a38; border-radius: 16px; background: linear-gradient(#15947f, #07504a); padding: 6px 8px 4px; text-align: center; box-shadow: 0 4px 0 #3d210e; }
+    .screen-title strong {
+      display: block;
+      color: var(--cream);
+      font-size: clamp(1.45rem, 7vw, 2rem);
+      font-weight: 1000;
+      letter-spacing: -0.04em;
+      text-shadow: 0 3px 0 #3d210e;
+    }
+    .screen-title span { color: #ffe2a0; font-weight: 900; }
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 10px;
+      border: 3px solid #d99a38;
+      border-radius: 19px;
+      background: #043032;
+      padding: 4px;
+      box-shadow: var(--shadow-hard);
+    }
+    .segment {
+      min-height: 48px;
+      border: 0;
+      border-radius: 13px;
+      background: transparent;
+      cursor: pointer;
+      color: #fff3d7;
+      font-weight: 1000;
+    }
+    .segment[aria-pressed="true"] {
+      background: linear-gradient(180deg, #2fc0a2, #087064);
+      color: #fff;
+      box-shadow: inset 0 0 0 2px #ffd36a, 0 3px 0 #3d210e;
+    }
+    .period { display: flex; justify-content: center; gap: 8px; align-items: center; margin: 10px 0; color: #07504a; font-weight: 1000; text-transform: uppercase; text-shadow: 0 1px #fff3d7; }
+    .period::before, .period::after { content: ""; width: 42px; height: 1px; background: linear-gradient(90deg, transparent, #d99a38); }
+    .period::after { transform: scaleX(-1); }
+    .podium { display: grid; grid-template-columns: 1fr 1.12fr 1fr; align-items: end; gap: 7px; margin: 8px 0 12px; }
+    .podium-card { min-width: 0; text-align: center; }
+    .podium-card.first { transform: translateY(-6px); }
+    .medal { display: grid; place-items: center; width: 54px; height: 43px; margin: 0 auto -2px; clip-path: polygon(50% 0, 100% 30%, 86% 100%, 14% 100%, 0 30%); background: #8495c8; color: #fff; font-size: 1.25rem; font-weight: 1000; text-shadow: 0 2px #3d210e; }
+    .first .medal { width: 66px; height: 54px; background: linear-gradient(#ffe360, #d99000); color: #382000; font-size: 1.7rem; }
+    .third .medal { background: linear-gradient(#ffaf45, #ad5400); color: #321600; }
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto;
+      border: 3px solid #d9e6ff;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d4c3a8, #806b57);
+      color: #3d210e;
+      font-size: 1.65rem;
+      box-shadow: 0 3px 0 #3d210e;
+    }
+    .first .avatar { width: 72px; height: 72px; border-color: var(--primary-gold); box-shadow: 0 4px 0 #3d210e; }
+    .third .avatar { border-color: #f49b32; }
+    .podium-base { margin-top: -3px; border: 2px solid #d99a38; border-radius: 11px; background: linear-gradient(180deg, #0a5b50, #043032); padding: 8px 3px 7px; box-shadow: var(--shadow-hard); }
+    .first .podium-base { border-color: #ffc21c; background: linear-gradient(180deg, #15947f, #07504a); }
+    .third .podium-base { border-color: #a96525; }
+    .player-name { overflow-wrap: anywhere; color: #fff; font-weight: 1000; }
+    .score { color: #fff3d7; font-weight: 1000; font-variant-numeric: tabular-nums; }
+    .first .score { color: var(--primary-gold); }
+    .third .score { color: #f5a348; }
+    .rank-list { overflow: hidden; border: 3px solid #d99a38; border-radius: 17px; background: rgba(7, 80, 74, 0.96); box-shadow: var(--shadow-hard); }
+    .rank-row { display: grid; grid-template-columns: 40px 45px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 64px; padding: 7px 10px; border-bottom: 1px solid #9b7437; }
+    .rank-row:last-child { border-bottom: 0; }
+    .rank { color: #fff3d7; text-align: center; font-size: 1.25rem; font-weight: 1000; font-variant-numeric: tabular-nums; }
+    .rank-row .avatar, .my-row .avatar { width: 42px; height: 42px; border-width: 2px; font-size: 1.05rem; margin: 0; }
+    .rank-row .score { color: #fff3d7; }
+    .my-row {
+      display: grid;
+      grid-template-columns: 45px 45px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      border: 3px solid #ffc21c;
+      border-radius: 17px;
+      background: linear-gradient(90deg, rgba(21, 148, 127, 0.96), rgba(7, 80, 74, 0.98));
+      padding: 9px 10px;
+      box-shadow: var(--shadow-hard);
+    }
+    .my-row .rank { color: #fff3d7; }
+    .you-badge { display: inline-flex; margin-right: 5px; border: 2px solid #ffc21c; border-radius: 7px; padding: 1px 5px; color: #fff3d7; font-size: 0.72rem; font-weight: 1000; text-transform: uppercase; }
+    .stale-banner, .status-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      border: 2px dashed #d99a38;
+      border-radius: 17px;
+      background: rgba(4, 48, 50, 0.92);
+      padding: 12px;
+      color: var(--primary-gold);
+      font-weight: 900;
+    }
+    .delta-wrap { width: min(620px, 100%); display: grid; gap: 12px; }
+    .delta-intro { color: var(--text-muted); text-align: center; }
+    .fragment {
+      overflow: hidden;
+      border: 3px solid #d99a38;
+      border-radius: var(--radius-panel);
+      background: linear-gradient(180deg, #0a5b50, #043032);
+      box-shadow: var(--shadow-hard);
+      padding: 18px;
+    }
+    .fragment-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .fragment-header p { color: var(--text-muted); }
+    .skeleton { display: grid; grid-template-columns: 48px 48px 1fr 80px; align-items: center; gap: 10px; min-height: 66px; border-bottom: 1px solid #9b7437; }
+    .skeleton span { display: block; height: 14px; border-radius: 8px; background: linear-gradient(90deg, #07504a, #15947f, #07504a); background-size: 200% 100%; animation: shimmer 1.5s linear infinite; }
+    .skeleton span:nth-child(2) { width: 42px; height: 42px; border-radius: 50%; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+    .empty-state { display: grid; place-items: center; min-height: 260px; text-align: center; }
+    .state-icon { font-size: 3rem; }
+    .action {
+      min-height: 48px;
+      border: 3px solid var(--outline-dark);
+      border-radius: var(--radius-control);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 1000;
+      box-shadow: var(--shadow-hard), inset 0 1px rgba(255, 255, 255, 0.28);
+    }
+    .action-primary { background: linear-gradient(#ffd84c, #e99a00); color: #2a1900; }
+    .action-secondary { background: linear-gradient(#2fc0a2, #087064); color: #fff; }
+    .action-ghost { border-color: #d99a38; background: #07504a; color: #fff3d7; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .error-box { border-left: 5px solid var(--danger-red); }
+    .offline-box { border-left: 5px solid var(--primary-gold); }
+    .friend-box { border-left: 5px solid #d99a38; }
+    .modal-scrim { display: grid; place-items: center; min-height: 430px; border-radius: 18px; background: rgba(0, 0, 0, 0.76); padding: 16px; }
+    .modal { width: min(380px, 100%); border: 3px solid #d99a38; border-radius: 22px; background: var(--karst-panel); padding: 18px; text-align: center; box-shadow: 0 8px 0 #3d210e; }
+    .modal .actions { display: grid; margin-top: 14px; }
+    .entry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .entry-card { display: grid; gap: 10px; border: 2px solid #d99a38; border-radius: 17px; background: #07504a; padding: 14px; }
+    .status-matrix { width: 100%; margin-top: 12px; border-collapse: collapse; }
+    .status-matrix th, .status-matrix td { border-bottom: 1px solid #9b7437; padding: 10px 8px; text-align: left; vertical-align: top; }
+    .status-matrix th { color: var(--text-muted); font-size: 0.78rem; }
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #d99a38; border-radius: 999px; padding: 3px 8px; font-weight: 900; white-space: nowrap; }
+    .status-pill.sent { color: var(--success-green); }
+    .status-pill.pending { color: var(--primary-gold); }
+    .status-pill.failed { color: #ff8d8d; }
+    details { overflow: hidden; }
+    details > summary { display: flex; min-height: 48px; align-items: center; gap: 7px; cursor: pointer; padding: 10px 14px; font-weight: 900; list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::before { content: "›"; color: var(--trajectory-cyan); font-size: 1.35rem; transform: rotate(0); transition: transform 0.15s ease; }
+    details[open] > summary::before { transform: rotate(90deg); }
+    .details-body { border-top: 1px solid #9b7437; padding: 10px 14px 14px; }
+    .meta { margin: 0; padding: 0; list-style: none; }
+    .meta li { display: grid; grid-template-columns: 180px 1fr; gap: 12px; border-top: 1px solid #9b7437; padding: 8px 0; }
+    .meta li:first-child { border-top: 0; }
+    .meta span { color: var(--text-muted); overflow-wrap: anywhere; }
+    .mapping { width: 100%; border-collapse: collapse; }
+    .mapping th, .mapping td { border-bottom: 1px solid #9b7437; padding: 8px; text-align: left; vertical-align: top; }
+    .mapping th { color: var(--text-muted); }
+    .source { padding: 12px 14px; }
+    .source h2 { margin-bottom: 5px; }
+    .note { color: var(--text-muted); font-size: 0.83rem; }
+
+    @media (max-width: 700px) {
+      .shell { padding: 8px; }
+      .hero { align-items: flex-start; }
+      .stage { min-height: 0; padding-inline: 0; }
+      .phone { border-radius: 22px; }
+      .phone-inner { padding-inline: 10px; }
+      .rank-row { grid-template-columns: 34px 42px minmax(0, 1fr) auto; gap: 6px; padding-inline: 7px; }
+      .my-row { grid-template-columns: 40px 42px minmax(0, 1fr) auto; gap: 6px; padding-inline: 7px; }
+      .entry-grid { grid-template-columns: 1fr; }
+      .meta li { grid-template-columns: 1fr; gap: 2px; }
+      .status-matrix { display: block; overflow-x: auto; }
+    }
+    @media (min-width: 760px) {
+      .phone { width: 440px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#states">Bỏ qua đến mockup</a>
+  <div class="shell stack">
+    <header class="handoff-card hero">
+      <div>
+        <h1>Bảng xếp hạng theo màn</h1>
+        <p>Implementation mockup · Game Center (iOS) / Google Play Games (Android)</p>
+      </div>
+      <div class="chips" aria-label="Phạm vi handoff">
+        <span class="chip">Mobile portrait 390 × 844</span>
+        <span class="chip">Top 100 + vị trí của tôi</span>
+        <span class="chip">VI / EN</span>
+      </div>
+    </header>
+
+    <main class="stack" id="states">
+      <section class="handoff-card tab-shell" aria-labelledby="states-title">
+        <h2 id="states-title">Màn chính và state deltas</h2>
+        <div data-tabs>
+          <div class="tab-list" role="tablist" aria-label="Các trạng thái bảng xếp hạng">
+            <button class="tab" id="tab-base" role="tab" type="button" tabindex="0" aria-selected="true" aria-controls="panel-base">Có dữ liệu</button>
+            <button class="tab" id="tab-loading" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-loading">Đang tải</button>
+            <button class="tab" id="tab-empty" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-empty">Trống</button>
+            <button class="tab" id="tab-error" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-error">Lỗi dịch vụ</button>
+            <button class="tab" id="tab-offline" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-offline">Cache offline</button>
+            <button class="tab" id="tab-friends" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-friends">Bạn bè không khả dụng</button>
+            <button class="tab" id="tab-auth" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-auth">Xác thực</button>
+            <button class="tab" id="tab-submit" role="tab" type="button" tabindex="-1" aria-selected="false" aria-controls="panel-submit">Điểm vào & gửi điểm</button>
+          </div>
+
+          <section class="state-panel" id="panel-base" role="tabpanel" aria-labelledby="tab-base">
+            <div class="stage">
+              <article class="phone" aria-label="Bảng xếp hạng Màn 12, bộ lọc Toàn cầu">
+                <div class="phone-inner">
+                  <header class="screen-header">
+                    <button class="icon-button" type="button" aria-label="Quay lại màn Chọn màn, giữ nguyên màn 12 và vị trí cuộn">←</button>
+                    <div class="screen-title">
+                      <strong>BẢNG XẾP HẠNG</strong>
+                      <span>Màn 12 · Mọi thời đại</span>
+                    </div>
+                    <span aria-hidden="true"></span>
+                  </header>
+
+                  <div class="segmented" role="group" aria-label="Phạm vi bảng xếp hạng">
+                    <button class="segment" type="button" aria-pressed="true">◎ TOÀN CẦU</button>
+                    <button class="segment" type="button" aria-pressed="false">♟ BẠN BÈ</button>
+                  </div>
+                  <div class="period" aria-label="Kỳ xếp hạng: Mọi thời đại">◷ Mọi thời đại</div>
+
+                  <section class="podium" aria-label="Ba người dẫn đầu">
+                    <article class="podium-card second" aria-label="Hạng 2, LinhNhi, 98.750 điểm">
+                      <div class="medal">2</div><div class="avatar" aria-hidden="true">👤</div>
+                      <div class="podium-base"><div class="player-name">LinhNhi</div><div class="score">98.750</div></div>
+                    </article>
+                    <article class="podium-card first" aria-label="Hạng 1, RồngThép, 125.600 điểm">
+                      <div class="medal">1</div><div class="avatar" aria-hidden="true">👤</div>
+                      <div class="podium-base"><div class="player-name">RồngThép</div><div class="score">125.600</div></div>
+                    </article>
+                    <article class="podium-card third" aria-label="Hạng 3, ChơiCúDội, 76.300 điểm">
+                      <div class="medal">3</div><div class="avatar" aria-hidden="true">👤</div>
+                      <div class="podium-base"><div class="player-name">ChơiCúDội</div><div class="score">76.300</div></div>
+                    </article>
+                  </section>
+
+                  <ol class="rank-list" start="4" aria-label="Danh sách xếp hạng từ hạng 4">
+                    <li class="rank-row" aria-label="Hạng 4, ThangLaoCao, 62.400 điểm"><span class="rank">4</span><span class="avatar" aria-hidden="true">👤</span><span class="player-name">ThangLaoCao</span><span class="score">62.400</span></li>
+                    <li class="rank-row" aria-label="Hạng 5, AnhBaPhải, 54.210 điểm"><span class="rank">5</span><span class="avatar" aria-hidden="true">👤</span><span class="player-name">AnhBaPhải</span><span class="score">54.210</span></li>
+                    <li class="rank-row" aria-label="Hạng 6, Mạnh Mẽ Lên, 47.890 điểm"><span class="rank">6</span><span class="avatar" aria-hidden="true">👤</span><span class="player-name">Mạnh Mẽ Lên</span><span class="score">47.890</span></li>
+                    <li class="rank-row" aria-label="Hạng 7, CúDộiMaster, 42.150 điểm"><span class="rank">7</span><span class="avatar" aria-hidden="true">👤</span><span class="player-name">CúDộiMaster</span><span class="score">42.150</span></li>
+                    <li class="rank-row" aria-label="Hạng 8, Người Chơi Ẩn Danh, 36.820 điểm"><span class="rank">8</span><span class="avatar" aria-hidden="true">👤</span><span class="player-name">Người Chơi Ẩn Danh</span><span class="score">36.820</span></li>
+                  </ol>
+
+                  <section class="my-row" aria-label="Hạng của bạn: 127, 8.400 điểm, ngoài top 100">
+                    <span class="rank">127</span><span class="avatar" aria-hidden="true">👤</span>
+                    <span class="player-name"><span class="you-badge">Bạn</span>Người chơi</span><span class="score">8.400</span>
+                  </section>
+                  <p class="note" style="text-align:center;margin-top:6px">Bạn đang ngoài top 100</p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="state-panel" id="panel-loading" role="tabpanel" aria-labelledby="tab-loading" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Giữ nguyên header, nút quay lại và bộ lọc; chỉ thay vùng dữ liệu. Screen reader công bố “Đang tải bảng xếp hạng Màn 12”.</p>
+              <section class="fragment" aria-busy="true" aria-live="polite" aria-label="Đang tải bảng xếp hạng">
+                <div class="fragment-header"><div><h3>Đang tải bảng xếp hạng…</h3><p>Toàn cầu · Màn 12 · Mọi thời đại</p></div><span class="status-pill pending">◌ Đang tải</span></div>
+                <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              </section>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-empty" role="tabpanel" aria-labelledby="tab-empty" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Không tạo hàng điểm 0. Bộ lọc và ngữ cảnh màn vẫn tương tác được.</p>
+              <section class="fragment empty-state" aria-live="polite">
+                <div><div class="state-icon" aria-hidden="true">🏆</div><h3>Chưa có điểm cho Màn 12</h3><p class="note">Hãy là người đầu tiên ghi tên vào bảng Toàn cầu.</p></div>
+              </section>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-error" role="tabpanel" aria-labelledby="tab-error" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Lỗi dịch vụ không xác thực giữ người chơi trong màn bảng và không chạm vào tiến trình hay hàng đợi gửi điểm.</p>
+              <section class="fragment error-box" role="alert">
+                <div class="fragment-header"><div><h3>Không tải được bảng xếp hạng</h3><p>Game Center/Google Play Games tạm thời không phản hồi.</p></div><span class="status-pill failed">! Lỗi dịch vụ</span></div>
+                <div class="actions"><button class="action action-primary" type="button">Thử lại</button><button class="action action-ghost" type="button">Quay lại</button></div>
+              </section>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-offline" role="tabpanel" aria-labelledby="tab-offline" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Khi cache khớp nền tảng, màn và bộ lọc, giữ danh sách đã lưu nhưng gắn trạng thái cũ rõ ràng; không gửi điểm tới khi xác thực lại.</p>
+              <section class="fragment offline-box" aria-live="polite">
+                <div class="fragment-header"><div><h3>Dữ liệu có thể đã cũ</h3><p>Đang hiển thị bản Toàn cầu của Màn 12 được lưu gần nhất.</p></div><span class="status-pill pending">⚠ Offline</span></div>
+                <div class="status-card"><span aria-hidden="true">⚠</span><span>Không có kết nối · Điểm đang chờ sẽ được giữ trên thiết bị</span></div>
+                <div class="actions" style="margin-top:12px"><button class="action action-secondary" type="button">Thử tải lại</button></div>
+              </section>
+              <section class="fragment empty-state" aria-label="Biến thể không có cache">
+                <div><div class="state-icon" aria-hidden="true">☁</div><h3>Không có dữ liệu offline</h3><p class="note">Chưa có bản lưu phù hợp cho Màn 12 · Bạn bè.</p></div>
+              </section>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-friends" role="tabpanel" aria-labelledby="tab-friends" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Áp dụng khi quyền riêng tư, hạn chế tài khoản hoặc nền tảng không trả danh sách bạn bè.</p>
+              <section class="fragment friend-box" role="status">
+                <div class="fragment-header"><div><h3>Không thể hiển thị bảng Bạn bè</h3><p>Danh sách bạn bè hiện không khả dụng với tài khoản nền tảng này.</p></div><span class="status-pill">♟ Bạn bè</span></div>
+                <div class="actions"><button class="action action-secondary" type="button">Xem Toàn cầu</button><button class="action action-ghost" type="button">Quay lại</button></div>
+              </section>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-auth" role="tabpanel" aria-labelledby="tab-auth" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Chỉ xuất hiện sau hành động rõ ràng “Xem bảng xếp hạng” hoặc “Gửi điểm”; không bật khi khởi động hay đang chơi.</p>
+              <section class="fragment modal-scrim" aria-label="Xem trước hộp thoại xác thực">
+                <div class="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" aria-describedby="auth-description">
+                  <div class="state-icon" aria-hidden="true">🏆</div>
+                  <h3 id="auth-title">Kết nối bảng xếp hạng?</h3>
+                  <p id="auth-description">Kết nối Game Center hoặc Google Play Games để xem bảng và gửi kỷ lục. Bạn vẫn có thể chơi hoàn toàn offline.</p>
+                  <div class="actions"><button class="action action-primary" type="button">Kết nối</button><button class="action action-ghost" type="button">Để sau</button></div>
+                </div>
+              </section>
+              <p class="note">Nếu hủy/thất bại: giữ nguyên điểm, sao, xu và tiến trình; không tự bật lại xác thực trước hành động rõ ràng tiếp theo.</p>
+            </div></div>
+          </section>
+
+          <section class="state-panel" id="panel-submit" role="tabpanel" aria-labelledby="tab-submit" hidden>
+            <div class="stage"><div class="delta-wrap">
+              <p class="delta-intro">Hai điểm vào giữ nguyên ngữ cảnh; trạng thái gửi là phản hồi bổ sung, không thay thế CTA gameplay.</p>
+              <div class="entry-grid">
+                <article class="entry-card">
+                  <div><span class="chip">Màn Chọn màn</span><h3>Màn 12 · 3 sao</h3><p class="note">Chỉ hiện cho màn đã mở khóa. Quay lại giữ chương, selection và vị trí cuộn.</p></div>
+                  <button class="action action-secondary" type="button" aria-label="Xem bảng xếp hạng Màn 12">Xem bảng xếp hạng</button>
+                </article>
+                <article class="entry-card">
+                  <div><span class="chip">Màn Thắng</span><h3>Kỷ lục mới · 42.150</h3><p class="note">Giữ “Tiếp theo” và “Chọn màn”; không ghi phần thưởng lần hai khi quay lại.</p></div>
+                  <button class="action action-secondary" type="button" aria-label="Xem bảng xếp hạng của Màn 12 vừa hoàn thành">Xem bảng xếp hạng</button>
+                </article>
+              </div>
+              <section class="fragment">
+                <h3>Trạng thái gửi điểm</h3>
+                <table class="status-matrix">
+                  <thead><tr><th>Trạng thái</th><th>Hiển thị / hành động</th><th>Hành vi</th></tr></thead>
+                  <tbody>
+                    <tr><td><span class="status-pill sent">✓ Đã gửi</span></td><td>Không cần CTA gửi lại</td><td>Giữ nguyên điểm, sao và xu cục bộ.</td></tr>
+                    <tr><td><span class="status-pill pending">◷ Đang chờ</span></td><td>“Sẽ tự gửi khi có mạng”</td><td>Lưu bền vững, tối đa một điểm cao nhất cho mỗi màn.</td></tr>
+                    <tr><td><span class="status-pill failed">! Không gửi được</span></td><td><button class="action action-ghost" type="button">Gửi lại</button></td><td>Hiển thị lý do dễ hiểu; chỉ retry thủ công với lỗi không thể tự retry.</td></tr>
+                    <tr><td><span class="status-pill">Chưa kết nối</span></td><td><button class="action action-secondary" type="button">Gửi điểm</button></td><td>Hành động này mới bắt đầu xác thực theo nhu cầu.</td></tr>
+                  </tbody>
+                </table>
+              </section>
+            </div></div>
+          </section>
+        </div>
+      </section>
+
+      <details class="handoff-card" id="notes">
+        <summary>Implementation Notes</summary>
+        <div class="details-body">
+          <ul class="meta">
+            <li><strong>Entry paths</strong><span>Màn Chọn màn ↔ Bảng xếp hạng; Màn Thắng ↔ Bảng xếp hạng. Bảng không mở khi đang ngắm hoặc bi đang bay.</span></li>
+            <li><strong>Identity boundary</strong><span>Tên/avatar đến từ Game Center hoặc Google Play Games. Cache, hàng “của tôi” và hàng đợi tách theo nền tảng + danh tính; không dùng hồ sơ Firebase.</span></li>
+            <li><strong>Top 100 rule</strong><span>Nếu người chơi trong top 100, đánh dấu đúng hàng bằng outline + badge “Bạn” và không render hàng riêng. Nếu ngoài top 100, render hàng riêng như base state.</span></li>
+            <li><strong>Responsive</strong><span>Phone portrait là chính; nội dung trong safe area, panel tối đa khoảng 440dp. Tablet giữ panel tập trung thay vì kéo giãn. Tên dài wrap tối đa hai dòng; điểm dùng số tabular. Ở text scale lớn, hàng tăng chiều cao và CTA vẫn ≥48dp.</span></li>
+            <li><strong>Accessibility</strong><span>Thứ tự đọc mỗi hàng: hạng → tên → điểm. Filter dùng nhãn + trạng thái pressed, hàng của tôi có badge chữ, lỗi/offline có icon + text. Loading, lỗi, offline và đổi filter phải công bố qua live region trong implementation.</span></li>
+            <li><strong>Localization</strong><span>Copy trong mockup là VI. EN dùng cùng component tree; không hard-code độ rộng theo chuỗi VI. Không hiển thị bộ lọc Ngày/Tuần hoặc bảng tổng chiến dịch.</span></li>
+            <li><strong>ImageGen correction</strong><span>Ảnh tham chiếu hiển thị một hàng top 100 có badge “Bạn” đồng thời thêm hàng “Bạn” ngoài top 100. Mockup sửa theo requirements: base state chỉ dùng hàng ngoài top 100; hai biến thể loại trừ nhau.</span></li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="handoff-card" id="component-map">
+        <summary>Project Component / Token Map</summary>
+        <div class="details-body">
+          <table class="mapping">
+            <thead><tr><th>Vùng</th><th>Composition</th><th>Token / variant</th><th>Ghi chú</th></tr></thead>
+            <tbody>
+              <tr><td>Screen surface</td><td>SafeArea + centered panel</td><td><code>karstDeep</code>, <code>karstTeal</code>, <code>karstBronze</code></td><td>Backdrop karst; không dùng shell galaxy/navy hoặc card trắng.</td></tr>
+              <tr><td>Primary / secondary action</td><td>Project button hierarchy</td><td><code>primaryGold</code> / <code>secondaryBlue</code></td><td>Height ≥48dp, outer dark stroke, hard shadow.</td></tr>
+              <tr><td>Active filter</td><td>Segmented control</td><td><code>karstTeal</code> + <code>primaryGold</code> outline + pressed state</td><td>Nhãn, icon và trạng thái pressed bảo đảm không dựa riêng vào màu.</td></tr>
+              <tr><td>Leaderboard row</td><td>Avatar + rank + name + score</td><td><code>karstTeal</code>, <code>karstBronze</code>, <code>cream</code></td><td>Neutral avatar fallback on missing/error.</td></tr>
+              <tr><td>Current player</td><td>Leaderboard row + “Bạn” badge</td><td><code>primaryGold</code> outline</td><td>Badge và semantics là tín hiệu ngoài màu.</td></tr>
+              <tr><td>Offline / error</td><td>Inline status panel</td><td><code>primaryGold</code> / <code>dangerRed</code></td><td>Icon + text + action; không che back/filter.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <section class="handoff-card source" id="metadata" aria-labelledby="metadata-title">
+        <h2 id="metadata-title">Source Metadata</h2>
+        <ul class="meta">
+          <li><strong>Requirements</strong><span>aidlc-docs/specs/bang-xep-hang/requirements.md</span></li>
+          <li><strong>Design guideline</strong><span>aidlc-docs/foundation/uiux-guideline.md</span></li>
+          <li><strong>Design image</strong><span>aidlc-docs/specs/bang-xep-hang/design-assets/leaderboard-reference-v2.png</span></li>
+          <li><strong>Visual scope</strong><span>Single-screen mobile portrait reference; observed state count: 1. Child images skipped because the reference is not a multi-screen/component board.</span></li>
+          <li><strong>State consolidation</strong><span>One full base leaderboard; loading, empty, error, offline/cache, friends unavailable, auth, entry points and submission states shown as changed-region deltas.</span></li>
+          <li><strong>Visual QA</strong><span>Revalidation was attempted at the 853px-wide design viewport, but the in-app Browser URL policy blocked the local page. A prior pass captured and compared all 8 state tabs against leaderboard-reference-v2.png; the current audit therefore remains statically validated rather than newly browser-validated.</span></li>
+        </ul>
+      </section>
+
+      <details class="handoff-card" id="visual-extraction">
+        <summary>Visual Extraction Decision</summary>
+        <div class="details-body">
+          <ul class="meta">
+            <li><strong>Preview path</strong><span>aidlc-docs/specs/bang-xep-hang/design-assets/leaderboard-reference-v2.png</span></li>
+            <li><strong>Classification</strong><span>single-screen, mobile portrait, arcade leaderboard</span></li>
+            <li><strong>Observed states</strong><span>1 — loaded leaderboard with podium, list, outside-top-100 row and stale-data banner</span></li>
+            <li><strong>Decision</strong><span>skip child extraction</span></li>
+            <li><strong>Reason</strong><span>The supplied reference is one coherent screen. Additional states come from approved requirements and reuse the same screen/component families.</span></li>
+          </ul>
+        </div>
+      </details>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-tabs]').forEach((tabs) => {
+      const tabList = tabs.querySelector('[role="tablist"]');
+      const buttons = [...tabs.querySelectorAll('[role="tab"]')];
+      const panels = [...tabs.querySelectorAll('[role="tabpanel"]')];
+
+      function activate(button, moveFocus = false) {
+        buttons.forEach((item) => {
+          const isActive = item === button;
+          item.setAttribute('aria-selected', String(isActive));
+          item.tabIndex = isActive ? 0 : -1;
+        });
+        panels.forEach((panel) => { panel.hidden = panel.id !== button.getAttribute('aria-controls'); });
+        if (moveFocus) button.focus();
+      }
+
+      buttons.forEach((button) => button.addEventListener('click', () => activate(button)));
+      tabList.addEventListener('keydown', (event) => {
+        const current = buttons.indexOf(document.activeElement);
+        if (current < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        let next = current;
+        if (event.key === 'ArrowRight') next = (current + 1) % buttons.length;
+        if (event.key === 'ArrowLeft') next = (current - 1 + buttons.length) % buttons.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = buttons.length - 1;
+        activate(buttons[next], true);
+      });
+    });
+  </script>
+</body>
+</html>

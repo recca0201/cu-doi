@@ -104,7 +104,10 @@ nhập vẫn chơi được khi mất mạng và dữ liệu chờ tự đồng 
 
 **3. Trình bày và khả năng tiếp cận**
 
-3.1 WHEN màn Hồ sơ được hiển thị THEN system SHALL tuân theo hệ arcade đêm của `uiux-guideline.md`: nền indigo/navy, panel tối, CTA chính vàng, CTA phụ xanh và viền comic rõ.
+3.1 WHEN màn Hồ sơ được hiển thị THEN system SHALL tuân theo hệ karst adventure
+arcade của `uiux-guideline.md`: backdrop karst, panel jade/teal, khung
+bronze/gold, CTA chính vàng và bóng sticker cứng; SHALL không dùng shell
+galaxy/indigo/navy.
 
 3.2 WHEN nội dung vượt quá chiều cao khả dụng THEN system SHALL cho phép cuộn dọc, giữ nút quay lại trong safe area và không cắt nội dung ở phone nhỏ hoặc tablet.
 

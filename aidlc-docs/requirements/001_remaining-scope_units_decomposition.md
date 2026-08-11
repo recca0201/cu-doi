@@ -18,6 +18,10 @@ source_artifacts:
 
 # Units Definition & Prioritization — Phạm vi còn lại
 
+> **Visual note — 2026-08-11:** mọi mô tả “arcade đêm”, `nightIndigo` hoặc
+> `panelNavy` trong decomposition này chỉ còn mang nghĩa behavior/hierarchy.
+> Style mới phải theo karst foundation và golden đang pass.
+
 ## Cách đọc mã story
 
 Bốn story artifact được đánh số độc lập, nên cả bốn đều có `US-001..US-003`. Trong

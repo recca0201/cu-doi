@@ -13,6 +13,10 @@ source_artifacts:
 
 # Design: Giọng và cấu trúc ngoài sân đấu
 
+> **Visual authority override — 2026-08-11:** phần flow, component tree và state
+> trong design này còn hiệu lực; mọi mô tả shell galaxy/indigo/navy đã bị thay bởi
+> karst art direction trong `foundation/uiux-guideline.md` và golden hiện hành.
+
 ## Overview
 
 | Review item | Summary |
@@ -30,7 +34,7 @@ source_artifacts:
 | Q5 | Cổng "lần đầu" cho thoại giới thiệu là `showGuide`/`fresh` hay seen-set? | **Đã chốt** | **Seen-set.** `menu_screen.dart:34` hiện tính `fresh = progress.results.isEmpty` — nhưng sau Unit 1, **một lần thua** cũng sinh `LevelResult` (Unit 1 Q4), nên `fresh` thành `false` và `_guide()` **không bao giờ hiện lại**. Người chơi thua ngay lần đầu sẽ mất luôn phần hướng dẫn. `showGuide` phải đọc `!hasSeen(DialogueId.intro)`. **Trong lúc seen-set còn đang restore**, `showGuide` là `false` — hiện lại hướng dẫn cho người chơi cũ tệ hơn là hiện muộn một khung cho người mới. `markSeen(DialogueId.intro)` gọi từ handler `gotItCta` chỗ đang clear `_guideVisible` (`game_screen.dart:414`). Đây là **thêm một lần đụng call site của Unit 1**. |
 | Q3 | Trạng thái "đã xem thoại" lưu vào `progress_v1` hay khoá riêng? | **Đã chốt** | **Khoá riêng `dialogue_seen_v1`.** Unit 1 đã thêm hai field vào `LevelResult` trong `progress_v1`; nhồi thêm một `Set<String>` vào cùng khoá là lần đổi schema thứ ba trên cùng payload trong cùng release. Thoại cũng **không phải tiến trình chơi** — mất nó thì người chơi xem lại một đoạn thoại, không mất sao hay xu. |
 | Q4 | `scrollable_positioned_list` có cần thêm không? | **Đã chốt** | **Không.** Dùng layout metrics của section/grid + `initialScrollOffset`, áp trước khung đầu. Metrics được test ở phone/tablet/text scale lớn; không thêm package chỉ cho một lần định vị. |
-| Q6 | Level select dùng danh sách, đường mòn hay grid? | **Đã chốt** | **Grid 4 cột trên nền navy.** UI/UX Design Spec 1.0 thay thế composition đường mòn của `ban_bua`; chỉ tái sử dụng state/progress và component primitive, không port `ChapterTrail`/`TrailPainter`. |
+| Q6 | Level select dùng danh sách, đường mòn hay grid? | **Đã chốt** | **Grid 4 cột trên backdrop karst.** Golden hiện hành thay composition đường mòn của `ban_bua`; chỉ tái sử dụng state/progress và component primitive, không port `ChapterTrail`/`TrailPainter`. |
 
 ## Architecture
 
@@ -173,18 +177,18 @@ class ArenaMapScreen extends ConsumerStatefulWidget {
 
 **Luật suy ra khi không có `requestedArenaId`**: màn mở gần nhất **chưa hoàn thành**, tức `completedMax + 1` theo định nghĩa **sau Unit 1** (`stars >= 1 || skipped`). Nghĩa là một màn đã bỏ qua tính là đã xong, nên bản đồ mở ở màn **sau** nó — đúng ý AC US-3/1.1, và bản trước chỉ liệt kê ba ca trả `null` mà không viết ra nhánh này.
 
-## Thiết kế bản đồ đích — UI/UX Design Spec 1.0
+## Thiết kế bản đồ đích — karst art direction 2026-08-11
 
-Phần composition bản đồ được thay thế ngày 2026-08-09:
+Phần composition bản đồ được chốt theo golden hiện hành ngày 2026-08-11:
 
-- Shell dùng `nightIndigo` + texture sao/chấm nhẹ, header `panelNavy` với Back,
+- Shell dùng `BbCanyonBackdrop`, header jade/teal có khung bronze/gold với Back,
   “CHỌN MÀN” và tổng sao.
 - Mỗi chapter là một section có title + `earned/max`; phần level là
   `GridView`/`SliverGrid` **4 cột**, `NeverScrollableScrollPhysics` nếu nằm trong
   một `CustomScrollView` duy nhất.
 - Mỗi node có vùng chạm tối thiểu 48dp; số màn ở giữa; hàng 0–3 sao nằm dưới hoặc
   trong đáy node nhưng không làm thay đổi extent giữa các state.
-- `current`: gold outline + glow; `completed`: sao vàng; `locked`: navy/gray +
+- `current`: gold outline + surface sáng hơn; `completed`: sao vàng; `locked`: teal sâu/gray +
   lock; `skipped`: badge/icon chữ, không chỉ đổi màu.
 - Node thứ 5 của mỗi chapter giữ đúng lưới; ô trống không được lấp bằng màn của chapter sau.
 - Không port `ChapterTrail`, `TrailPainter`, đường cubic đứt nét, công thức sin
@@ -201,7 +205,7 @@ composition trình bày.
 
 Phương án đường mòn kế thừa `ban_bua` đã bị loại hoàn toàn. Không port
 `ChapterTrail`, `TrailPainter`, palette mùa/boss, số học slot zig-zag hoặc card
-cream/coral. Level select hiện hành là shell arcade đêm với section chapter và grid
+cream/coral. Level select hiện hành là shell karst với section chapter và grid
 4 cột mô tả ở trên. Mọi tính toán vị trí ban đầu dựa trên extent section/grid thật
 và được kiểm ở phone, tablet, text scale lớn.
 
@@ -342,11 +346,11 @@ final bool crowded = losses >= kSkipOfferAfterLosses;   // Unit 1, KHÔNG viết
 
 ## UI Design Specification
 
-Ràng buộc đi từ `uiux-guideline.md` và hình tổng hợp trong
-`Cu_Doi_UI_UX_Design_Spec.docx`:
+Ràng buộc đi từ `uiux-guideline.md` và golden
+`test/ui/goldens/arena_map_390x844.png`:
 
-- Shell: nền `nightIndigo`, panel/header `panelNavy`, tổng sao màu
-  `primaryGold`; không dùng sky/cream.
+- Shell: `BbCanyonBackdrop`, panel/header jade/teal, khung bronze/gold, tổng sao
+  màu `primaryGold`; không dùng galaxy/indigo/navy.
 - Level layout: grid 4 cột trong từng chapter, một vùng cuộn cấp màn hình; không
   có trail/zig-zag/cubic connector.
 - Header chapter: tên + tiến độ `n/15`, canh trái, khác node bằng typography và

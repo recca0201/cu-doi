@@ -305,8 +305,8 @@ phép quét gợi ý, rồi UI, cuối cùng nối dây. Mọi lệnh kiểm ch�
 - [x] 13.3 Write minimal implementation
   - Reference: US-1 AC-3.3, US-1 AC-3.4, US-1 AC-6.1, US-1 AC-6.2, US-1 AC-6.4
   - Implementation file: `lib/ui/screens/game_screen.dart`
-  - Dùng action gold hoặc icon button navy có gold accent ở footer, kèm badge
-    navy/gold cho giá và số xu còn thiếu. Không dùng variant `accent` nếu nó còn
+  - Dùng action gold hoặc icon button karst teal có gold accent ở footer, kèm badge
+    karst teal/gold cho giá và số xu còn thiếu. Không dùng variant `accent` nếu nó còn
     ánh xạ coral. Nối `hintPath` vào `ArenaPainter`; preview ngắm vẫn chỉ hai đoạn.
 - [x] 13.4 Run test to verify it passes
   - Reference: US-1 AC-3.3, US-1 AC-3.4, US-1 AC-6.1, US-1 AC-6.2, US-1 AC-6.4

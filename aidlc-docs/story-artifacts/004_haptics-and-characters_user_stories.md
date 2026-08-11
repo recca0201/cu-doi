@@ -171,9 +171,10 @@ mục tiêu và không che sân đấu trong lúc chơi.
 cả hai ngôn ngữ chứ không chỉ dịch nghĩa.
 
 3.6 WHEN thoại được trình bày trong hướng dẫn hoặc kết quả THEN system SHALL dùng
-panel `panelNavy`, chữ trắng/muted và scrim tối khi là modal. Hướng dẫn modal dùng
-CTA gold/blue; thoại nhúng trong kết quả SHALL không cạnh tranh với CTA chính
-Thử lại/Tiếp theo. Không dựng card trắng/coral hoặc một kiểu popup thứ tư.
+panel karst jade/teal có khung bronze/gold, chữ cream/muted và scrim tối khi là
+modal. Hướng dẫn modal dùng CTA gold + secondary hiện hành; thoại nhúng trong kết
+quả SHALL không cạnh tranh với CTA chính Thử lại/Tiếp theo. Không dựng card
+trắng/coral, panel galaxy/navy độc lập hoặc một kiểu popup thứ tư.
 
 ## Dependency Notes
 

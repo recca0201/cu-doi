@@ -13,6 +13,10 @@ source_artifacts:
 
 # User Stories: Nhóm màn theo chương trên bản đồ
 
+> **Visual note — 2026-08-11:** story/acceptance criteria về cấu trúc 4 chương
+> vẫn giữ nguyên. Cụm từ navy/arcade đêm cũ không còn quyết style; dùng golden
+> arena map và `foundation/uiux-guideline.md` cho karst art direction hiện hành.
+
 ## Overview
 
 `arena_map_screen.dart` hiện là một `ListView.separated` phẳng trải 20 màn

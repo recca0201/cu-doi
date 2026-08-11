@@ -337,21 +337,20 @@ reader nằm ngoài phạm vi unit.
 
 ## UI Design Specification
 
-Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
-`Cu_Doi_UI_UX_Design_Spec.docx`:
+Ràng buộc UI đi từ `uiux-guideline.md`, code đang render và golden hiện hành:
 
-- Nút gợi ý dùng action gold hoặc icon button navy có gold accent tuỳ mật độ footer,
+- Nút gợi ý dùng action gold hoặc icon button karst teal có gold accent tuỳ mật độ footer,
   đặt ở **footer màn chơi**, vùng chạm ≥48dp và không đè shooter/vùng bóng bay
   (AC US-1/6.1, 6.4). Không dùng coral/teal từ theme cũ.
 - Trạng thái vô hiệu phải theo §4.1: giảm saturation khoảng 70%, opacity 55%, bỏ
   glow nhưng vẫn giữ giá và lý do thiếu xu đọc được; không mặc định component cũ
   đã khớp target nếu chưa có golden.
 - Dấu "đã bỏ qua" trên node grid: badge/icon có chữ, không chỉ màu — AC US-2/5.2.
-- Xác nhận bỏ qua dùng dialog `panelNavy`, scrim 70–80%, CTA chính gold và CTA
+- Xác nhận bỏ qua dùng dialog karst jade/teal có khung bronze, scrim 70–80%, CTA chính gold và CTA
   phụ blue; không tạo style popup riêng.
 - Trên màn thua, **Thử lại** giữ `primaryGold`; gợi ý/bỏ qua dùng secondary/utility
   treatment nên không nổi bật hơn đường tiếp tục chơi (AC US-3/3.2).
-- Giá và số xu còn thiếu hiện ở badge navy/gold cạnh nút, không nhét vào nhãn CTA.
+- Giá và số xu còn thiếu hiện ở badge karst teal/gold cạnh nút, không nhét vào nhãn CTA.
   Nguồn số dư vẫn là `progressProvider`; `HintStatus.insufficientCoins` chỉ là
   trạng thái hiển thị dẫn xuất.
 

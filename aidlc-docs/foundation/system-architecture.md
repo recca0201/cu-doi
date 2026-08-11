@@ -644,12 +644,15 @@ main() → SharedPreferences.getInstance()
 - **`currentBanks` được truyền xuống painter** để mục tiêu phát sáng theo tầng khi
   số dội tăng. Đây là bất biến sản phẩm số 7, và nó là lý do painter cần biết
   trạng thái cú bắn đang bay thay vì chỉ biết trạng thái bàn.
-- **[Observed] Code hiện tại còn dùng hai hệ màu**: `BbTheme.light()` (cream/sky)
-  cho menu và `ArenaInk` (indigo đêm) cho sân đấu. **[Target 2026-08-09]** UI/UX
-  Design Spec 1.0 đã thay quyết định này bằng một hệ arcade đêm thống nhất. Đây là
-  migration ở tầng trình bày; nó không đổi ranh giới `lib/sim/`, hình học sân hay
-  pipeline solver. `ArenaInk` vẫn lưu `int` thay vì `Color` (ADR-7). Xem
-  `uiux-guideline.md` cho token và lộ trình migration.
+- **[Approved 2026-08-11]** Shell ngoài sân dùng hệ **Vietnamese karst adventure**:
+  `BbCanyonBackdrop`, panel jade/teal, khung bronze/gold và asset
+  `assets/images/ui/karst/`. Golden `test/ui/goldens/arena_map_390x844.png` là
+  nguồn trực quan chuẩn. `ArenaInk` vẫn tối để sân đấu, trail cyan và tín hiệu
+  `armed` có tương phản; điều này không biến toàn app thành galaxy/indigo/navy.
+  Quyết định cũ ngày 09/08 về một hệ arcade đêm navy thống nhất đã bị thay thế.
+  Đây vẫn chỉ là thay đổi tầng trình bày; không đổi `lib/sim/`, hình học sân hay
+  pipeline solver. `ArenaInk` tiếp tục lưu `int` thay vì `Color` (ADR-7). Xem
+  `uiux-guideline.md` cho thứ tự ưu tiên và token.
 
 ---
 

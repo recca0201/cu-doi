@@ -16,9 +16,12 @@ source_artifacts:
 Thứ tự: luật miền thuần Dart trước (test được không cần widget), rồi dựng component
 grid theo design mới, lắp bản đồ, rồi thoại, cuối cùng nối dây và kiểm.
 
-**Nguồn design hiện hành**: `Cu_Doi_UI_UX_Design_Spec.docx` và
-`aidlc-docs/foundation/uiux-guideline.md`. `C:\repos\ban_bua` chỉ còn là nguồn
-tham khảo primitive; **không port composition đường mòn**.
+**Visual authority override — 2026-08-11**: task list này là lịch sử triển khai.
+Nguồn design hiện hành là `aidlc-docs/foundation/uiux-guideline.md`, golden
+`test/ui/goldens/arena_map_390x844.png` và asset `assets/images/ui/karst/`.
+`Cu_Doi_UI_UX_Design_Spec.docx` cùng các task ghi `nightIndigo`/`panelNavy` không
+còn quyết art direction. `C:\repos\ban_bua` chỉ còn là nguồn tham khảo primitive;
+**không port composition đường mòn**.
 
 **Phụ thuộc Unit 1**: task 6 (dấu đã bỏ qua trên node), task 10 (`targetArenaId` +
 `pushReplacement`), task 11 (`showGuide` đọc seen-set), và ràng buộc badge của Unit 1. Nếu Unit 1 chưa làm, các task đó **chặn** — không tự viết lại phần của Unit 1.
@@ -117,11 +120,11 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Command: `flutter test test/domain/target_level_test.dart`
   - Expected: PASS.
 
-### 5. Token và shell tối cho màn chọn màn
+### 5. Token và shell karst cho màn chọn màn
 
-- [x] 5.1 Viết golden/widget test cho shell 390 × 844: nền `nightIndigo`, header
-  `panelNavy`, Back / “CHỌN MÀN” / tổng sao; không có `sky`, cream card hoặc coral
-  CTA từ composition cũ.
+- [x] 5.1 Viết golden/widget test cho shell 390 × 844: `BbCanyonBackdrop`, header
+  jade/teal có khung bronze/gold, Back / “CHỌN MÀN” / tổng sao; không có galaxy,
+  cream card hoặc coral CTA từ composition cũ.
 - [x] 5.2 Thêm/ánh xạ token ngữ nghĩa theo `uiux-guideline.md`; không viết hex
   trong widget và không sửa `lib/sim/`.
 - [x] 5.3 Chạy test ở phone, tablet và text scale 2.0; kiểm không overflow.
@@ -246,7 +249,7 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
   - Reference: US-4 AC-3.2, US-4 AC-4.2, US-4 AC-4.3
   - Implementation file: `lib/ui/character_dialogue.dart`
   - Một component với `modal` và `embedded` presentation. Modal dùng scrim 70–80%,
-    chặn chạm xuyên, scroll, maxWidth 420, panel navy và CTA gold. Embedded dùng
+    chặn chạm xuyên, scroll, maxWidth 420, panel karst và CTA gold. Embedded dùng
     cùng nội dung/panel primitive nhưng không scrim hoặc CTA gold riêng. Không port
     card cream/coral.
   - **Sao nguyên khối `Semantics` ở `:1999-2006` kèm comment** — comment ghi rằng bỏ `explicitChildNodes` làm framework assert và hiện màn đỏ. Đó là loại tri thức mất đi thì phải học lại bằng một lần vỡ.
@@ -344,10 +347,10 @@ không) — task 1 dựng harness đó trước, mọi task widget sau đều d�
 - [x] 17.3 Kiểm trên máy ảo
   - Reference: US-1 AC-3.1, US-3 AC-1.1
   - Command: `flutter build apk --release --target-platform android-x64`
-  - Cài và mở màn chọn màn: 4 chương có tiêu đề và tiến độ, grid 4 cột nền navy,
+  - Cài và mở màn chọn màn: 4 chương có tiêu đề và tiến độ, grid 4 cột trên backdrop karst,
     node current/locked/completed/skipped đúng state, tự định vị tới chỗ đang chơi.
-    Chụp ảnh ở 390 × 844 và đối chiếu hierarchy với hình trong
-    `Cu_Doi_UI_UX_Design_Spec.docx`; không đối chiếu composition đường mòn của
+    Chụp ảnh ở 390 × 844 và đối chiếu hierarchy với
+    `test/ui/goldens/arena_map_390x844.png`; không đối chiếu composition đường mòn của
     `ban_bua`. **Lưu ý**: dùng release build — debug APK 155 MB không cài được vì
     `/data` máy ảo chật; release ~19 MB.
 
@@ -367,4 +370,3 @@ Once this task plan is approved, proceed to Phase 4: Task Execution.
 3. Tasks will be marked complete with checkboxes after execution
 
 **Example**: To execute task 1.1, use `/aidlc.construction.execute-task 1.1`
-

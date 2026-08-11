@@ -2,12 +2,15 @@
 artifact_type: foundation
 document: uiux-guideline
 project: ban_bua_tuong
-status: target
+status: approved-current
 created: 2026-08-05
-updated: 2026-08-09
+updated: 2026-08-11
 source_artifacts:
   - Cu_Doi_UI_UX_Design_Spec.docx
   - project-overview-pdr.md
+  - test/ui/goldens/arena_map_390x844.png
+  - assets/images/backgrounds/vietnam_karst_canyon_v2.png
+  - assets/images/ui/karst/
   - lib/core/bb_tokens.dart
   - lib/core/bb_theme.dart
   - lib/core/arena_ink.dart
@@ -20,26 +23,34 @@ source_artifacts:
 
 # Cú Dội · Hướng dẫn UI/UX
 
-**Thiết kế đích**: UI/UX Design Spec 1.0  
-**Khổ tham chiếu**: mobile portrait 390 × 844  
+**Thiết kế đích**: Vietnamese karst adventure arcade · approved 2026-08-11
+
+**Khổ tham chiếu**: mobile portrait 390 × 844
+
 **Trạng thái**: đã chốt làm nguồn thiết kế cho các thay đổi UI tiếp theo
 
-> Tài liệu này thay thế định hướng “vỏ sáng sky/cream, sân đấu tối” trước đây.
-> Toàn bộ sản phẩm nay dùng cùng một ngôn ngữ **arcade đêm**: nền indigo/navy,
-> panel tối, CTA vàng, CTA phụ xanh, viền dày và glow có kiểm soát.
+> Ngôn ngữ hiện hành là **karst adventure arcade**: backdrop núi đá vôi Việt Nam
+> sáng và có sương, panel sơn mài xanh ngọc/teal, khung đồng-vàng chạm khắc,
+> Baloo 2 + Nunito, viền comic và bóng sticker cứng. Vùng gameplay/HUD có thể tối
+> để giữ tương phản; shell toàn app không dùng nền galaxy/indigo/navy làm mặc định.
 >
-> Các nhãn **[Target]** mô tả giao diện cần đạt. Các nhãn **[Observed]** mô tả
-> code hiện tại. Không được đọc một mục [Target] như thể nó đã được triển khai.
+> Quyết định này thay art direction trong UI/UX Design Spec 1.0 ngày 09/08/2026.
+> File Word và asset `ui/galaxy/` chỉ còn là nguồn lịch sử hoặc tham khảo cấu trúc.
 
 ## 1. Thứ tự ưu tiên khi tài liệu xung đột
 
 1. Luật chơi và bảy bất biến trong
    [`project-overview-pdr.md`](./project-overview-pdr.md) luôn thắng mọi mockup.
-2. File Word `Cu_Doi_UI_UX_Design_Spec.docx` và hình tổng hợp 10 trạng thái trong
-   file đó là nguồn cho art direction, bố cục và hierarchy.
-3. Tài liệu này chuẩn hoá hai nguồn trên thành quy tắc triển khai.
-4. Các spec cấp unit dùng tài liệu này; nếu còn mô tả giao diện sky/cream,
-   đường mòn uốn lượn hoặc CTA coral thì phần đó đã lỗi thời.
+2. Golden đang pass, đặc biệt `test/ui/goldens/arena_map_390x844.png`, là bằng
+   chứng trực quan cao nhất cho shell, mật độ, vật liệu và hierarchy đã triển khai.
+3. Asset `assets/images/ui/karst/`, backdrop karst và code đang render quyết định
+   vật liệu, palette và hình dạng component. Không suy art direction từ tên token
+   legacy nếu output thực tế khác.
+4. Tài liệu này chuẩn hoá các nguồn đang chạy thành quy tắc cho màn mới. Mockup
+   feature đã được người dùng duyệt đứng sau foundation và phải ghi rõ nguồn ảnh.
+5. File Word `Cu_Doi_UI_UX_Design_Spec.docx`, asset `ui/galaxy/` và spec/task cũ
+   mô tả shell indigo/navy chỉ là lịch sử. Có thể dùng chúng để hiểu flow, không
+   dùng làm visual target.
 
 ### 1.1. Sai khác có chủ đích so với hình tham chiếu
 
@@ -58,7 +69,7 @@ source_artifacts:
    trong 1–2 lượt, nhờ phản hồi ngay tại mục tiêu thay vì tutorial dài.
 2. **Số lần dội là thông tin số một.** Số `requiredBanks`, số dội hiện tại và hệ
    số phải đọc được trong lúc mắt đang bám viên bi.
-3. **Arcade đêm, không trở lại bubble shooter.** Không dùng lưới bong bóng, ghép
+3. **Karst adventure arcade, không trở lại bubble shooter.** Không dùng lưới bong bóng, ghép
    màu, trần hạ dần hoặc power-up theo khuôn bubble shooter. Bốn màu mục tiêu là
    phân nhóm thị giác, không phải luật ghép màu.
 4. **Kỹ năng vẫn thuộc về người chơi.** Preview chỉ có hai đoạn đầu; không hiển
@@ -70,47 +81,47 @@ source_artifacts:
 
 ## 3. Design system đích
 
-### 3.1. Bảng màu ngữ nghĩa [Target]
+### 3.1. Bảng màu ngữ nghĩa [Approved]
 
-| Token đích | Giá trị | Vai trò |
+| Token / màu chuẩn | Giá trị | Vai trò |
 |---|---:|---|
-| `nightIndigo` | `#090D2A` | Nền app và nền sân; tạo tương phản với cyan |
-| `panelNavy` | `#151B3E` | Card, HUD, dialog, capsule |
-| `primaryGold` | `#FFC21C` | CTA chính, sao, điểm nổi bật |
-| `secondaryBlue` | `#1976D2` | CTA phụ, điều hướng |
-| `tertiaryPurple` | `#7E32C8` | Hành động cấp ba, shop/event nếu có |
-| `dangerRed` | `#F04444` | Đáy mở, thất bại, cảnh báo |
-| `trajectoryCyan` | `#54D9FF` | Bi, trail, điểm va chạm, minh hoạ quỹ đạo |
+| `karstDeep` | `#042D31` | Scrim sâu, nền gameplay và lớp đáy của panel |
+| `karstTeal` | `#07504A` | Surface chính, panel sơn mài và chrome ngoài sân |
+| `karstBronze` | `#D99A38` | Khung chạm khắc, divider và ornament |
+| `primaryGold` | `#FFC21C` | CTA chính, sao, selected/current và điểm nổi bật |
+| `cream` | `#FFF3D7` | Chữ chính trên surface xanh và inner highlight |
+| `secondaryBlue` | `#1976D2` | CTA phụ khi component hiện hành dùng blue |
+| `trajectoryCyan` | `#54D9FF` | Bi, trail, điểm va chạm; không dùng làm màu shell |
 | `successGreen` | `#7ED321` | Đủ điều kiện, kỷ lục mới, xác nhận tích cực |
-| `cream` | `#FFF3D7` | Chữ/surface sáng dùng tiết chế |
-| `textPrimary` | `#FFFFFF` | Tiêu đề và nội dung chính trên nền tối |
-| `textMuted` | `#AAB2D5` | Chú thích, metadata, trạng thái phụ |
-| `outlineDark` | `#080B1B` | Viền ngoài và bóng cứng |
+| `dangerRed` | `#F04444` | Đáy mở, thất bại và lỗi cần chú ý |
+| `outlineDark` | `#3D210E` theo vật liệu karst | Bóng sticker cứng và viền sâu trên asset/component karst |
+| `nightIndigo` / `panelNavy` | legacy/scoped | Chỉ cho arena/HUD tối hoặc màn cũ có lý do tương phản; không dùng làm shell mặc định |
 
 **Quy tắc**:
 
-- Không dùng hex thô trong widget. Các giá trị trên phải đi qua token; nếu code
-  cũ chưa có token tương ứng thì thêm/chuyển token trước khi dựng màn.
+- Ưu tiên token. Một số asset/painter karst hiện vẫn dùng màu vật liệu trực tiếp;
+  khi chạm vào chúng, gom về token thay vì nhân thêm hex mới.
 - `primaryGold` là CTA chính xuyên suốt: **Chơi, Tiếp theo, Thử lại**.
-- `secondaryBlue` là CTA phụ: **Chọn màn, Về menu**.
-- Purple không thay cho CTA chính.
+- CTA phụ dùng component hiện hành (blue hoặc teal) nhưng phải giữ hierarchy thấp
+  hơn gold và cùng khung/bóng karst.
+- Purple/galaxy không thay cho surface hay CTA chính của shell karst.
 - Trạng thái không bao giờ chỉ dựa vào màu; luôn có thêm hình dạng, outline,
   biểu cảm, icon hoặc chữ.
 
-### 3.2. Chuyển đổi từ code hiện tại [Observed → Target]
+### 3.2. Trạng thái code và quy tắc tiếp tục
 
-| Hiện tại | Thiết kế đích | Ghi chú migration |
-|---|---|---|
-| `sky`/`cream` làm nền màn ngoài sân | `nightIndigo` + texture sao/chấm rất nhẹ | Bỏ mô hình hybrid sáng/tối |
-| `bbCoral` primary | `primaryGold` | Không đổi nhãn variant mà giữ màu cũ một cách âm thầm |
-| `bbTeal` secondary | `secondaryBlue` | Teal có thể giữ cho trạng thái riêng, không làm CTA phụ |
-| `bbGrape` | `tertiaryPurple` | Dành cho cấp ba/shop/event có thật |
-| `ArenaInk.cream` cho trail | `trajectoryCyan` | Chữ HUD vẫn dùng white/cream |
-| Sunburst sáng toàn màn | Star field/ray tối, chỉ tăng cường ở màn thắng | Giảm nhiễu ở menu và map |
-| Card trắng | Panel navy gradient/solid | Chữ đổi sang trắng/muted |
+| Đang dùng | Quy tắc cho thay đổi mới |
+|---|---|
+| `BbCanyonBackdrop` + `vietnam_karst_canyon_v2.png` | Dùng cho shell adventure; giữ scrim vừa đủ để chữ/panel đọc được |
+| Asset `assets/images/ui/karst/` | Nguồn chuẩn cho khung, nút Back, title, level card và detail panel |
+| `karstDeep` / `karstTeal` / `karstBronze` | Surface và vật liệu chính ngoài sân đấu |
+| `primaryGold` | CTA chính, selected/current và điểm nhấn |
+| `nightIndigo` / `panelNavy` | Không mở rộng ra toàn app; chỉ giữ nơi gameplay/HUD tối cần tương phản |
+| Asset `assets/images/ui/galaxy/` | Legacy hoặc feature-specific; không dùng để suy shell mới |
+| `bbCoral`, card trắng, nền sky/cream phẳng | Legacy; không tạo màn mới theo hệ này |
 
-Tên API cũ có thể giữ tạm trong lúc migration, nhưng mọi tài liệu và test mới
-phải gọi theo **vai trò ngữ nghĩa**, không gọi theo màu cũ.
+Tên API cũ có thể tồn tại vì compatibility. Visual review và test mới phải gọi
+theo **vai trò ngữ nghĩa** và đối chiếu golden, không suy màu chỉ từ tên API.
 
 ### 3.3. Typography [Target]
 
@@ -134,9 +145,11 @@ phải gọi theo **vai trò ngữ nghĩa**, không gọi theo màu cũ.
 
 - Dùng lưới 4dp; gutter chuẩn 16–20dp.
 - Bo nút 14–18dp; panel lớn 18–24dp; icon button hình tròn.
-- Viền ngoài 2–3dp `outlineDark`; inner highlight 1dp trắng ở 20–30% opacity.
+- Viền ngoài 2–3dp nâu/teal sâu; khung trang trí dùng bronze/gold; inner highlight
+  1dp cream ở 20–30% opacity.
 - Bóng cứng 0/4dp, blur thấp hoặc bằng 0; không dùng elevation Material mặc định.
-- Glow chỉ dành cho CTA chính, quỹ đạo, mục tiêu `armed`, sao và khoảnh khắc thắng.
+- Glow chỉ dành cho quỹ đạo, mục tiêu `armed`, sao và khoảnh khắc thắng. CTA/shell
+  karst ưu tiên highlight vật liệu và bóng sticker hơn neon glow.
 
 ## 4. Component library
 
@@ -145,10 +158,10 @@ phải gọi theo **vai trò ngữ nghĩa**, không gọi theo màu cũ.
 | Loại | Màu | Cao | Ứng dụng | Trạng thái |
 |---|---|---:|---|---|
 | Primary | gold gradient | 58–64 | Chơi, Tiếp theo, Thử lại | default/pressed/disabled |
-| Secondary | blue gradient | 52–58 | Chọn màn, Về menu | default/pressed/disabled |
-| Tertiary | purple gradient | 48–54 | Cửa hàng/sự kiện có thật | default/pressed/disabled |
-| Icon | dark circular | 44–48 | Back, pause, settings, close | default/pressed/disabled |
-| Bottom utility | dark capsule | 56–64 | Sự kiện, nhiệm vụ, cài đặt | selected/unselected |
+| Secondary | teal hoặc blue hiện hành, khung bronze/dark | 52–58 | Chọn màn, Về menu | default/pressed/disabled |
+| Tertiary | teal/dark ghost | 48–54 | Hành động cấp ba có thật | default/pressed/disabled |
+| Icon | jade/teal, khung gold/bronze | 44–48 | Back, pause, settings, close | default/pressed/disabled |
+| Bottom utility | panel sơn mài karst | 56–64 | Tiện ích đã triển khai | selected/unselected |
 
 Nút có outer stroke tối, inner highlight sáng và shadow cứng. Khi nhấn: dịch xuống
 2dp, shadow ngắn lại, brightness giảm 8–12%. Disabled: saturation giảm khoảng 70%,
@@ -156,10 +169,11 @@ opacity 55%, không glow. Icon hành động đặt trái; chevron tiến tới 
 
 ### 4.2. Panel, dialog và HUD
 
-- Panel nền `panelNavy`, viền xám-xanh sáng vừa đủ, inner highlight mảnh.
+- Panel ngoài sân dùng `karstTeal`/`karstDeep`, viền `karstBronze` hoặc asset
+  `ui/karst/`, inner highlight cream mảnh và bóng sticker nâu cứng.
 - Dialog dùng scrim đen 70–80%; primary action ở trên secondary action.
 - Top HUD tối giản: pause trái, tên màn giữa, lượt còn lại phải.
-- Không dùng card trắng lớn trong hệ đích.
+- Không dùng card trắng lớn hoặc panel neon navy/purple như một hệ độc lập.
 - Safe area không được làm lệch tâm arena; HUD và shooter nằm ngoài vùng che của
   notch/home indicator.
 
@@ -222,8 +236,8 @@ của cú trước vẫn được giữ để người chơi học đường car
 - Header: Back, “CHỌN MÀN”, tổng sao.
 - Nội dung: **grid 4 cột** trên điện thoại; mỗi chapter là một section 5 màn hoặc
   carousel theo chapter. Không dùng đường mòn uốn lượn.
-- Level node tròn/bo tròn, có số màn và 0–3 sao; current dùng gold outline + glow;
-  locked dùng navy/gray + lock.
+- Mỗi màn là card preview karst bo tròn như golden hiện hành, có số màn và 0–3
+  sao; current dùng gold outline + nền sáng hơn; locked dùng teal sâu/gray + lock.
 - Tên chapter và tiến độ `n/15` luôn hiện. Luật mở màn vẫn tuyến tính, không thêm
   cổng khoá chapter.
 - Chạm màn khoá: shake ngắn + tooltip/snackbar “Hoàn thành màn trước để mở”.
@@ -342,24 +356,28 @@ không triển khai cho đến khi requirements được sửa có chủ đích.
 - Target có `armed` state; preview hai đoạn; đáy mở; vệt ma; bi xuyên target.
 - Local progress, stars, coins, unlock, VI/EN và audio đã có ở mức code.
 
-### 10.2. Chưa khớp thiết kế đích [Observed]
+### 10.2. Chưa khớp hoàn toàn [Observed]
 
-- Token và màn ngoài sân vẫn theo hệ sáng/coral/teal cũ.
-- Chọn màn hiện là danh sách/card hoặc các spec cũ mô tả đường mòn; target là grid
-  dark arcade.
-- Variant button đang gắn tên `primary` với coral thay vì vai trò gold.
-- Popup/dialog chưa đồng nhất.
-- Một số feature trong hình (shop/event/mission, end-shot card) chưa phải chức năng
-  chắc chắn; không triển khai chỉ để giống mockup.
+- Token semantic và một số widget còn giữ tên/màu legacy dù màn chính đã render
+  theo karst; khi sửa phải gom dần về vai trò karst, không đổi output về galaxy.
+- Một số popup/dialog hoặc màn phụ chưa dùng cùng khung jade/bronze.
+- Asset `ui/galaxy/` còn tồn tại cho compatibility và preset cụ thể; sự tồn tại
+  của chúng không làm galaxy trở lại art direction toàn app.
+- Một số feature trong hình cũ (shop/event/mission, end-shot card) chưa phải chức
+  năng chắc chắn; không triển khai chỉ để giống mockup.
 
 ### 10.3. Trình tự migration đề xuất
 
-1. Thêm token ngữ nghĩa mới và theme tối; giữ adapter cho API cũ trong một nhịp.
-2. Chuẩn hoá button/panel/icon/dialog states.
-3. Đổi Menu, Settings, Help và Level Select sang nền tối.
-4. Đồng bộ ArenaInk: trail cyan, panel multiplier, feedback `armed`.
+1. Bổ sung/chuẩn hoá token `karstDeep`, `karstTeal`, `karstBronze` và shadow nâu;
+   giữ adapter cho API legacy trong một nhịp.
+2. Chuẩn hoá button/panel/icon/dialog theo asset `ui/karst/` và component đang chạy.
+3. Đưa các màn phụ còn lệch về cùng backdrop/khung karst; không đổi Menu, Settings,
+   Help hay Level Select sang nền galaxy/navy.
+4. Giữ ArenaInk tối, trail cyan, multiplier và feedback `armed` vì đây là vùng
+   gameplay cần tương phản, không phải art direction của shell.
 5. Dựng result/lose/end-shot states; sau cùng thêm polish motion và sound.
-6. Chạy golden test ở 390 × 844, màn nhỏ, tablet và text scale lớn.
+6. Chạy golden test ở 390 × 844, màn nhỏ, tablet và text scale lớn. Mọi thay đổi
+   shell phải đối chiếu `arena_map_390x844.png` hoặc golden mới đã được duyệt.
 
 ## 11. Checklist nghiệm thu
 
@@ -367,7 +385,9 @@ không triển khai cho đến khi requirements được sửa có chủ đích.
 - [ ] Khi bank count đạt threshold, target đổi state đủ mạnh **trước** va chạm.
 - [ ] Vạch đỏ nét đứt đọc ra là đáy mở, không phải tường.
 - [ ] Preview dừng ở hai đoạn, không lộ lời giải.
-- [ ] Primary gold / secondary blue / tertiary purple nhất quán.
+- [ ] Shell dùng backdrop karst + panel jade/teal + khung bronze/gold; không trôi
+  về galaxy/indigo/navy.
+- [ ] Primary gold và CTA phụ teal/blue giữ hierarchy nhất quán.
 - [ ] Nút có default/pressed/disabled và hitbox đủ lớn.
 - [ ] Level select phản ánh đúng 20 màn/4 chương và không dùng nhãn chapter sai từ hình.
 - [ ] Màn thua nói đúng “hết lượt còn mục tiêu”; bi rơi chỉ kết thúc cú bắn.
@@ -378,5 +398,10 @@ không triển khai cho đến khi requirements được sửa có chủ đích.
 
 ---
 
-**Cập nhật lần cuối**: 2026-08-09  
-**Nguồn thiết kế**: `Cu_Doi_UI_UX_Design_Spec.docx`, hình tổng hợp 10 trạng thái
+**Cập nhật lần cuối**: 2026-08-11
+
+**Nguồn thiết kế đã duyệt**: `test/ui/goldens/arena_map_390x844.png`,
+`assets/images/backgrounds/vietnam_karst_canyon_v2.png`, `assets/images/ui/karst/`
+
+**Nguồn lịch sử, không còn quyết art direction**: `Cu_Doi_UI_UX_Design_Spec.docx`,
+hình tổng hợp 10 trạng thái và `assets/images/ui/galaxy/`.

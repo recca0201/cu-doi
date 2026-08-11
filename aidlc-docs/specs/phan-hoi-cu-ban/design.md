@@ -340,12 +340,11 @@ Không phát rung khi đang kéo ngắm (AC US-4/2.5) — thoả **do cấu trú
 
 ## UI Design Specification
 
-Ràng buộc UI đi từ `uiux-guideline.md` và hình tổng hợp trong
-`Cu_Doi_UI_UX_Design_Spec.docx`:
+Ràng buộc UI đi từ `uiux-guideline.md`, code đang render và golden hiện hành:
 
-- Công tắc rung đặt cùng panel `panelNavy` với Âm thanh và Nhạc nền, phát
-  `Semantics.toggled`. Track on/off phải khớp theme tối mới và có tín hiệu vị trí/
-  icon ngoài màu; không giữ `bbTeal` chỉ vì đó là màu code cũ.
+- Công tắc rung đặt cùng panel karst jade/teal với Âm thanh và Nhạc nền, phát
+  `Semantics.toggled`. Track on/off phải khớp shell karst và có tín hiệu vị trí/
+  icon ngoài màu; không tạo panel galaxy/navy riêng.
 - Tầng hiệu ứng dùng `trajectoryCyan` cho spark/ring/trail, `primaryGold` cho
   multiplier/score emphasis, `dangerRed` cho blocked/fail và token target hiện có;
   không hex thô.

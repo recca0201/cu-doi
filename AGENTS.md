@@ -33,6 +33,21 @@ số lần bi phải dội tường trước khi nó có thể vỡ. Luật nằ
 `requiredBanks`, `shots`, `starThresholds` do solver tính từ mô phỏng thật. Sửa
 campaign.js rồi chạy lại; các con số tune bằng tay sẽ sai.
 
+## Nguồn chuẩn UI hiện hành — đừng quay lại style galaxy/navy
+
+Art direction đã duyệt là **Vietnamese karst adventure arcade**: backdrop núi đá
+vôi sáng, panel sơn mài xanh ngọc/teal, khung đồng-vàng chạm khắc, Baloo 2 +
+Nunito và bóng sticker cứng. Trước khi thiết kế hoặc sửa UI, đọc
+`aidlc-docs/foundation/uiux-guideline.md` và đối chiếu
+`test/ui/goldens/arena_map_390x844.png`.
+
+Thứ tự ưu tiên hình ảnh: **golden đang pass → asset `assets/images/ui/karst/` +
+code đang render → `uiux-guideline.md` → mockup đã duyệt của feature**. File
+`Cu_Doi_UI_UX_Design_Spec.docx`, asset `ui/galaxy/` và các câu cũ kiểu “toàn app
+indigo/navy” chỉ là lịch sử, không còn là nguồn art direction. `nightIndigo` và
+`panelNavy` chỉ dùng cho vùng gameplay/HUD tối khi có lý do tương phản; không
+được suy ra thành shell toàn app.
+
 ## Cơ chế này có một chiến thuật suy biến
 
 Bắn gần nằm ngang cho bi ping-pong quét cả sân. Bản tham số đầu tiên cho phép dọn
