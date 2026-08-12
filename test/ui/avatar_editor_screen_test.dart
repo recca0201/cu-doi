@@ -5,10 +5,12 @@ import '../support/pump_app.dart';
 
 void main() {
   testWidgets(
-    'shows six presets, selected check, square preview and privacy copy',
+    'shows four mascot moods, shared header, preview and privacy copy',
     (tester) async {
       await pumpApp(tester, home: const AvatarEditorScreen());
       await tester.pump();
+      expect(find.byKey(const Key('avatar-title')), findsOneWidget);
+      expect(find.byKey(const Key('avatar-back')), findsOneWidget);
       expect(find.byKey(const Key('avatar-square-preview')), findsOneWidget);
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
       expect(
@@ -16,7 +18,9 @@ void main() {
         findsOneWidget,
       );
       expect(find.bySemanticsLabel('pangolin-gold'), findsOneWidget);
-      expect(find.bySemanticsLabel('galaxy-purple'), findsOneWidget);
+      expect(find.bySemanticsLabel('pangolin-victory'), findsOneWidget);
+      expect(find.bySemanticsLabel('pangolin-surprised'), findsOneWidget);
+      expect(find.bySemanticsLabel('pangolin-gentle-sad'), findsOneWidget);
     },
   );
   testWidgets('system picker cancel is a no-op', (tester) async {

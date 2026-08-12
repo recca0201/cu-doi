@@ -33,8 +33,11 @@ class SettingsScreen extends ConsumerWidget {
                 constraints: const BoxConstraints(maxWidth: BbTokens.screenMax),
                 child: Column(
                   children: <Widget>[
-                    _SettingsHeader(
-                      title: t.settingsTitle,
+                    BbKarstHeader(
+                      titleAsset:
+                          'assets/images/ui/karst/settings_title_banner_v2.png',
+                      titleLabel: t.settingsTitle,
+                      titleKey: const Key('settings-title'),
                       backLabel: t.backCta,
                       onBack: () => Navigator.of(context).pop(),
                     ),
@@ -180,63 +183,5 @@ class _NightDivider extends StatelessWidget {
   Widget build(BuildContext context) => Divider(
     height: BbTokens.sp6,
     color: BbTokens.karstBronze.withValues(alpha: .35),
-  );
-}
-
-class _SettingsHeader extends StatelessWidget {
-  const _SettingsHeader({
-    required this.title,
-    required this.backLabel,
-    required this.onBack,
-  });
-
-  final String title;
-  final String backLabel;
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 82,
-    child: Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Positioned(
-          left: 68,
-          right: 68,
-          top: 0,
-          bottom: 0,
-          child: Semantics(
-            header: true,
-            label: title,
-            child: ExcludeSemantics(
-              child: Image.asset(
-                'assets/images/ui/karst/settings_title_banner_v2.png',
-                key: const Key('settings-title'),
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          left: 10,
-          top: 14,
-          child: Semantics(
-            button: true,
-            label: backLabel,
-            onTap: onBack,
-            child: GestureDetector(
-              onTap: onBack,
-              child: const Image(
-                image: AssetImage('assets/images/ui/karst/back_button.png'),
-                width: 52,
-                height: 52,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
   );
 }

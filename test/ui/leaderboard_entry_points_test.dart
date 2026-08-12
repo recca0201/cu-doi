@@ -1,6 +1,6 @@
 import 'package:ban_bua_tuong/domain/player_progress.dart';
-import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
 import 'package:ban_bua_tuong/ui/screens/leaderboard_screen.dart';
+import 'package:ban_bua_tuong/ui/screens/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,67 +15,48 @@ PlayerProgress _progressThrough(int arenaId) => PlayerProgress(
 
 void main() {
   testWidgets(
-    'selected unlocked arena exposes a labelled leaderboard action only',
+    'main menu exposes a labelled leaderboard action for the current arena',
     (WidgetTester tester) async {
       final SemanticsHandle semantics = tester.ensureSemantics();
-      await pumpApp(tester, home: const ArenaMapScreen());
+      await pumpApp(tester, home: const MenuScreen());
 
       expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 1'), findsOneWidget);
-      expect(
-        find.byKey(const Key('selected-arena-leaderboard')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('menu-leaderboard')), findsOneWidget);
 
-      final Finder lockedNode = find.descendant(
-        of: find.byKey(const ValueKey<String>('arena-2')),
-        matching: find.byType(InkWell),
-      );
-      tester.widget<InkWell>(lockedNode).onTap!();
+      await tester.tap(find.byKey(const Key('menu-leaderboard')));
       await tester.pump();
-
-      expect(find.byIcon(Icons.lock_rounded), findsWidgets);
-      expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 1'), findsOneWidget);
-      expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 2'), findsNothing);
+      await tester.pump(const Duration(milliseconds: 30));
+      expect(find.byType(LeaderboardScreen), findsOneWidget);
+      expect(find.textContaining('Màn 1'), findsOneWidget);
       semantics.dispose();
     },
   );
 
-  testWidgets('push and pop preserve chapter selection and scroll owner', (
-    WidgetTester tester,
-  ) async {
-    final SemanticsHandle semantics = tester.ensureSemantics();
-    await pumpApp(
-      tester,
-      progress: _progressThrough(11),
-      home: const ArenaMapScreen(targetArenaId: 12),
-    );
+  testWidgets(
+    'push and pop preserve the menu and target the first unfinished arena',
+    (WidgetTester tester) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpApp(
+        tester,
+        progress: _progressThrough(11),
+        home: const MenuScreen(),
+      );
 
-    final State<StatefulWidget> mapStateBefore = tester.state(
-      find.byType(ArenaMapScreen),
-    );
-    final CustomScrollView scrollBefore = tester.widget(
-      find.byKey(const Key('arena-map-scroll')),
-    );
-    final double offsetBefore = scrollBefore.controller!.offset;
-    expect(find.text('Chương 3 · Zig-zag'), findsOneWidget);
-    expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 12'), findsOneWidget);
+      expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 12'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('selected-arena-leaderboard')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 30));
-    expect(find.byType(LeaderboardScreen), findsOneWidget);
+      await tester.tap(find.byKey(const Key('menu-leaderboard')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+      expect(find.byType(LeaderboardScreen), findsOneWidget);
+      expect(find.textContaining('Màn 12'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('leaderboard-back')));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('leaderboard-back')));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(ArenaMapScreen), findsOneWidget);
-    expect(tester.state(find.byType(ArenaMapScreen)), same(mapStateBefore));
-    expect(find.text('Chương 3 · Zig-zag'), findsOneWidget);
-    expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 12'), findsOneWidget);
-    final CustomScrollView scrollAfter = tester.widget(
-      find.byKey(const Key('arena-map-scroll')),
-    );
-    expect(scrollAfter.controller!.offset, offsetBefore);
-    semantics.dispose();
-  });
+      expect(find.byType(MenuScreen), findsOneWidget);
+      expect(find.byKey(const Key('menu-play')), findsOneWidget);
+      expect(find.bySemanticsLabel('Xem bảng xếp hạng Màn 12'), findsOneWidget);
+      semantics.dispose();
+    },
+  );
 }

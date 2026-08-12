@@ -59,6 +59,7 @@ void main() {
       final Finder logo = find.byKey(const Key('main-logo'));
       final Finder play = find.byKey(const Key('menu-play'));
       final Finder arenaSelect = find.byKey(const Key('menu-arena-select'));
+      final Finder leaderboard = find.byKey(const Key('menu-leaderboard'));
       final Finder howToPlay = find.byKey(const Key('menu-how-to-play'));
       final Finder tagline = find.byKey(const Key('menu-tagline'));
       final Finder playerAvatar = find.byKey(const Key('menu-player-avatar'));
@@ -66,6 +67,7 @@ void main() {
       expect(logo, findsOneWidget);
       expect(play, findsOneWidget);
       expect(arenaSelect, findsOneWidget);
+      expect(leaderboard, findsOneWidget);
       expect(howToPlay, findsOneWidget);
       expect(tagline, findsOneWidget);
       expect(playerAvatar, findsOneWidget);
@@ -78,8 +80,24 @@ void main() {
         tester.getRect(arenaSelect).bottom,
         lessThanOrEqualTo(size.height),
       );
+      expect(
+        tester.getRect(leaderboard).bottom,
+        lessThanOrEqualTo(size.height),
+      );
       expect(tester.getRect(howToPlay).bottom, lessThanOrEqualTo(size.height));
       expect(tester.getRect(tagline).bottom, lessThanOrEqualTo(size.height));
+      expect(
+        tester.getRect(arenaSelect).width,
+        greaterThan(tester.getRect(leaderboard).width),
+      );
+      expect(
+        tester.getRect(leaderboard).top,
+        closeTo(tester.getRect(howToPlay).top, 0.5),
+      );
+      expect(
+        tester.getRect(arenaSelect).bottom,
+        lessThan(tester.getRect(leaderboard).top),
+      );
       expect(
         tester.getRect(playerAvatar).right,
         lessThanOrEqualTo(tester.getRect(playerCopy).left),
@@ -94,6 +112,7 @@ void main() {
     expect(find.text('game bắn dội tường'), findsOneWidget);
     expect(find.byKey(const Key('menu-play')), findsOneWidget);
     expect(find.byKey(const Key('menu-arena-select')), findsOneWidget);
+    expect(find.byKey(const Key('menu-leaderboard')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

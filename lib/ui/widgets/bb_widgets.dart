@@ -599,6 +599,67 @@ class _BbMenuButtonState extends State<BbMenuButton> {
   }
 }
 
+/// Shared image-backed header for karst shell screens.
+class BbKarstHeader extends StatelessWidget {
+  const BbKarstHeader({
+    super.key,
+    required this.titleAsset,
+    required this.titleLabel,
+    required this.backLabel,
+    required this.onBack,
+    this.titleKey,
+    this.backKey,
+  });
+
+  final String titleAsset;
+  final String titleLabel;
+  final String backLabel;
+  final VoidCallback onBack;
+  final Key? titleKey;
+  final Key? backKey;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 82,
+    child: Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Positioned(
+          left: 68,
+          right: 68,
+          top: 0,
+          bottom: 0,
+          child: Semantics(
+            header: true,
+            label: titleLabel,
+            child: ExcludeSemantics(
+              child: Image.asset(
+                titleAsset,
+                key: titleKey,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: 10,
+          top: 14,
+          child: BbAssetButton(
+            key: backKey,
+            asset: 'assets/images/ui/karst/back_button.png',
+            width: 52,
+            height: 52,
+            fit: BoxFit.contain,
+            semanticLabel: backLabel,
+            onPressed: onBack,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 /// ImageGen-backed button that keeps Flutter semantics and press feedback.
 class BbAssetButton extends StatefulWidget {
   const BbAssetButton({

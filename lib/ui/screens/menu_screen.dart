@@ -16,6 +16,7 @@ import '../widgets/bb_backdrop.dart';
 import 'arena_map_screen.dart';
 import 'game_screen.dart';
 import 'how_to_play_screen.dart';
+import 'leaderboard_screen.dart';
 import 'settings_screen.dart';
 import 'profile_screen.dart';
 
@@ -98,6 +99,51 @@ class MenuScreen extends ConsumerWidget {
                 final double logoHeight = tablet
                     ? responsiveHeight(136, 200)
                     : (compact ? 64 : responsiveHeight(80, 176));
+                final Widget arenaSelectButton = _MenuSecondaryButton(
+                  key: const Key('menu-arena-select'),
+                  label: t.arenaSelectCta,
+                  compact: compact,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const ArenaMapScreen(),
+                    ),
+                  ),
+                );
+                final Widget leaderboardButton = Semantics(
+                  key: const Key('menu-leaderboard'),
+                  button: true,
+                  label: t.leaderboardEntrySemantic(firstUnfinished),
+                  child: ExcludeSemantics(
+                    child: _MenuSecondaryButton(
+                      label: t.leaderboardEntryCta,
+                      compact: compact,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => LeaderboardScreen(
+                            arenaId: firstUnfinished,
+                            origin: LeaderboardOrigin.mainMenu,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                final Widget howToPlayButton = _MenuSecondaryButton(
+                  key: const Key('menu-how-to-play'),
+                  label: t.howToCta,
+                  compact: compact,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => HowToPlayScreen(
+                        onDontShowAgain: () {
+                          dialogueSeen.markSeen(DialogueId.intro);
+                        },
+                      ),
+                    ),
+                  ),
+                );
+                final double menuClusterWidth =
+                    actionWidth * (compact ? .92 : .72);
 
                 return SingleChildScrollView(
                   padding: EdgeInsets.only(
@@ -161,36 +207,19 @@ class MenuScreen extends ConsumerWidget {
                             ),
                             SizedBox(height: responsiveHeight(5, 9)),
                             SizedBox(
-                              width: actionWidth * .60,
-                              child: _MenuSecondaryButton(
-                                key: const Key('menu-arena-select'),
-                                label: t.arenaSelectCta,
-                                icon: Icons.track_changes_rounded,
-                                compact: compact,
-                                onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const ArenaMapScreen(),
+                              width: menuClusterWidth,
+                              child: Column(
+                                children: <Widget>[
+                                  arenaSelectButton,
+                                  SizedBox(height: responsiveHeight(5, 8)),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(child: leaderboardButton),
+                                      const SizedBox(width: 8),
+                                      Expanded(child: howToPlayButton),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: responsiveHeight(5, 9)),
-                            SizedBox(
-                              width: actionWidth * .60,
-                              child: _MenuSecondaryButton(
-                                key: const Key('menu-how-to-play'),
-                                label: t.howToCta,
-                                icon: Icons.route_rounded,
-                                compact: compact,
-                                onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => HowToPlayScreen(
-                                      onDontShowAgain: () {
-                                        dialogueSeen.markSeen(DialogueId.intro);
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                ],
                               ),
                             ),
                             Expanded(
@@ -218,13 +247,11 @@ class _MenuSecondaryButton extends StatelessWidget {
   const _MenuSecondaryButton({
     super.key,
     required this.label,
-    required this.icon,
     required this.compact,
     required this.onPressed,
   });
 
   final String label;
-  final IconData icon;
   final bool compact;
   final VoidCallback onPressed;
 
@@ -237,7 +264,7 @@ class _MenuSecondaryButton extends StatelessWidget {
         (compact ? BbTokens.btnHSm : BbTokens.btnHMd) * controlScale;
     final double height = baseHeight + 3;
 
-    return SizedBox(
+    final Widget button = SizedBox(
       height: height,
       child: Stack(
         clipBehavior: Clip.none,
@@ -254,24 +281,11 @@ class _MenuSecondaryButton extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 18 * controlScale,
-            top: 0,
-            bottom: 0,
-            child: IgnorePointer(
-              child: Icon(
-                icon,
-                color: const Color(0xFFFFF3D7),
-                size: (compact ? 19 : 21) * controlScale,
-                shadows: const <Shadow>[
-                  Shadow(color: Colors.black45, offset: Offset(0, 2)),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
+
+    return button;
   }
 }
 
@@ -491,19 +505,19 @@ class _GameLogo extends StatelessWidget {
           ),
         ),
         Positioned(
-          left: 24,
-          right: 24,
-          bottom: 5,
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.fade,
-            style: BbText.button(Colors.white).copyWith(
-              fontSize: 16,
-              shadows: const <Shadow>[
-                Shadow(color: Color(0xCC062E2B), offset: Offset(0, 2)),
-              ],
+          left: 10,
+          right: 10,
+          bottom: -1,
+          height: 52,
+          child: Semantics(
+            label: title,
+            child: ExcludeSemantics(
+              child: Image.asset(
+                'assets/images/brand/menu_tagline_v2.png',
+                key: const Key('main-logo-tagline'),
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
             ),
           ),
         ),

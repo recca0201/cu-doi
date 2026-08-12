@@ -79,6 +79,7 @@ flutter:
     - assets/images/brand/
     - assets/images/backgrounds/
     - assets/images/mascot/
+    - assets/images/mascot/moods/
     - assets/images/auth/
     - assets/images/ui/galaxy/
     - assets/images/ui/karst/

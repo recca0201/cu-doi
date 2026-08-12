@@ -15,7 +15,7 @@ import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 import '../widgets/leaderboard_widgets.dart';
 
-enum LeaderboardOrigin { arenaMap, winResult }
+enum LeaderboardOrigin { mainMenu, winResult }
 
 class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({
@@ -586,59 +586,61 @@ class _LeaderboardHeader extends StatelessWidget {
   final VoidCallback onBack;
 
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      BbIconButton(
-        key: const Key('leaderboard-back'),
-        icon: Icons.arrow_back_rounded,
-        onPressed: onBack,
-        variant: BbVariant.karst,
-        semanticLabel: LeaderboardCopy.of(context).back,
-      ),
-      const SizedBox(width: BbTokens.sp2),
-      Expanded(
-        child: BbCard(
-          color: BbTokens.karstTeal,
-          borderColor: BbTokens.karstBronze,
-          shadowColor: const Color(0xFF3D210E),
-          radius: BbTokens.rMd,
-          padding: const EdgeInsets.symmetric(
-            horizontal: BbTokens.sp2,
-            vertical: BbTokens.sp2,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                title,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: BbText.h2(BbTokens.cream).copyWith(
-                  fontSize: 22,
-                  height: 1,
-                  shadows: const <Shadow>[
-                    Shadow(color: Color(0xFF3D210E), offset: Offset(0, 3)),
-                  ],
-                ),
+  Widget build(BuildContext context) => SizedBox(
+    height: 96,
+    child: Stack(
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        Positioned(
+          left: 58,
+          right: 58,
+          top: 0,
+          height: 70,
+          child: Semantics(
+            header: true,
+            label: title,
+            child: ExcludeSemantics(
+              child: Image.asset(
+                'assets/images/ui/karst/leaderboard_title_banner_v3.png',
+                key: const Key('leaderboard-title'),
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
               ),
-              const SizedBox(height: BbTokens.sp1),
-              Text(
-                subtitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: BbText.small(
-                  const Color(0xFFFFE2A0),
-                ).copyWith(fontWeight: FontWeight.w800, height: 1.1),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-      const SizedBox(width: BbTokens.sp2),
-      const SizedBox(width: BbTokens.tapMin),
-    ],
+        Positioned(
+          left: 0,
+          top: 9,
+          child: BbAssetButton(
+            key: const Key('leaderboard-back'),
+            asset: 'assets/images/ui/karst/back_button.png',
+            width: 52,
+            height: 52,
+            fit: BoxFit.contain,
+            semanticLabel: LeaderboardCopy.of(context).back,
+            onPressed: onBack,
+          ),
+        ),
+        Positioned(
+          left: 58,
+          right: 58,
+          bottom: 0,
+          child: Text(
+            subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: BbText.small(const Color(0xFFFFE2A0)).copyWith(
+              fontWeight: FontWeight.w900,
+              shadows: const <Shadow>[
+                Shadow(color: BbTokens.karstShadow, offset: Offset(0, 2)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }
 

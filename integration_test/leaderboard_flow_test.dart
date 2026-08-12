@@ -13,9 +13,9 @@ import 'package:ban_bua_tuong/sim/geometry.dart';
 import 'package:ban_bua_tuong/state/leaderboard_controller.dart';
 import 'package:ban_bua_tuong/state/providers.dart';
 import 'package:ban_bua_tuong/ui/fit.dart';
-import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
 import 'package:ban_bua_tuong/ui/screens/game_screen.dart';
 import 'package:ban_bua_tuong/ui/screens/leaderboard_screen.dart';
+import 'package:ban_bua_tuong/ui/screens/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +43,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-    'map -> explicit auth -> loaded -> scope -> offline cache -> retry',
+    'menu -> explicit auth -> loaded -> scope -> offline cache -> retry',
     (WidgetTester tester) async {
       bool offline = false;
       int globalLoads = 0;
@@ -90,7 +90,7 @@ void main() {
 
       await pumpApp(
         tester,
-        home: const ArenaMapScreen(),
+        home: const MenuScreen(),
         overrides: <Override>[
           gameServicesGatewayProvider.overrideWithValue(gateway),
         ],
@@ -98,7 +98,7 @@ void main() {
 
       expect(gateway.authenticateArguments, isEmpty);
       expect(gateway.loadCalls, isEmpty);
-      await tester.tap(find.byKey(const Key('selected-arena-leaderboard')));
+      await tester.tap(find.byKey(const Key('menu-leaderboard')));
       await _pumpUntil(
         tester,
         () => find
@@ -164,11 +164,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('leaderboard-back')));
       await tester.pumpAndSettle();
-      expect(find.byType(ArenaMapScreen), findsOneWidget);
-      expect(
-        find.byKey(const Key('selected-arena-leaderboard')),
-        findsOneWidget,
-      );
+      expect(find.byType(MenuScreen), findsOneWidget);
+      expect(find.byKey(const Key('menu-leaderboard')), findsOneWidget);
     },
   );
 

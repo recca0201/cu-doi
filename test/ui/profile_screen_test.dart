@@ -20,6 +20,8 @@ void main() {
       ),
     );
     await tester.pump();
+    expect(find.byKey(const Key('profile-title')), findsOneWidget);
+    expect(find.byKey(const Key('profile-back')), findsOneWidget);
     expect(find.text('2/60'), findsOneWidget);
     expect(find.text('1/20'), findsOneWidget);
     expect(find.text('700'), findsOneWidget);

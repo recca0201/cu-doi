@@ -33,41 +33,26 @@ class ProfileScreen extends ConsumerWidget {
           SafeArea(
             child: Column(
               children: [
-                SizedBox(
-                  height: 56,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        key: const Key('profile-back'),
-                        tooltip: t.backCta,
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          t.profileTitle,
-                          textAlign: TextAlign.center,
-                          style: BbText.h2(Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
+                BbKarstHeader(
+                  titleAsset:
+                      'assets/images/ui/karst/profile_title_banner_v2.png',
+                  titleLabel: t.profileTitle,
+                  titleKey: const Key('profile-title'),
+                  backLabel: t.backCta,
+                  backKey: const Key('profile-back'),
+                  onBack: () => Navigator.of(context).pop(),
                 ),
                 Expanded(
                   child: profile.restoring
                       ? const Center(child: CircularProgressIndicator())
                       : SingleChildScrollView(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
                           child: Center(
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 440),
                               child: Column(
                                 children: [
-                                  BbCard(
+                                  _ProfilePanel(
                                     child: Column(
                                       children: [
                                         PlayerAvatar(
@@ -88,13 +73,22 @@ class ProfileScreen extends ConsumerWidget {
                                             t.defaultPlayerName,
                                           ),
                                           key: const Key('profile-name'),
-                                          style: BbText.h2(Colors.white),
+                                          style: BbText.h2(BbTokens.cream),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         TextButton(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor:
+                                                BbTokens.primaryGold,
+                                          ),
                                           onPressed: () =>
                                               _editName(context, ref, profile),
-                                          child: Text(t.editNameCta),
+                                          child: Text(
+                                            t.editNameCta,
+                                            style: BbText.button(
+                                              BbTokens.primaryGold,
+                                            ).copyWith(fontSize: 16),
+                                          ),
                                         ),
                                         Text(
                                           account.phase == AccountPhase.guest
@@ -110,8 +104,11 @@ class ProfileScreen extends ConsumerWidget {
                                                     AccountPhase.deleted
                                               ? t.accountDeleted
                                               : t.signedInStatus,
+                                          textAlign: TextAlign.center,
                                           style: BbText.small(
-                                            BbTokens.textMuted,
+                                            BbTokens.cream.withValues(
+                                              alpha: .72,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -120,11 +117,40 @@ class ProfileScreen extends ConsumerWidget {
                                   const SizedBox(height: 12),
                                   _Metrics(summary: summary, t: t),
                                   if (summary.completedLevels == 0)
-                                    Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Text(
-                                        t.profileEncouragement,
-                                        style: BbText.body(Colors.white),
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: BbTokens.karstDeep.withValues(
+                                          alpha: .84,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: BbTokens.karstBronze
+                                              .withValues(alpha: .72),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.auto_awesome_rounded,
+                                            color: BbTokens.primaryGold,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              t.profileEncouragement,
+                                              style: BbText.body(
+                                                BbTokens.cream,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   if (focusAccount) ...[
@@ -202,12 +228,15 @@ class _Badges extends StatelessWidget {
   final ProfileSummary summary;
   final AppLocalizations t;
   @override
-  Widget build(BuildContext context) => BbCard(
+  Widget build(BuildContext context) => _ProfilePanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(t.badgesTitle, style: BbText.h3(Colors.white)),
-        const SizedBox(height: 8),
+        _ProfileSectionTitle(
+          icon: Icons.workspace_premium_rounded,
+          label: t.badgesTitle,
+        ),
+        const SizedBox(height: 12),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -225,12 +254,13 @@ class _Badges extends StatelessWidget {
                   '${badge.id}, ${badge.unlocked ? t.badgeUnlocked : t.badgeLocked}, ${badge.progress}/${badge.target}',
               child: Container(
                 decoration: BoxDecoration(
+                  color: BbTokens.karstDeep.withValues(alpha: .72),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: badge.unlocked
                         ? BbTokens.primaryGold
-                        : BbTokens.textMuted,
-                    width: 2,
+                        : BbTokens.karstBronze.withValues(alpha: .42),
+                    width: 1.5,
                   ),
                 ),
                 padding: const EdgeInsets.all(8),
@@ -242,14 +272,14 @@ class _Badges extends StatelessWidget {
                           : Icons.lock_outline,
                       color: badge.unlocked
                           ? BbTokens.primaryGold
-                          : BbTokens.textMuted,
+                          : BbTokens.cream.withValues(alpha: .42),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         '${badge.id}\n${badge.progress}/${badge.target}',
                         maxLines: 2,
-                        style: BbText.tiny(Colors.white),
+                        style: BbText.tiny(BbTokens.cream),
                       ),
                     ),
                   ],
@@ -270,13 +300,16 @@ class _AccountCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(accountProvider.notifier);
-    return BbCard(
+    return _ProfilePanel(
       key: const Key('profile-account-card'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(t.accountTitle, style: BbText.h3(Colors.white)),
-          const SizedBox(height: 8),
+          _ProfileSectionTitle(
+            icon: Icons.account_circle_rounded,
+            label: t.accountTitle,
+          ),
+          const SizedBox(height: 10),
           Text(
             account.phase == AccountPhase.guest
                 ? t.guestAccountBody
@@ -287,7 +320,7 @@ class _AccountCard extends ConsumerWidget {
                 : account.phase == AccountPhase.deleted
                 ? t.accountDeleted
                 : '${t.signedInStatus}: ${account.providers.map((p) => p.name).join(', ')}',
-            style: BbText.body(BbTokens.textMuted),
+            style: BbText.body(BbTokens.cream.withValues(alpha: .72)),
           ),
           const SizedBox(height: 12),
           if (!account.isAuthenticated &&
@@ -300,7 +333,7 @@ class _AccountCard extends ConsumerWidget {
             const SizedBox(height: 8),
             BbButton(
               label: t.signInAppleCta,
-              variant: BbVariant.secondary,
+              variant: BbVariant.karst,
               expand: true,
               onPressed: () => controller.signIn(AuthProviderKind.apple),
             ),
@@ -321,7 +354,7 @@ class _AccountCard extends ConsumerWidget {
                 ),
             BbButton(
               label: t.signOutCta,
-              variant: BbVariant.secondary,
+              variant: BbVariant.karst,
               expand: true,
               onPressed: () => _confirmSignOut(context, controller),
             ),
@@ -410,28 +443,72 @@ class _Metrics extends StatelessWidget {
   final ProfileSummary summary;
   final AppLocalizations t;
   @override
-  Widget build(BuildContext context) => BbCard(
-    child: Wrap(
-      spacing: 18,
-      runSpacing: 12,
-      alignment: WrapAlignment.center,
-      children: [
-        _metric(t.profileStars, '${summary.totalStars}/60'),
-        _metric(t.coinsLabel, '${summary.coins}'),
-        _metric(t.profileCompleted, '${summary.completedLevels}/20'),
-        _metric(t.bestScoreLabel, '${summary.bestScore}'),
-      ],
+  Widget build(BuildContext context) {
+    final bool largeText = MediaQuery.textScalerOf(context).scale(16) > 22;
+    return _ProfilePanel(
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: largeText ? 1 : 2,
+        childAspectRatio: largeText ? 4 : 2.25,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        children: [
+          _metric(
+            Icons.star_rounded,
+            t.profileStars,
+            '${summary.totalStars}/60',
+          ),
+          _metric(Icons.paid_rounded, t.coinsLabel, '${summary.coins}'),
+          _metric(
+            Icons.flag_rounded,
+            t.profileCompleted,
+            '${summary.completedLevels}/20',
+          ),
+          _metric(
+            Icons.military_tech_rounded,
+            t.bestScoreLabel,
+            '${summary.bestScore}',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _metric(IconData icon, String label, String value) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    decoration: BoxDecoration(
+      color: BbTokens.karstDeep.withValues(alpha: .72),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(
+        color: BbTokens.karstBronze.withValues(alpha: .46),
+        width: 1.5,
+      ),
     ),
-  );
-  Widget _metric(String label, String value) => SizedBox(
-    width: 78,
-    child: Column(
+    child: Row(
       children: [
-        Text(value, style: BbText.h3(Colors.white)),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: BbText.tiny(BbTokens.textMuted),
+        Icon(icon, color: BbTokens.primaryGold, size: 24),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(value, style: BbText.h3(BbTokens.cream)),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    style: BbText.tiny(BbTokens.cream.withValues(alpha: .68)),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     ),
@@ -448,41 +525,110 @@ class _ChapterPanel extends StatelessWidget {
   final ProfileSummary summary;
   final AppLocalizations t;
   @override
-  Widget build(BuildContext context) => Card(
-    color: const Color(0xEE073736),
-    child: ExpansionTile(
-      initiallyExpanded: chapter.chapter.number == 1,
-      textColor: Colors.white,
-      collapsedTextColor: Colors.white,
-      title: Text(t.profileChapter(chapter.chapter.number)),
-      subtitle: Text(
-        '${chapter.completed}/5 · ${chapter.stars}/15 ${t.profileStars}',
-      ),
-      children: summary.records
-          .where((r) => chapter.chapter.contains(r.levelId))
-          .map(
-            (r) => ListTile(
-              title: Text(
-                '${t.arenaNumberLabel(r.levelId)} · ${Localizations.localeOf(context).languageCode == 'en' ? kArenas[r.levelId - 1].nameEn : kArenas[r.levelId - 1].name}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              trailing: Text(
-                r.state == LevelRecordState.completed
-                    ? '${r.stars}★ · ${r.highScore}'
-                    : r.state == LevelRecordState.skipped
-                    ? t.arenaSkippedBadge
-                    : r.state == LevelRecordState.locked
-                    ? t.arenaLocked
-                    : '—',
-                style: TextStyle(
-                  color: r.state == LevelRecordState.completed
-                      ? BbTokens.primaryGold
-                      : BbTokens.textMuted,
-                ),
-              ),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: _ProfilePanel(
+      padding: EdgeInsets.zero,
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: Material(
+          color: Colors.transparent,
+          child: ExpansionTile(
+            initiallyExpanded: chapter.chapter.number == 1,
+            iconColor: BbTokens.primaryGold,
+            collapsedIconColor: BbTokens.karstBronze,
+            textColor: BbTokens.cream,
+            collapsedTextColor: BbTokens.cream,
+            tilePadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 4,
             ),
-          )
-          .toList(),
+            childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            title: Text(
+              t.profileChapter(chapter.chapter.number),
+              style: BbText.h3(BbTokens.cream),
+            ),
+            subtitle: Text(
+              '${chapter.completed}/5 · ${chapter.stars}/15 ${t.profileStars}',
+              style: BbText.small(BbTokens.cream.withValues(alpha: .68)),
+            ),
+            children: summary.records
+                .where((r) => chapter.chapter.contains(r.levelId))
+                .map(
+                  (r) => Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: BbTokens.karstBronze.withValues(alpha: .24),
+                        ),
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        dense: true,
+                        title: Text(
+                          '${t.arenaNumberLabel(r.levelId)} · ${Localizations.localeOf(context).languageCode == 'en' ? kArenas[r.levelId - 1].nameEn : kArenas[r.levelId - 1].name}',
+                          style: BbText.body(BbTokens.cream),
+                        ),
+                        trailing: Text(
+                          r.state == LevelRecordState.completed
+                              ? '${r.stars}★ · ${r.highScore}'
+                              : r.state == LevelRecordState.skipped
+                              ? t.arenaSkippedBadge
+                              : r.state == LevelRecordState.locked
+                              ? t.arenaLocked
+                              : '—',
+                          style: BbText.small(
+                            r.state == LevelRecordState.completed
+                                ? BbTokens.primaryGold
+                                : BbTokens.cream.withValues(alpha: .58),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ),
     ),
+  );
+}
+
+class _ProfilePanel extends StatelessWidget {
+  const _ProfilePanel({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(BbTokens.sp5),
+  });
+
+  final Widget child;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) => BbCard(
+    color: BbTokens.karstTeal,
+    borderColor: BbTokens.karstBronze,
+    shadowColor: BbTokens.karstShadow,
+    padding: padding,
+    child: child,
+  );
+}
+
+class _ProfileSectionTitle extends StatelessWidget {
+  const _ProfileSectionTitle({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(icon, color: BbTokens.primaryGold, size: 24),
+      const SizedBox(width: 8),
+      Expanded(child: Text(label, style: BbText.h3(BbTokens.cream))),
+    ],
   );
 }

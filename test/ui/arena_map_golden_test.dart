@@ -50,6 +50,9 @@ void main() {
       ]),
     );
     await tester.pump();
+
+    expect(find.byKey(const Key('selected-arena-leaderboard')), findsNothing);
+
     await expectLater(
       find.byKey(const Key('arena-map-golden')),
       matchesGoldenFile('goldens/arena_map_390x844.png'),

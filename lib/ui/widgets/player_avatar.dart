@@ -16,11 +16,12 @@ class PlayerAvatar extends StatelessWidget {
   final String? semanticLabel;
   static const Map<String, String> presetAssets = {
     'pangolin-gold': 'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
-    'pangolin-blue': 'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
-    'pangolin-purple': 'assets/images/mascot/cu_doi_mascot_pangolin_v1.png',
-    'galaxy-gold': 'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
-    'galaxy-blue': 'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
-    'galaxy-purple': 'assets/images/mascot/cu_doi_mascot_galaxy_v3.png',
+    'pangolin-victory':
+        'assets/images/mascot/moods/pangolin_victory.png',
+    'pangolin-surprised':
+        'assets/images/mascot/moods/pangolin_surprised.png',
+    'pangolin-gentle-sad':
+        'assets/images/mascot/moods/pangolin_gentle_sad.png',
   };
   @override
   Widget build(BuildContext context) {

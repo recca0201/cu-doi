@@ -9,6 +9,7 @@ abstract final class BbTokens {
   static const karstDeep = Color(0xFF042D31);
   static const karstTeal = Color(0xFF07504A);
   static const karstBronze = Color(0xFFD99A38);
+  static const karstShadow = Color(0xFF3D210E);
   static const primaryGold = Color(0xFFFFC21C);
   static const primaryGoldDark = Color(0xFFD99B00);
   static const secondaryBlue = Color(0xFF1976D2);
