@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/arena_ink.dart';
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 import '../../domain/character.dart';
@@ -197,6 +198,7 @@ class _RuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
+    key: Key('how-to-rule-$number'),
     constraints: const BoxConstraints(minHeight: 146),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(18),
@@ -220,67 +222,102 @@ class _RuleCard extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(28, 20, 34, 22),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: _StepBadge(number: number),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                flex: 4,
-                child: AspectRatio(
-                  aspectRatio: 1.08,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF071638),
-                      borderRadius: BorderRadius.circular(13),
-                      border: Border.all(
-                        color: BbTokens.trajectoryCyan.withValues(alpha: .75),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(11),
-                      child: CustomPaint(painter: _RuleDiagram(art)),
+          padding: const EdgeInsets.fromLTRB(28, 21, 34, 24),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double textScale = MediaQuery.textScalerOf(
+                context,
+              ).scale(1);
+              final bool stacked =
+                  constraints.maxWidth < 300 || textScale > 1.35;
+              final Widget heading = Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _StepBadge(number: number),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      title,
+                      key: Key('how-to-title-$number'),
+                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      style: BbText.h3(
+                        BbTokens.primaryGold,
+                      ).copyWith(fontSize: 17),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                flex: 6,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              );
+              final Widget diagram = _RuleDiagramBox(
+                key: Key('how-to-art-$number'),
+                art: art,
+              );
+              final Widget explanation = Text(
+                body,
+                key: Key('how-to-body-$number'),
+                style: BbText.small(Colors.white).copyWith(fontSize: 12.5),
+              );
+
+              if (stacked) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    FittedBox(
-                      alignment: Alignment.centerLeft,
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        style: BbText.h3(
-                          BbTokens.primaryGold,
-                        ).copyWith(fontSize: 17),
-                      ),
+                    heading,
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(width: 190, height: 124, child: diagram),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      body,
-                      style: BbText.small(
-                        Colors.white,
-                      ).copyWith(fontSize: 12.5),
-                    ),
+                    const SizedBox(height: 10),
+                    explanation,
                   ],
-                ),
-              ),
-            ],
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  heading,
+                  const SizedBox(height: 9),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(width: 132, height: 112, child: diagram),
+                      const SizedBox(width: 12),
+                      Expanded(child: explanation),
+                    ],
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
+    ),
+  );
+}
+
+class _RuleDiagramBox extends StatelessWidget {
+  const _RuleDiagramBox({super.key, required this.art});
+
+  final _RuleArt art;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: const Color(0xFF071E27),
+      borderRadius: BorderRadius.circular(13),
+      border: Border.all(
+        color: BbTokens.trajectoryCyan.withValues(alpha: .75),
+        width: 1.5,
+      ),
+      boxShadow: const <BoxShadow>[
+        BoxShadow(color: Color(0x66032124), offset: Offset(0, 2)),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(11),
+      child: CustomPaint(painter: _RuleDiagram(art)),
     ),
   );
 }
@@ -393,52 +430,72 @@ class _RuleDiagram extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final double unit = math.min(size.width / 132, size.height / 112);
     final Paint cyan = Paint()
-      ..color = BbTokens.trajectoryCyan
-      ..strokeWidth = 3
+      ..color = ArenaInk.of(ArenaInk.trajectoryCyan)
+      ..strokeWidth = 2.2 * unit
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     final Paint glow = Paint()
-      ..color = BbTokens.trajectoryCyan.withValues(alpha: .22)
-      ..strokeWidth = 9
+      ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x38)
+      ..strokeWidth = 7 * unit
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
-    final Offset launcher = Offset(size.width * .50, size.height * .84);
+    final Offset launcher = Offset(size.width * .50, size.height * .82);
 
-    void ball(Offset c, [double radius = 9]) {
+    void ball(Offset c, [double radius = 6.5]) {
       canvas.drawCircle(
         c,
-        radius + 5,
-        Paint()..color = BbTokens.trajectoryCyan.withValues(alpha: .22),
+        radius * 2.2,
+        Paint()..color = ArenaInk.of(ArenaInk.energyCyan, 0x28),
       );
-      canvas.drawCircle(c, radius, Paint()..color = const Color(0xFFE9FBFF));
-      canvas.drawCircle(
-        c,
-        radius,
-        Paint()
-          ..color = BbTokens.trajectoryCyan
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
+      paintPangolinBall(
+        canvas,
+        center: c,
+        radius: radius,
+        shellColor: const Color(0xFFE97822),
+        showFace: false,
       );
     }
 
-    void launcherAt(Offset c) {
+    void launcherAt(Offset c, {double angle = -math.pi / 2}) {
+      canvas.save();
+      canvas.translate(c.dx, c.dy);
+      canvas.rotate(angle);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromCenter(center: c, width: 34, height: 25),
-          const Radius.circular(8),
+          Rect.fromLTRB(-4 * unit, -5 * unit, 24 * unit, 5 * unit),
+          Radius.circular(2.5 * unit),
         ),
-        Paint()..color = const Color(0xFF2479C8),
+        Paint()
+          ..shader =
+              const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color(0xFFFFD36A),
+                  Color(0xFFD99A38),
+                  Color(0xFF8A4E1D),
+                ],
+              ).createShader(
+                Rect.fromLTRB(-4 * unit, -5 * unit, 24 * unit, 5 * unit),
+              ),
       );
       canvas.drawCircle(
-        c - const Offset(0, 12),
-        10,
-        Paint()..color = BbTokens.primaryGold,
+        Offset(21 * unit, 0),
+        5.7 * unit,
+        Paint()
+          ..color = ArenaInk.of(ArenaInk.energyCyan)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2 * unit,
       );
-      canvas.drawCircle(
-        c - const Offset(0, 12),
-        7,
-        Paint()..color = BbTokens.trajectoryCyan,
+      canvas.restore();
+      paintPangolinBall(
+        canvas,
+        center: c,
+        radius: 7 * unit,
+        shellColor: const Color(0xFFE97822),
+        showFace: false,
       );
     }
 
@@ -450,70 +507,163 @@ class _RuleDiagram extends CustomPainter {
       canvas.drawPath(p, glow);
       canvas.drawPath(p, cyan);
       for (final Offset point in points.skip(1).take(points.length - 2)) {
-        canvas.drawCircle(point, 4, Paint()..color = Colors.white);
+        canvas.drawCircle(point, 2.8 * unit, Paint()..color = Colors.white);
       }
     }
 
-    void target(Offset c, int number, Color color) {
-      canvas.drawCircle(c, 19, Paint()..color = color.withValues(alpha: .25));
+    void target(Offset c, int number, Color color, {bool armed = false}) {
+      canvas.drawCircle(
+        c,
+        15 * unit,
+        Paint()
+          ..color = armed
+              ? ArenaInk.of(ArenaInk.energyCyan, 0x58)
+              : color.withValues(alpha: .25),
+      );
       paintPangolinBall(
         canvas,
         center: c,
-        radius: 15,
+        radius: 10.5 * unit,
         shellColor: color,
+        armed: armed,
         number: number,
-        showFace: false,
       );
+    }
+
+    void sideWall(double x) {
+      canvas.drawLine(
+        Offset(x, 5 * unit),
+        Offset(x, size.height - 5 * unit),
+        Paint()
+          ..color = ArenaInk.of(ArenaInk.outline)
+          ..strokeWidth = 7 * unit,
+      );
+      canvas.drawLine(
+        Offset(x, 5 * unit),
+        Offset(x, size.height - 5 * unit),
+        Paint()
+          ..color = ArenaInk.of(ArenaInk.frame)
+          ..strokeWidth = 3.2 * unit,
+      );
+    }
+
+    void block(Rect rect) {
+      final RRect shape = RRect.fromRectAndRadius(
+        rect,
+        Radius.circular(2.2 * unit),
+      );
+      canvas.drawRRect(
+        shape,
+        Paint()
+          ..shader = const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[Color(0xFF61779B), Color(0xFF243A61)],
+          ).createShader(rect),
+      );
+      canvas.drawRRect(
+        shape,
+        Paint()
+          ..color = const Color(0xFFB6C8E2)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .8 * unit,
+      );
+    }
+
+    void deflector(Offset a, Offset b) {
+      canvas.drawLine(
+        a,
+        b,
+        Paint()
+          ..color = ArenaInk.of(ArenaInk.outline)
+          ..strokeWidth = 7 * unit
+          ..strokeCap = StrokeCap.round,
+      );
+      canvas.drawLine(
+        a,
+        b,
+        Paint()
+          ..color = const Color(0xFF5E7397)
+          ..strokeWidth = 4.5 * unit
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+
+    void resultMark(Offset center, {required bool success}) {
+      final Paint outline = Paint()
+        ..color = ArenaInk.of(ArenaInk.outline)
+        ..strokeWidth = 6 * unit
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round;
+      final Paint color = Paint()
+        ..color = success ? BbTokens.successGreen : BbTokens.dangerRed
+        ..strokeWidth = 3.2 * unit
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round;
+      final Path mark = success
+          ? (Path()
+              ..moveTo(center.dx - 7 * unit, center.dy)
+              ..lineTo(center.dx - 2 * unit, center.dy + 5 * unit)
+              ..lineTo(center.dx + 8 * unit, center.dy - 7 * unit))
+          : (Path()
+              ..moveTo(center.dx - 6 * unit, center.dy - 6 * unit)
+              ..lineTo(center.dx + 6 * unit, center.dy + 6 * unit)
+              ..moveTo(center.dx + 6 * unit, center.dy - 6 * unit)
+              ..lineTo(center.dx - 6 * unit, center.dy + 6 * unit));
+      canvas.drawPath(mark, outline);
+      canvas.drawPath(mark, color);
     }
 
     switch (art) {
       case _RuleArt.aim:
-        launcherAt(launcher);
-        final Offset end = Offset(size.width * .80, size.height * .20);
-        _dashedLine(canvas, launcher - const Offset(0, 18), end, cyan);
-        canvas.drawPath(
-          Path()
-            ..moveTo(end.dx, end.dy)
-            ..lineTo(end.dx - 12, end.dy + 4)
-            ..lineTo(end.dx - 5, end.dy + 14)
-            ..close(),
-          Paint()..color = Colors.white,
+        sideWall(size.width * .94);
+        final Offset bank = Offset(size.width * .94, size.height * .30);
+        final Offset end = Offset(size.width * .68, size.height * .12);
+        launcherAt(launcher, angle: -.93);
+        _dashedLine(canvas, launcher, bank, cyan);
+        _dashedLine(
+          canvas,
+          bank,
+          end,
+          Paint()
+            ..color = ArenaInk.of(ArenaInk.trajectoryCyan, 0x78)
+            ..strokeWidth = 1.6 * unit
+            ..strokeCap = StrokeCap.round,
         );
+        canvas.drawCircle(bank, 2.8 * unit, Paint()..color = Colors.white);
         canvas.drawCircle(
-          Offset(size.width * .38, size.height * .50),
-          13,
+          Offset(size.width * .28, size.height * .60),
+          7 * unit,
           Paint()..color = const Color(0xFFFFB38A),
         );
         canvas.drawLine(
-          Offset(size.width * .38, size.height * .50),
-          Offset(size.width * .52, size.height * .35),
+          Offset(size.width * .28, size.height * .60),
+          Offset(size.width * .45, size.height * .45),
           Paint()
             ..color = const Color(0xFFFFB38A)
-            ..strokeWidth = 9
+            ..strokeWidth = 6 * unit
             ..strokeCap = StrokeCap.round,
         );
       case _RuleArt.bounce:
-        final Paint wall = Paint()
-          ..color = const Color(0xFF657A9F)
-          ..strokeWidth = 10
-          ..strokeCap = StrokeCap.round;
-        canvas.drawLine(
-          Offset(size.width * .10, size.height * .16),
-          Offset(size.width * .10, size.height * .84),
-          wall,
+        sideWall(size.width * .08);
+        block(
+          Rect.fromCenter(
+            center: Offset(size.width * .54, size.height * .35),
+            width: size.width * .30,
+            height: 12 * unit,
+          ),
         );
-        canvas.drawLine(
-          Offset(size.width * .52, size.height * .25),
-          Offset(size.width * .82, size.height * .50),
-          wall,
+        deflector(
+          Offset(size.width * .66, size.height * .60),
+          Offset(size.width * .88, size.height * .42),
         );
         path(<Offset>[
-          Offset(size.width * .78, size.height * .82),
-          Offset(size.width * .10, size.height * .60),
-          Offset(size.width * .52, size.height * .25),
-          Offset(size.width * .78, size.height * .12),
+          Offset(size.width * .78, size.height * .86),
+          Offset(size.width * .08, size.height * .66),
+          Offset(size.width * .46, size.height * .41),
+          Offset(size.width * .72, size.height * .55),
         ]);
-        ball(Offset(size.width * .78, size.height * .82));
+        ball(Offset(size.width * .78, size.height * .86));
       case _RuleArt.direct:
         canvas.drawLine(
           Offset(size.width * .5, 8),
@@ -524,47 +674,44 @@ class _RuleDiagram extends CustomPainter {
         );
         target(
           Offset(size.width * .25, size.height * .28),
-          2,
+          1,
           BbTokens.dangerRed,
         );
-        launcherAt(Offset(size.width * .25, size.height * .85));
+        launcherAt(Offset(size.width * .25, size.height * .86));
         path(<Offset>[
           Offset(size.width * .25, size.height * .73),
-          Offset(size.width * .25, size.height * .44),
+          Offset(size.width * .25, size.height * .40),
         ]);
-        _diagramText(
-          canvas,
-          '×',
-          Offset(size.width * .25, size.height * .62),
-          31,
-          BbTokens.dangerRed,
-        );
+        resultMark(Offset(size.width * .25, size.height * .62), success: false);
         target(
           Offset(size.width * .75, size.height * .28),
-          2,
+          1,
           BbTokens.dangerRed,
+          armed: true,
         );
-        launcherAt(Offset(size.width * .75, size.height * .85));
+        sideWall(size.width * .96);
+        launcherAt(Offset(size.width * .75, size.height * .86), angle: -1.05);
         path(<Offset>[
           Offset(size.width * .75, size.height * .73),
-          Offset(size.width * .92, size.height * .55),
-          Offset(size.width * .75, size.height * .42),
+          Offset(size.width * .96, size.height * .57),
+          Offset(size.width * .75, size.height * .39),
         ]);
-        _diagramText(
-          canvas,
-          '✓',
-          Offset(size.width * .75, size.height * .62),
-          27,
-          BbTokens.successGreen,
-        );
+        resultMark(Offset(size.width * .75, size.height * .62), success: true);
       case _RuleArt.score:
+        sideWall(size.width * .08);
+        target(
+          Offset(size.width * .75, size.height * .50),
+          2,
+          BbTokens.tertiaryPurple,
+          armed: true,
+        );
         path(<Offset>[
-          Offset(size.width * .16, size.height * .76),
-          Offset(size.width * .16, size.height * .28),
-          Offset(size.width * .48, size.height * .14),
-          Offset(size.width * .72, size.height * .52),
+          Offset(size.width * .42, size.height * .86),
+          Offset(size.width * .08, size.height * .56),
+          Offset(size.width * .44, size.height * .16),
+          Offset(size.width * .66, size.height * .43),
         ]);
-        ball(Offset(size.width * .16, size.height * .76));
+        launcherAt(Offset(size.width * .42, size.height * .86), angle: -2.45);
         _diagramText(
           canvas,
           '×3',
@@ -575,30 +722,36 @@ class _RuleDiagram extends CustomPainter {
         _diagramText(
           canvas,
           '+300',
-          Offset(size.width * .67, size.height * .78),
-          22,
+          Offset(size.width * .73, size.height * .76),
+          19,
           BbTokens.primaryGold,
         );
       case _RuleArt.floor:
-        launcherAt(Offset(size.width * .40, size.height * .78));
+        final double floorY = size.height * .84;
+        launcherAt(Offset(size.width * .35, floorY - 9 * unit), angle: -1.05);
         _dashedLine(
           canvas,
-          Offset(size.width * .05, size.height * .70),
-          Offset(size.width * .95, size.height * .70),
+          Offset(size.width * .05, floorY),
+          Offset(size.width * .95, floorY),
           Paint()
             ..color = BbTokens.dangerRed
-            ..strokeWidth = 3,
+            ..strokeWidth = 2.2 * unit,
         );
-        ball(Offset(size.width * .65, size.height * .46));
+        path(<Offset>[
+          Offset(size.width * .35, floorY - 13 * unit),
+          Offset(size.width * .78, size.height * .30),
+          Offset(size.width * .66, floorY - 4 * unit),
+        ]);
+        ball(Offset(size.width * .66, floorY - 4 * unit));
         canvas.drawLine(
-          Offset(size.width * .65, size.height * .57),
-          Offset(size.width * .65, size.height * .88),
+          Offset(size.width * .66, floorY + 4 * unit),
+          Offset(size.width * .66, size.height * .96),
           Paint()
             ..color = BbTokens.dangerRed
-            ..strokeWidth = 4
+            ..strokeWidth = 3 * unit
             ..strokeCap = StrokeCap.round,
         );
-        final Offset tip = Offset(size.width * .65, size.height * .90);
+        final Offset tip = Offset(size.width * .66, size.height * .97);
         canvas.drawPath(
           Path()
             ..moveTo(tip.dx, tip.dy)

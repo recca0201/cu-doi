@@ -42,6 +42,7 @@ class ArenaPainter extends CustomPainter {
     required this.trail,
     required this.ghostTrail,
     this.hintPath = const <V2>[],
+    this.hintTargetIndices = const <int>[],
     required this.ballPos,
     required this.currentBanks,
     required this.shotInFlight,
@@ -61,6 +62,7 @@ class ArenaPainter extends CustomPainter {
   final List<V2> trail;
   final List<V2> ghostTrail;
   final List<V2> hintPath;
+  final List<int> hintTargetIndices;
   final V2? ballPos;
 
   /// Banks accumulated by the shot in flight, or 0 when idle. Drives the
@@ -496,6 +498,32 @@ class ArenaPainter extends CustomPainter {
       final double r = fit.u(kTargetRadius * 1.18);
       final int base = ArenaInk.targets[t.palette % ArenaInk.targets.length];
       final bool armed = currentBanks >= t.requiredBanks;
+      final bool hinted = hintTargetIndices.contains(i);
+
+      if (hinted) {
+        canvas.drawCircle(
+          c,
+          r * 2.05,
+          Paint()..color = ArenaInk.of(ArenaInk.primaryGold, 0x38),
+        );
+        canvas.drawCircle(
+          c,
+          r * 1.72,
+          Paint()
+            ..color = ArenaInk.of(ArenaInk.primaryGold, 0xF2)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = fit.u(1.05),
+        );
+        for (int ray = 0; ray < 4; ray++) {
+          final double angle = math.pi / 4 + ray * math.pi / 2;
+          final Offset direction = Offset(math.cos(angle), math.sin(angle));
+          canvas.drawCircle(
+            c + direction * (r * 2.18),
+            fit.u(.72),
+            Paint()..color = ArenaInk.of(ArenaInk.cream),
+          );
+        }
+      }
 
       canvas.drawCircle(
         c,

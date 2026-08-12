@@ -1,4 +1,4 @@
-package com.example.ban_bua_tuong
+package com.tungbogin.cudoi
 
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.games.GamesClientStatusCodes
@@ -614,6 +614,6 @@ class GameServicesBridgeTest {
     private data class SubmittedScore(val leaderboardId: String, val score: Long)
 
     private companion object {
-        const val RUNTIME_APPLICATION_ID = "com.example.ban_bua_tuong"
+        const val RUNTIME_APPLICATION_ID = "com.tungbogin.cudoi"
     }
 }

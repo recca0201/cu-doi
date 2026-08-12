@@ -4,7 +4,7 @@
          guard and native validateConfiguration method reject these explicit
          placeholders; do not invent console IDs in source control. -->
     <string name="game_services_project_id" translatable="false">REPLACE_WITH_PLAY_GAMES_PROJECT_ID</string>
-    <string name="play_games_android_application_id" translatable="false">REPLACE_WITH_RELEASE_APPLICATION_ID</string>
+    <string name="play_games_android_application_id" translatable="false">com.tungbogin.cudoi</string>
 
     <string name="leaderboard_arena_1" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_01</string>
     <string name="leaderboard_arena_2" translatable="false">REPLACE_WITH_LEADERBOARD_ID_ARENA_02</string>

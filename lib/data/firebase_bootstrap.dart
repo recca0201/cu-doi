@@ -4,6 +4,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../firebase_options.dart';
 import '../firebase_options_emulator.dart';
 
 class FirebaseBootstrapResult {
@@ -25,8 +26,14 @@ class FirebaseBootstrap {
       return const FirebaseBootstrapResult.guest();
     }
     if (enableProduction && !useEmulator) {
-      // Production-generated options intentionally remain an external release input.
-      throw StateError('Production Firebase options have not been generated');
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      await FirebaseAppCheck.instance.activate(
+        providerAndroid: const AndroidPlayIntegrityProvider(),
+        providerApple: const AppleAppAttestWithDeviceCheckFallbackProvider(),
+      );
+      return const FirebaseBootstrapResult.connected(emulator: false);
     }
     await Firebase.initializeApp(options: emulatorFirebaseOptions);
     FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9099);

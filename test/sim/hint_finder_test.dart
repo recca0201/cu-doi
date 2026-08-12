@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ban_bua_tuong/sim/arena.dart';
 import 'package:ban_bua_tuong/sim/arenas.dart';
 import 'package:ban_bua_tuong/sim/hint_finder.dart';
+import 'package:ban_bua_tuong/sim/shot_runner.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 ArenaSnapshot _arenaSnapshot(List<bool> alive) {
@@ -28,12 +29,35 @@ void main() {
     expect(first, isNotNull);
     expect(second, isNotNull);
     expect(first!.targetsDestroyed, greaterThanOrEqualTo(1));
+    expect(first.targetIndices, isNotEmpty);
     expect(first.path.first.x, kShooterOrigin.x);
     expect(first.path.first.y, kShooterOrigin.y);
     expect(first.path.last.y, inInclusiveRange(0, kArenaHeight));
     expect(second!.aim.x, closeTo(first.aim.x, 1e-12));
     expect(second.aim.y, closeTo(first.aim.y, 1e-12));
     expect(alive, everyElement(isTrue));
+
+    final List<bool> replayAlive = List<bool>.of(alive);
+    final ShotRunner replay = ShotRunner(
+      segments: _arenaSnapshot(alive).segments,
+      targets: kArenas.first.targets,
+      alive: replayAlive,
+      origin: kShooterOrigin,
+      direction: first.aim,
+      recordTrail: false,
+    );
+    int guard = 0;
+    while (replay.ball.alive && guard < kHintSimulationStepGuard) {
+      replay.step(kHintSimulationDt);
+      guard++;
+    }
+    for (final int targetIndex in first.targetIndices) {
+      expect(
+        replayAlive[targetIndex],
+        isFalse,
+        reason: 'Hint target $targetIndex must break when its aim is replayed',
+      );
+    }
   });
 
   test(

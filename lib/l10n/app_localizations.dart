@@ -494,6 +494,42 @@ abstract class AppLocalizations {
   /// **'Đã hiện đường gợi ý phá được {count} mục tiêu.'**
   String hintShownAnnouncement(int count);
 
+  /// No description provided for @rewardedAdCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem quảng cáo · +{reward} xu'**
+  String rewardedAdCta(int reward);
+
+  /// No description provided for @rewardedAdLoading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tải quảng cáo…'**
+  String get rewardedAdLoading;
+
+  /// No description provided for @rewardedAdEarned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận {reward} xu để dùng cho gợi ý.'**
+  String rewardedAdEarned(int reward);
+
+  /// No description provided for @rewardedAdDismissed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem hết quảng cáo để nhận xu.'**
+  String get rewardedAdDismissed;
+
+  /// No description provided for @rewardedAdUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có quảng cáo. Hãy thử lại sau.'**
+  String get rewardedAdUnavailable;
+
+  /// No description provided for @rewardedAdSaveFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không lưu được xu thưởng. Hãy thử lại.'**
+  String get rewardedAdSaveFailed;
+
   /// No description provided for @skipArenaLabel.
   ///
   /// In vi, this message translates to:

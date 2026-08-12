@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "cu-doi-game"
+  },
+  "targets": {
+    "cu-doi-game": {
+      "hosting": {
+        "privacy": [
+          "cudoi"
+        ]
+      }
+    }
+  }
+}

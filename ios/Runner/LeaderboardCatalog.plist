@@ -5,7 +5,7 @@
 	<!-- Release inputs owned by App Store Connect. The native validator and
 	     Release build phase reject these explicit placeholders. -->
 	<key>ExpectedBundleIdentifier</key>
-	<string>REPLACE_WITH_GAME_CENTER_BUNDLE_IDENTIFIER</string>
+	<string>com.tungbogin.cudoi</string>
 	<key>Leaderboards</key>
 	<dict>
 		<key>1</key>

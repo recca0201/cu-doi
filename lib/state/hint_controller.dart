@@ -21,6 +21,8 @@ class HintState {
     this.purchasedPath = const <V2>[],
     this.purchasedForArenaId,
     this.targetsDestroyed = 0,
+    this.targetIndices = const <int>[],
+    this.purchasedTargetIndices = const <int>[],
   });
 
   final HintStatus status;
@@ -28,6 +30,8 @@ class HintState {
   final List<V2> purchasedPath;
   final int? purchasedForArenaId;
   final int targetsDestroyed;
+  final List<int> targetIndices;
+  final List<int> purchasedTargetIndices;
 
   HintState copyWith({
     HintStatus? status,
@@ -35,6 +39,8 @@ class HintState {
     List<V2>? purchasedPath,
     int? purchasedForArenaId,
     int? targetsDestroyed,
+    List<int>? targetIndices,
+    List<int>? purchasedTargetIndices,
     bool clearArenaId = false,
   }) => HintState(
     status: status ?? this.status,
@@ -44,6 +50,9 @@ class HintState {
         ? null
         : (purchasedForArenaId ?? this.purchasedForArenaId),
     targetsDestroyed: targetsDestroyed ?? this.targetsDestroyed,
+    targetIndices: targetIndices ?? this.targetIndices,
+    purchasedTargetIndices:
+        purchasedTargetIndices ?? this.purchasedTargetIndices,
   );
 }
 
@@ -83,12 +92,17 @@ class HintController extends StateNotifier<HintState> {
       switch (result) {
         case SpendResult.ok:
           final List<V2> path = List<V2>.unmodifiable(shot.path);
+          final List<int> targetIndices = List<int>.unmodifiable(
+            shot.targetIndices,
+          );
           state = HintState(
             status: HintStatus.shown,
             path: path,
             purchasedPath: path,
             purchasedForArenaId: snapshot.arenaId,
             targetsDestroyed: shot.targetsDestroyed,
+            targetIndices: targetIndices,
+            purchasedTargetIndices: targetIndices,
           );
         case SpendResult.insufficientCoins:
           state = state.copyWith(status: HintStatus.insufficientCoins);
@@ -102,7 +116,11 @@ class HintController extends StateNotifier<HintState> {
 
   void clearOnShot() {
     if (_disposed) return;
-    state = state.copyWith(status: HintStatus.idle, path: const <V2>[]);
+    state = state.copyWith(
+      status: HintStatus.idle,
+      path: const <V2>[],
+      targetIndices: const <int>[],
+    );
   }
 
   void onArenaLoaded(int arenaId) {
@@ -112,6 +130,7 @@ class HintController extends StateNotifier<HintState> {
       state = state.copyWith(
         status: HintStatus.shown,
         path: state.purchasedPath,
+        targetIndices: state.purchasedTargetIndices,
       );
       return;
     }

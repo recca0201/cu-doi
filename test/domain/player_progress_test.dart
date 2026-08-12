@@ -37,6 +37,7 @@ void main() {
     expect(initial.canAfford(100), isTrue);
     expect(initial.canAfford(101), isFalse);
     expect(initial.withCoinsSpent(150).coins, 0);
+    expect(initial.withCoinsEarned(50).coins, 150);
 
     final PlayerProgress skipped = initial.withLoss(3).withSkipped(3);
     expect(skipped.isSkipped(3), isTrue);

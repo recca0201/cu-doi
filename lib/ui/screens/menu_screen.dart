@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
+import '../../core/release_features.dart';
 import '../../domain/character.dart';
 import '../../domain/player_progress.dart';
 import '../../state/profile_controller.dart';
@@ -212,13 +213,16 @@ class MenuScreen extends ConsumerWidget {
                                 children: <Widget>[
                                   arenaSelectButton,
                                   SizedBox(height: responsiveHeight(5, 8)),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(child: leaderboardButton),
-                                      const SizedBox(width: 8),
-                                      Expanded(child: howToPlayButton),
-                                    ],
-                                  ),
+                                  if (kLeaderboardsEnabled)
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(child: leaderboardButton),
+                                        const SizedBox(width: 8),
+                                        Expanded(child: howToPlayButton),
+                                      ],
+                                    )
+                                  else
+                                    howToPlayButton,
                                 ],
                               ),
                             ),

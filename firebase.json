@@ -1,15 +1,1 @@
-{
-  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
-  "storage": { "rules": "storage.rules" },
-  "functions": {
-    "source": "functions",
-    "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]
-  },
-  "emulators": {
-    "auth": { "port": 9099 },
-    "firestore": { "port": 8080 },
-    "storage": { "port": 9199 },
-    "functions": { "port": 5001 },
-    "ui": { "enabled": false }
-  }
-}
+{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"storage":{"rules":"storage.rules"},"functions":{"source":"functions","predeploy":["npm --prefix \"$RESOURCE_DIR\" run build"]},"hosting":{"target":"privacy","public":"hosting","cleanUrls":true,"trailingSlash":false,"headers":[{"source":"**","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"},{"key":"X-Frame-Options","value":"DENY"},{"key":"Content-Security-Policy","value":"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"}]}],"redirects":[{"source":"/","destination":"/privacy","type":302}]},"emulators":{"auth":{"port":9099},"firestore":{"port":8080},"storage":{"port":9199},"functions":{"port":5001},"ui":{"enabled":false}},"flutter":{"platforms":{"android":{"default":{"projectId":"cu-doi-game","appId":"1:267824873916:android:794c2253e1342f5df4ebb9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cu-doi-game","configurations":{"android":"1:267824873916:android:794c2253e1342f5df4ebb9","ios":"1:267824873916:ios:2bdec47739f5b439f4ebb9"}}}}}}

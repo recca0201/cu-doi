@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/bb_theme.dart';
+import 'core/release_features.dart';
 import 'data/settings_repository.dart';
 import 'data/firebase_bootstrap.dart';
 import 'l10n/app_localizations.dart';
@@ -39,7 +40,11 @@ class BanBuaTuongApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Eager ownership is intentional: identity invalidation and resume retry
     // must work before, after and entirely without a leaderboard route.
-    ref.watch(leaderboardLifecycleCoordinatorProvider);
+    if (kLeaderboardsEnabled) {
+      ref.watch(leaderboardLifecycleCoordinatorProvider);
+    }
+    // Audio must start from restored settings even if gameplay is never opened.
+    ref.watch(gameAudioLifecycleProvider);
     final AppSettings settings = ref.watch(settingsProvider);
     return MaterialApp(
       onGenerateTitle: (BuildContext ctx) => AppLocalizations.of(ctx).appTitle,

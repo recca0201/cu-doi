@@ -11,6 +11,7 @@ import '../../core/arena_ink.dart';
 import '../../core/bb_theme.dart';
 import '../../core/bb_tokens.dart';
 import '../../core/game_audio_service.dart';
+import '../../core/release_features.dart';
 import '../../core/haptic_service.dart';
 import '../../domain/economy.dart';
 import '../../domain/character.dart';
@@ -26,6 +27,7 @@ import '../../sim/hint_finder.dart';
 import '../../sim/shot_runner.dart';
 import '../../state/hint_controller.dart';
 import '../../state/providers.dart';
+import '../../state/rewarded_ad_controller.dart';
 import '../arena_painter.dart';
 import '../character_dialogue.dart';
 import '../comic_effect_controller.dart';
@@ -411,7 +413,6 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final int achievedScore = _score;
     final int epoch = _terminalResultEpoch;
     final progress = ref.read(progressProvider.notifier);
-    final submissions = ref.read(leaderboardSubmissionProvider.notifier);
     final Completer<RecordOutcome> completer = Completer<RecordOutcome>();
     _recordFuture = completer.future;
     _audio.play(GameSound.win, scope: GameAudioScope.terminalResult);
@@ -427,7 +428,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
             stars,
             achievedScore,
           );
-          await submissions.onPersistedWin(outcome);
+          if (kLeaderboardsEnabled) {
+            await ref
+                .read(leaderboardSubmissionProvider.notifier)
+                .onPersistedWin(outcome);
+          }
           if (!completer.isCompleted) completer.complete(outcome);
         } catch (error, stackTrace) {
           if (!completer.isCompleted) {
@@ -542,7 +547,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
                                 onPanEnd: (DragEndDetails d) => setState(_fire),
                                 child: SizedBox.expand(
                                   child: CustomPaint(
-                                    painter: _painter(hint.path),
+                                    painter: _painter(
+                                      hint.path,
+                                      hint.targetIndices,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -573,7 +581,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     );
   }
 
-  ArenaPainter _painter(List<V2> hintPath) {
+  ArenaPainter _painter(List<V2> hintPath, List<int> hintTargetIndices) {
     final ShotRunner? runner = _runner;
     final bool inFlight = runner != null && runner.ball.alive;
 
@@ -598,6 +606,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
       trail: runner?.trail ?? const <V2>[],
       ghostTrail: _ghost,
       hintPath: hintPath,
+      hintTargetIndices: hintTargetIndices,
       ballPos: inFlight ? runner.ball.pos : null,
       currentBanks: runner?.banks ?? 0,
       shotInFlight: inFlight,
@@ -732,6 +741,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   Widget _footer(AppLocalizations t, HintState hint) {
     final String code = Localizations.localeOf(context).languageCode;
     final PlayerProgress progress = ref.watch(progressProvider);
+    final RewardedAdState rewardedAd = ref.watch(rewardedAdProvider);
     final int missing = progress.coins < kHintCost
         ? kHintCost - progress.coins
         : 0;
@@ -742,7 +752,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
         _runner == null &&
         _outcome == null &&
         !_guideVisible;
-    final String statusText = switch (hint.status) {
+    final String hintStatusText = switch (hint.status) {
       HintStatus.computing => t.hintComputing,
       HintStatus.unavailable => t.hintUnavailable,
       HintStatus.failed => t.hintFailed,
@@ -750,6 +760,23 @@ class _GameScreenState extends ConsumerState<GameScreen>
       HintStatus.shown => t.hintShownAnnouncement(hint.targetsDestroyed),
       HintStatus.idle => '',
     };
+    final String rewardedStatusText = switch (rewardedAd.status) {
+      RewardedAdStatus.idle => '',
+      RewardedAdStatus.loading => t.rewardedAdLoading,
+      RewardedAdStatus.earned => t.rewardedAdEarned(kRewardedAdCoins),
+      RewardedAdStatus.dismissed => t.rewardedAdDismissed,
+      RewardedAdStatus.unavailable => t.rewardedAdUnavailable,
+      RewardedAdStatus.saveFailed => t.rewardedAdSaveFailed,
+    };
+    final String statusText = hintStatusText.isNotEmpty
+        ? hintStatusText
+        : rewardedStatusText;
+    final bool canWatchAd =
+        missing > 0 &&
+        !rewardedAd.busy &&
+        _runner == null &&
+        _outcome == null &&
+        !_guideVisible;
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 7, 12, 10),
       decoration: BoxDecoration(
@@ -824,6 +851,25 @@ class _GameScreenState extends ConsumerState<GameScreen>
               );
             },
           ),
+          if (missing > 0) ...<Widget>[
+            const SizedBox(height: BbTokens.sp2),
+            FractionallySizedBox(
+              widthFactor: .72,
+              child: BbButton.karst(
+                key: const Key('rewarded-ad-button'),
+                label:
+                    (rewardedAd.busy
+                            ? t.rewardedAdLoading
+                            : t.rewardedAdCta(kRewardedAdCoins))
+                        .toUpperCase(),
+                icon: Icons.ondemand_video_rounded,
+                expand: true,
+                onPressed: canWatchAd
+                    ? () => ref.read(rewardedAdProvider.notifier).show()
+                    : null,
+              ),
+            ),
+          ],
           if (statusText.isNotEmpty) ...<Widget>[
             const SizedBox(height: BbTokens.sp2),
             Semantics(
@@ -1128,7 +1174,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         ),
                       ],
                       const SizedBox(height: BbTokens.sp6),
-                      if (won) ...<Widget>[
+                      if (won && kLeaderboardsEnabled) ...<Widget>[
                         FractionallySizedBox(
                           widthFactor: .72,
                           child: _WinLeaderboardButton(

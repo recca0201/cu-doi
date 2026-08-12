@@ -12,30 +12,23 @@ dội tiếp, nên một cú có thể ăn nhiều mục tiêu. Càng dội càn
 ## Chạy
 
 ```bash
-flutter create --platforms=android,ios .   # CHẠY TRƯỚC TIÊN (xem mục dưới)
 flutter pub get
 flutter gen-l10n                            # sinh lib/l10n/app_localizations.dart
 flutter test
 flutter run
 ```
 
-### Vì sao phải `flutter create` trước
+### Platform scaffolding
 
-Repo này **chưa có thư mục `android/`, `ios/`, `web/`**. Chúng được cố tình bỏ ra
-thay vì copy từ `ban_bua`: một Xcode project và Gradle config copy tay rất dễ mang
-theo bundle ID cũ, cấu hình flavor cũ, plugin Firebase/AdMob không còn dùng, và
-lỗi kiểu đó chỉ lộ ra khi build ký số. `flutter create --platforms=android,ios .`
-sinh scaffolding sạch, không ghi đè `lib/`, `test/`, `pubspec.yaml` hay `assets/`.
+`android/` và `ios/` đã được sinh và có native bridge cho Play Games/Game Center.
+Không chạy lại `flutter create` nếu không chủ đích review phần native bị ghi đè.
+Bundle ID đã là `com.tungbogin.cudoi`. Bản phát hành đầu chỉ còn cần cấu hình
+signing; leaderboard được giữ sau feature flag cho một bản cập nhật sau.
 
-Sau đó tự quyết định bundle ID. Xem mục "Bundle ID" dưới đây trước khi chọn.
+### Trạng thái toolchain
 
-### Chưa từng được biên dịch
-
-Toàn bộ code này được viết trong môi trường **không có Dart/Flutter toolchain**
-(các host phát hành SDK bị chặn ở tầng mạng), nên nó chưa từng qua `flutter
-analyze` hay `flutter build`. Hãy coi lần chạy `flutter test` đầu tiên là bước
-kiểm tra thật, không phải nghi thức. Nếu có lỗi biên dịch, xác suất cao nằm ở
-`lib/ui/`, thấp ở `lib/sim/` (Dart thuần, đã kiểm chứng bằng solver).
+Repo đã qua `flutter analyze`, widget/unit tests và Android debug build. Release
+build cố ý fail-closed cho đến khi chủ tài khoản điền đúng ID/certificate thật.
 
 ## Cái gì lấy lại từ `ban_bua`, cái gì không
 
@@ -143,27 +136,38 @@ lần dội đạt trần, nên req tối đa dùng được là **4**.
 chính renderer của `arena_painter.dart` (port sang canvas), ở 390×844. Đây là
 cách duy nhất hiện có để xem toàn bộ level mà không build được app.
 
-## Bundle ID — quyết định trước khi submit
+## Release configuration
 
-Chưa đặt (do `android/`/`ios/` chưa sinh). Đây là quyết định về App Store, không
-phải về code:
+Đây là app record mới, khác biệt với Bắn Bừa trước đó. Bundle/application ID đã
+chốt cho cả Android và iOS là `com.tungbogin.cudoi`.
 
-- **Dùng lại `com.tungbogin.banBua`** và submit như một version mới của app record
-  cũ. Đây là cách khớp với điều Apple yêu cầu — họ nói "review the app concept",
-  hàm ý nộp lại chính app đó với concept đã sửa.
-- **Bundle ID mới** tạo ra app thứ hai cùng thương hiệu trên cùng account. Với
-  một account vừa bị 4.3(a), đó là rủi ro không cần thiết.
+Firebase production dùng project `cu-doi-game`. Privacy Policy song ngữ được
+deploy từ `hosting/privacy.html` tới https://cudoi.web.app/privacy; URL gốc
+https://cudoi.web.app chuyển hướng tới trang này.
 
-Khuyến nghị: dùng lại bundle ID cũ.
+Bản phát hành đầu tiên không bật bảng xếp hạng. UI và lifecycle đã được khóa bởi
+`kLeaderboardsEnabled = false`; Play Games/Game Center capability không được
+khai báo trong binary. Code và catalog được giữ lại để bật ở bản cập nhật sau.
 
-## Còn thiếu (thứ tự ưu tiên)
+Các input do chủ tài khoản/CI phải cung cấp, không được bịa trong source:
+
+- Android release keystore/signing config. Firebase app registration và
+  `android/app/google-services.json` đã được tạo cho package production.
+- Khi bật leaderboard trong bản cập nhật: Play Games project ID và 20
+  leaderboard ID trong `android/app/src/main/res/values/leaderboards.xml`.
+- iOS development team/provisioning. Firebase app registration và
+  `ios/Runner/GoogleService-Info.plist` đã được tạo cho bundle production.
+- Khi bật leaderboard trong bản cập nhật: 20 Game Center leaderboard ID trong
+  `ios/Runner/LeaderboardCatalog.plist` và bật lại Game Center capability.
+
+Gradle/Xcode có guard để release dừng ngay nếu các placeholder này còn tồn tại.
+
+## Còn cần xác nhận ngoài code
 
 1. **Playtest.** Solver nói được "giải được", không nói được "vui". Câu hỏi số
    một vẫn là: khoảnh khắc cú bắn thẳng đầu tiên bị nảy ra gây tò mò hay gây khó
    hiểu?
-2. Thiết kế lại tầng hiệu ứng truyện tranh quanh **số lần dội** thay vì `popped`,
-   rồi mới port `comic_effect_controller.dart` từ `ban_bua`.
-3. Gợi ý / bỏ qua màn: puzzle dội tường có thể làm người chơi tắc hẳn, khác với
-   ghép-3 luôn còn nước đi hợp lệ. Với 20 màn thì đây là việc cần làm sớm.
-4. Nhóm màn theo chương trên `arena_map_screen` — hiện là danh sách phẳng 20 dòng.
-5. Haptics, nhân vật có tên và thoại, Firebase, quảng cáo.
+2. Điền credential/ID production ở mục trên và chạy release build trên máy có
+   keystore + Xcode signing hợp lệ.
+3. Test audio focus/interruption thật trên Android và iOS (cuộc gọi, tai nghe,
+   background/resume), ngoài các test lifecycle tự động trong repo.

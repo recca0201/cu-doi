@@ -174,7 +174,7 @@ class LeaderboardScreenView extends StatelessWidget {
                         subtitle: copy.level(state.arenaId, arenaName),
                         onBack: onBack,
                       ),
-                      const SizedBox(height: BbTokens.sp3),
+                      const SizedBox(height: BbTokens.sp2),
                       LeaderboardScopeControl(
                         scope: state.scope,
                         onSelected: onScopeSelected,
@@ -196,7 +196,7 @@ class LeaderboardScreenView extends StatelessWidget {
                           ),
                           child: const SizedBox.shrink(),
                         ),
-                      const SizedBox(height: BbTokens.sp3),
+                      const SizedBox(height: BbTokens.sp2),
                       const LeaderboardPeriodLabel(),
                       const SizedBox(height: BbTokens.sp2),
                       Expanded(child: _body(context)),
@@ -587,7 +587,7 @@ class _LeaderboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 96,
+    height: 76,
     child: Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
@@ -595,7 +595,7 @@ class _LeaderboardHeader extends StatelessWidget {
           left: 58,
           right: 58,
           top: 0,
-          height: 70,
+          height: 54,
           child: Semantics(
             header: true,
             label: title,
@@ -611,12 +611,12 @@ class _LeaderboardHeader extends StatelessWidget {
         ),
         Positioned(
           left: 0,
-          top: 9,
+          top: 3,
           child: BbAssetButton(
             key: const Key('leaderboard-back'),
             asset: 'assets/images/ui/karst/back_button.png',
-            width: 52,
-            height: 52,
+            width: 48,
+            height: 48,
             fit: BoxFit.contain,
             semanticLabel: LeaderboardCopy.of(context).back,
             onPressed: onBack,

@@ -8,8 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 import '../core/game_audio_service.dart';
+import '../core/game_audio_lifecycle.dart';
 import '../core/haptic_service.dart';
 import '../core/platform_avatar.dart';
+import '../core/rewarded_ad_service.dart';
 import '../data/game_services_gateway.dart';
 import '../data/identity_hasher.dart';
 import '../data/leaderboard_repository.dart';
@@ -31,6 +33,7 @@ import 'hint_controller.dart';
 import 'leaderboard_controller.dart';
 import 'leaderboard_lifecycle_coordinator.dart';
 import 'profile_controller.dart';
+import 'rewarded_ad_controller.dart';
 
 /// Overridden in `main()` after `SharedPreferences.getInstance()` resolves, so
 /// nothing downstream has to be async. Reading it without the override is a
@@ -180,6 +183,14 @@ class ProgressController extends StateNotifier<PlayerProgress> {
       if (await _repo.save(next)) state = next;
     });
   }
+
+  Future<bool> grantCoins(int amount) => _enqueue<bool>(() async {
+    if (amount <= 0) return false;
+    final PlayerProgress next = state.withCoinsEarned(amount);
+    if (!await _repo.save(next)) return false;
+    state = next;
+    return true;
+  });
 
   Future<SpendResult> spendOnHint() =>
       _spend(cost: kHintCost, transform: (PlayerProgress value) => value);
@@ -465,6 +476,18 @@ final hintControllerProvider =
       ),
     );
 
+final rewardedAdServiceProvider = Provider<RewardedAdService>(
+  (ref) => GoogleRewardedAdService(),
+);
+
+final rewardedAdProvider =
+    StateNotifierProvider.autoDispose<RewardedAdController, RewardedAdState>(
+      (ref) => RewardedAdController(
+        ref.watch(rewardedAdServiceProvider),
+        ref.read(progressProvider.notifier).grantCoins,
+      ),
+    );
+
 /// Built once, then kept in step with settings via a listener.
 ///
 /// Deliberately not `ref.watch(settingsProvider)` — that would tear down and
@@ -483,6 +506,15 @@ final gameAudioProvider = Provider<GameAudioService>((ref) {
 
   ref.onDispose(service.stopAll);
   return service;
+});
+
+final gameAudioLifecycleProvider = Provider<GameAudioLifecycleCoordinator>((
+  ref,
+) {
+  final GameAudioLifecycleCoordinator coordinator =
+      GameAudioLifecycleCoordinator(ref.watch(gameAudioProvider));
+  ref.onDispose(coordinator.dispose);
+  return coordinator;
 });
 
 final hapticServiceProvider = Provider<HapticService>((ref) {

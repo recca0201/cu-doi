@@ -1,7 +1,7 @@
 name: ban_bua_tuong
 description: "Bắn Bừa — Cú Dội: game bắn dội tường. Trúng thẳng không tính."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.0+2
 
 environment:
   sdk: ^3.12.2
@@ -30,18 +30,15 @@ dependencies:
   firebase_storage: ^13.0.0
   cloud_functions: ^6.0.0
   google_sign_in: ^7.1.1
+  google_mobile_ads: ^9.1.0
 
   # Reused verbatim from ban_bua for lib/core/game_audio_service.dart. Pulls in
   # `flame` transitively, but no Flame game loop is used — rendering is a plain
   # CustomPainter driven by a Ticker, which is what the prototype validated.
   flame_audio: ^2.12.1
 
-  # Deliberately NOT here yet, unlike ban_bua:
-  #   firebase_core / cloud_firestore / firebase_auth — progress is local-only
-  #     until the loop is settled. lib/data/firestore_progress_repository.dart
-  #     from ban_bua drops in behind ProgressRepository when wanted.
-  #   google_mobile_ads — ads sat outside the PDR's MVP scope and would be
-  #     tuning noise while the core loop is still being judged.
+  # Rewarded ads are opt-in and only fund hint coins. QA uses Google's test
+  # units; production IDs must be supplied explicitly for release builds.
 
 dev_dependencies:
   flutter_test:

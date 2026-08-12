@@ -17,7 +17,7 @@ ArenaSnapshot _snapshot(int id) => ArenaSnapshot(
 const HintShot _shot = HintShot(
   aim: V2(0, -1),
   path: <V2>[V2(50, 150), V2(10, 10)],
-  targetsDestroyed: 1,
+  targetIndices: <int>[2],
 );
 
 void main() {
@@ -76,12 +76,15 @@ void main() {
     );
     await controller.request(_snapshot(2));
     expect(controller.state.status, HintStatus.shown);
+    expect(controller.state.targetIndices, <int>[2]);
     expect(spends, 1);
     controller.clearOnShot();
     expect(controller.state.path, isEmpty);
+    expect(controller.state.targetIndices, isEmpty);
     expect(controller.state.purchasedPath, isNotEmpty);
     controller.onArenaLoaded(2);
     expect(controller.state.path, controller.state.purchasedPath);
+    expect(controller.state.targetIndices, <int>[2]);
     expect(spends, 1);
     controller.clearOnShot();
     await controller.request(_snapshot(2));

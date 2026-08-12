@@ -31,6 +31,7 @@ void main() {
                 V2(70, 4),
                 V2(50, 54),
               ],
+              hintTargetIndices: const <int>[0],
               ballPos: null,
               currentBanks: 4,
               shotInFlight: false,

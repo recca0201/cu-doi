@@ -65,29 +65,28 @@ void main() {
     },
   );
 
-  testWidgets(
-    'app root eagerly starts lifecycle before any leaderboard route',
-    (WidgetTester tester) async {
-      final _ProviderGateway gateway = _ProviderGateway();
-      await tester.binding.setSurfaceSize(const Size(390, 844));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('first release does not start platform leaderboard lifecycle', (
+    WidgetTester tester,
+  ) async {
+    final _ProviderGateway gateway = _ProviderGateway();
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: <Override>[
-            sharedPreferencesProvider.overrideWithValue(preferences),
-            gameServicesGatewayProvider.overrideWithValue(gateway),
-          ],
-          child: const BanBuaTuongApp(),
-        ),
-      );
-      await tester.pump();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          sharedPreferencesProvider.overrideWithValue(preferences),
+          gameServicesGatewayProvider.overrideWithValue(gateway),
+        ],
+        child: const BanBuaTuongApp(),
+      ),
+    );
+    await tester.pump();
 
-      expect(gateway.restoreCalls, 1);
-      expect(gateway.authenticateCalls, 0);
-      expect(find.byKey(const Key('menu-play')), findsOneWidget);
-    },
-  );
+    expect(gateway.restoreCalls, 0);
+    expect(gateway.authenticateCalls, 0);
+    expect(find.byKey(const Key('menu-play')), findsOneWidget);
+  });
 }
 
 Future<void> _pumpUntil(bool Function() condition) async {

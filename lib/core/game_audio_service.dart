@@ -58,7 +58,7 @@ class GameAudioService {
 
   static const int _maxPlayers = 3;
   static const String _backgroundMusicPath = 'background_loop.mp3';
-  static const double _backgroundMusicVolume = 0.22;
+  static const double _backgroundMusicVolume = 0.16;
 
   static const Map<GameSound, String> _files = {
     GameSound.shoot: 'shoot.mp3',
@@ -100,9 +100,19 @@ class GameAudioService {
   final List<_AudioSlot> _slots = [];
   int _nextSequence = 0;
   int _musicGeneration = 0;
+  bool _initialized = false;
+  bool _suspended = false;
   GameAudioPlayer? _backgroundPlayer;
 
   static String assetPathFor(GameSound sound) => _files[sound]!;
+
+  /// Warms short effects and starts music once settings have been restored.
+  Future<void> initialize() async {
+    if (_initialized) return;
+    _initialized = true;
+    await preload();
+    await startBackgroundMusic();
+  }
 
   Future<void> preload() async {
     if (!_soundEnabled) return;
@@ -114,7 +124,7 @@ class GameAudioService {
   }
 
   Future<void> startBackgroundMusic() async {
-    if (!_musicEnabled || _backgroundPlayer != null) return;
+    if (!_musicEnabled || _suspended || _backgroundPlayer != null) return;
     final generation = ++_musicGeneration;
     try {
       final player = await _backend.loop(
@@ -135,11 +145,23 @@ class GameAudioService {
     _soundEnabled = soundOn;
     _musicEnabled = musicOn;
     if (!soundOn) stopGameplayEffects();
-    if (musicOn) {
+    if (musicOn && _initialized && !_suspended) {
       unawaited(startBackgroundMusic());
     } else {
       stopBackgroundMusic();
     }
+  }
+
+  void suspend() {
+    _suspended = true;
+    stopGameplayEffects();
+    stopBackgroundMusic();
+  }
+
+  void resume() {
+    if (!_suspended) return;
+    _suspended = false;
+    if (_initialized && _musicEnabled) unawaited(startBackgroundMusic());
   }
 
   void stopBackgroundMusic() {

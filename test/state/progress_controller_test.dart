@@ -189,6 +189,19 @@ void main() {
     expect(poorRepo.saves, 0);
   });
 
+  test('reward coins commit only after a successful write', () async {
+    final _Repo repo = _Repo(const PlayerProgress(coins: 20));
+    final ProgressController controller = await _controller(repo);
+
+    expect(await controller.grantCoins(kRewardedAdCoins), isTrue);
+    expect(controller.state.coins, 70);
+
+    repo.writeSucceeds = false;
+    expect(await controller.grantCoins(kRewardedAdCoins), isFalse);
+    expect(controller.state.coins, 70);
+    expect(await controller.grantCoins(0), isFalse);
+  });
+
   test('the spending lock rejects overlapping transactions', () async {
     final Completer<void> gate = Completer<void>();
     final _Repo repo = _Repo(const PlayerProgress(coins: 500), gate: gate);

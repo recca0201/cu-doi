@@ -233,6 +233,28 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String rewardedAdCta(int reward) {
+    return 'Xem quảng cáo · +$reward xu';
+  }
+
+  @override
+  String get rewardedAdLoading => 'Đang tải quảng cáo…';
+
+  @override
+  String rewardedAdEarned(int reward) {
+    return 'Đã nhận $reward xu để dùng cho gợi ý.';
+  }
+
+  @override
+  String get rewardedAdDismissed => 'Xem hết quảng cáo để nhận xu.';
+
+  @override
+  String get rewardedAdUnavailable => 'Chưa có quảng cáo. Hãy thử lại sau.';
+
+  @override
+  String get rewardedAdSaveFailed => 'Không lưu được xu thưởng. Hãy thử lại.';
+
+  @override
   String get skipArenaLabel => 'Bỏ qua màn';
 
   @override

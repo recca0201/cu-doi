@@ -235,6 +235,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String rewardedAdCta(int reward) {
+    return 'Watch ad · +$reward coins';
+  }
+
+  @override
+  String get rewardedAdLoading => 'Loading ad…';
+
+  @override
+  String rewardedAdEarned(int reward) {
+    return 'You earned $reward coins for a hint.';
+  }
+
+  @override
+  String get rewardedAdDismissed => 'Finish the ad to earn coins.';
+
+  @override
+  String get rewardedAdUnavailable =>
+      'No ad is available right now. Try again later.';
+
+  @override
+  String get rewardedAdSaveFailed =>
+      'The reward could not be saved. Please try again.';
+
+  @override
   String get skipArenaLabel => 'Skip stage';
 
   @override

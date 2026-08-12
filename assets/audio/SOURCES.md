@@ -1,7 +1,10 @@
 # Audio sources
 
-All sound effects are MP3 files downloaded from Pixabay and are free for use
+All third-party audio files were downloaded from Pixabay and are free for use
 under the [Pixabay Content License](https://pixabay.com/service/license-summary/).
+
+The level-complete effect was selected from the search supplied for this
+project: https://pixabay.com/sound-effects/search/level%20complete%20sound/
 
 | File | Sound | Creator | Source |
 | --- | --- | --- | --- |
@@ -32,8 +35,12 @@ audio download or streaming.
 License for every row:
 https://pixabay.com/service/license-summary/
 
-## Original background music
+## Background music
 
-`background_loop.mp3` is an original 16-second synthesized loop created for
-Bắn Bừa on 2026-07-31. It uses only generated sine-wave voices (no external
-samples), is normalized to −22 LUFS / −3 dBTP, and is bundled at 96 kbps.
+| Bundled file | Pixabay title | Contributor | Individual source page | Acquired | Source duration | Bundled encoding | Source SHA-256 | Bundled SHA-256 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `background_loop.mp3` | Vietnam's Symphony of Dreams - Vietnam Travel | Asian_Background_Music | https://pixabay.com/music/adventure-vietnamx27s-symphony-of-dreams-vietnam-travel-220666/ | 2026-08-12 | 3:31 | Full track, metadata removed, MP3 96 kbps; looped by the app | `dc8b2e1268c06f7d758c403cbb704363b339dba36eeb9d401b480559ac7cfe1f` | `9c7c10a04d19a2a4857aa5b65faba97a05d481431c7c7ee6380b04211cc33267` |
+
+The music is tagged by Pixabay as Vietnam/Asia/traditional/folk background
+music and fits the approved Vietnamese karst adventure direction. The app
+plays the bundled file locally at low volume; it does not stream from Pixabay.

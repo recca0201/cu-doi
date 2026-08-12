@@ -12,7 +12,6 @@ import 'package:ban_bua_tuong/sim/geometry.dart';
 import 'package:ban_bua_tuong/state/providers.dart';
 import 'package:ban_bua_tuong/ui/fit.dart';
 import 'package:ban_bua_tuong/ui/screens/game_screen.dart';
-import 'package:ban_bua_tuong/ui/screens/leaderboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -242,7 +241,7 @@ void main() {
   );
 
   testWidgets(
-    'win saves locally before enqueue and leaderboard pop does not reward twice',
+    'first release saves a win locally without leaderboard submission',
     (WidgetTester tester) async {
       final SemanticsHandle semantics = tester.ensureSemantics();
       final List<String> events = <String>[];
@@ -262,30 +261,16 @@ void main() {
       expect(find.byKey(const Key('result-win-title')), findsOneWidget);
       expect(find.text('Màn sau'), findsOneWidget);
       expect(find.text('Chọn màn'), findsOneWidget);
-      expect(
-        find.bySemanticsLabel('Xem bảng xếp hạng của Màn 1 vừa hoàn thành'),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('win-leaderboard-button')), findsNothing);
       expect(setup.progress.saves, 1);
-      expect(gateway.submissions, 1);
-      expect(events.indexOf('local-save'), lessThan(events.indexOf('submit')));
+      expect(gateway.submissions, 0);
       final int coinsAfterWin = setup.progress.value.coins;
-
-      await tester.tap(find.byKey(const Key('win-leaderboard-button')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 40));
-      expect(find.byType(LeaderboardScreen), findsOneWidget);
-      expect(find.text('Đã gửi'), findsOneWidget);
-
-      await tester.tap(find.byKey(const Key('leaderboard-back')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 350));
       expect(find.byKey(const Key('result-win-title')), findsOneWidget);
       expect(find.text('Màn sau'), findsOneWidget);
       expect(find.text('Chọn màn'), findsOneWidget);
       expect(setup.progress.saves, 1);
       expect(setup.progress.value.coins, coinsAfterWin);
-      expect(gateway.submissions, 1);
+      expect(gateway.submissions, 0);
       expect(setup.container.read(progressProvider).isCompleted(1), isTrue);
       semantics.dispose();
     },

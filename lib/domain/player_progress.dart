@@ -60,6 +60,11 @@ class PlayerProgress {
     coins: (coins - (amount < 0 ? 0 : amount)).clamp(0, 1 << 30),
   );
 
+  PlayerProgress withCoinsEarned(int amount) => PlayerProgress(
+    results: results,
+    coins: (coins + (amount < 0 ? 0 : amount)).clamp(0, 1 << 30),
+  );
+
   PlayerProgress withSkipped(int levelId) {
     final LevelResult prev = results[levelId] ?? const LevelResult();
     final next = Map<int, LevelResult>.from(results)
