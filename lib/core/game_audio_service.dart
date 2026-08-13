@@ -58,7 +58,7 @@ class GameAudioService {
 
   static const int _maxPlayers = 3;
   static const String _backgroundMusicPath = 'background_loop.mp3';
-  static const double _backgroundMusicVolume = 0.16;
+  static const double _backgroundMusicVolume = 0.128;
 
   static const Map<GameSound, String> _files = {
     GameSound.shoot: 'shoot.mp3',

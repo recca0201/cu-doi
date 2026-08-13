@@ -770,6 +770,18 @@ abstract class AppLocalizations {
   /// **'Tiếp tục với Apple'**
   String get signInAppleCta;
 
+  /// No description provided for @signInProgress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang mở cửa sổ đăng nhập…'**
+  String get signInProgress;
+
+  /// No description provided for @signInFailedMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không đăng nhập được. Hãy kiểm tra tài khoản Google trên thiết bị rồi thử lại.'**
+  String get signInFailedMessage;
+
   /// No description provided for @providerConfigRequired.
   ///
   /// In vi, this message translates to:

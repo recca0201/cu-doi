@@ -20,12 +20,16 @@ class FirebaseBootstrap {
   static const bool useEmulator = bool.fromEnvironment('USE_FIREBASE_EMULATOR');
   static const bool enableProduction = bool.fromEnvironment(
     'ENABLE_FIREBASE_PRODUCTION',
+    defaultValue: true,
   );
-  static Future<FirebaseBootstrapResult> initialize() async {
-    if (!useEmulator && !enableProduction) {
+  static Future<FirebaseBootstrapResult> initialize({
+    bool? productionEnabled,
+  }) async {
+    final bool connectToProduction = productionEnabled ?? enableProduction;
+    if (!useEmulator && !connectToProduction) {
       return const FirebaseBootstrapResult.guest();
     }
-    if (enableProduction && !useEmulator) {
+    if (connectToProduction && !useEmulator) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );

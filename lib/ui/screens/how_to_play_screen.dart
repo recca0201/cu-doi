@@ -222,7 +222,10 @@ class _RuleCard extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(28, 21, 34, 24),
+          // The source frame has a thick ornamental rail along the bottom.
+          // Keep copy above that rail instead of treating the full bitmap as
+          // usable content space, especially in the stacked phone layout.
+          padding: const EdgeInsets.fromLTRB(28, 21, 34, 44),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               final double textScale = MediaQuery.textScalerOf(
@@ -239,8 +242,6 @@ class _RuleCard extends StatelessWidget {
                     child: Text(
                       title,
                       key: Key('how-to-title-$number'),
-                      maxLines: 2,
-                      overflow: TextOverflow.visible,
                       style: BbText.h3(
                         BbTokens.primaryGold,
                       ).copyWith(fontSize: 17),

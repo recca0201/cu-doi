@@ -1,10 +1,16 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../state/account_controller.dart';
 
 class FirebaseAccountRepository implements AccountRepository {
-  FirebaseAccountRepository(this.auth);
+  FirebaseAccountRepository(this.auth, {GoogleSignIn? googleSignIn})
+    : _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+
   final FirebaseAuth auth;
+  final GoogleSignIn _googleSignIn;
+  Future<void>? _googleInitialization;
+  bool _googleInitialized = false;
 
   Stream<AccountIdentity?> authStateChanges() => auth.authStateChanges().map(
     (user) => user == null ? null : _identity(user),
@@ -12,10 +18,14 @@ class FirebaseAccountRepository implements AccountRepository {
 
   @override
   Future<AccountIdentity?> signIn(AuthProviderKind provider) async {
-    final AuthProvider authProvider = provider == AuthProviderKind.apple
-        ? AppleAuthProvider()
-        : GoogleAuthProvider();
-    final result = await auth.signInWithProvider(authProvider);
+    final UserCredential result;
+    if (provider == AuthProviderKind.google) {
+      final OAuthCredential? credential = await _googleCredential();
+      if (credential == null) return null;
+      result = await auth.signInWithCredential(credential);
+    } else {
+      result = await auth.signInWithProvider(AppleAuthProvider());
+    }
     return result.user == null ? null : _identity(result.user!);
   }
 
@@ -23,10 +33,13 @@ class FirebaseAccountRepository implements AccountRepository {
   Future<Set<AuthProviderKind>> link(AuthProviderKind provider) async {
     final user = auth.currentUser;
     if (user == null) throw StateError('No authenticated account');
-    final AuthProvider authProvider = provider == AuthProviderKind.apple
-        ? AppleAuthProvider()
-        : GoogleAuthProvider();
-    await user.linkWithProvider(authProvider);
+    if (provider == AuthProviderKind.google) {
+      final OAuthCredential? credential = await _googleCredential();
+      if (credential == null) return _providers(user);
+      await user.linkWithCredential(credential);
+    } else {
+      await user.linkWithProvider(AppleAuthProvider());
+    }
     await user.reload();
     return _providers(auth.currentUser ?? user);
   }
@@ -37,16 +50,46 @@ class FirebaseAccountRepository implements AccountRepository {
   ) async {
     final user = auth.currentUser;
     if (user == null) throw StateError('No authenticated account');
-    final AuthProvider authProvider = provider == AuthProviderKind.apple
-        ? AppleAuthProvider()
-        : GoogleAuthProvider();
-    final result = await user.reauthenticateWithProvider(authProvider);
+    final UserCredential result;
+    if (provider == AuthProviderKind.google) {
+      final OAuthCredential? credential = await _googleCredential();
+      if (credential == null) throw StateError('Google sign-in was canceled');
+      result = await user.reauthenticateWithCredential(credential);
+    } else {
+      result = await user.reauthenticateWithProvider(AppleAuthProvider());
+    }
     final token = await result.user?.getIdToken(true);
     return ReauthenticationProof(provider: provider, idToken: token ?? '');
   }
 
   @override
-  Future<void> signOut() => auth.signOut();
+  Future<void> signOut() async {
+    await auth.signOut();
+    if (_googleInitialized) await _googleSignIn.signOut();
+  }
+
+  Future<OAuthCredential?> _googleCredential() async {
+    await (_googleInitialization ??= _initializeGoogle());
+    try {
+      final GoogleSignInAccount account = await _googleSignIn.authenticate();
+      final String? idToken = account.authentication.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw StateError('Google Sign-In returned no ID token');
+      }
+      return GoogleAuthProvider.credential(idToken: idToken);
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled ||
+          error.code == GoogleSignInExceptionCode.interrupted) {
+        return null;
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> _initializeGoogle() async {
+    await _googleSignIn.initialize();
+    _googleInitialized = true;
+  }
 
   AccountIdentity _identity(User user) =>
       AccountIdentity(uid: user.uid, providers: _providers(user));

@@ -75,6 +75,12 @@ flutter {
 
 dependencies {
     implementation("com.google.android.gms:play-services-games-v2:22.0.0")
+    // Google Mobile Ads 25.4.0 still requests WorkManager 2.7.0. Its Room
+    // runtime predates the consumer R8 rule that preserves the generated
+    // WorkDatabase constructor, so minified release builds crash in
+    // InitializationProvider before Flutter starts. Keep WorkManager current
+    // explicitly until the ads SDK raises its transitive dependency.
+    implementation("androidx.work:work-runtime:2.11.2")
     testImplementation("junit:junit:4.13.2")
 }
 

@@ -393,6 +393,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get signInAppleCta => 'Tiếp tục với Apple';
 
   @override
+  String get signInProgress => 'Đang mở cửa sổ đăng nhập…';
+
+  @override
+  String get signInFailedMessage =>
+      'Không đăng nhập được. Hãy kiểm tra tài khoản Google trên thiết bị rồi thử lại.';
+
+  @override
   String get providerConfigRequired =>
       'Đăng nhập sẽ khả dụng sau khi cấu hình provider phát hành.';
 

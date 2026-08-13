@@ -300,6 +300,7 @@ class _AccountCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(accountProvider.notifier);
+    final bool authenticating = account.phase == AccountPhase.authenticating;
     return _ProfilePanel(
       key: const Key('profile-account-card'),
       child: Column(
@@ -313,6 +314,10 @@ class _AccountCard extends ConsumerWidget {
           Text(
             account.phase == AccountPhase.guest
                 ? t.guestAccountBody
+                : authenticating
+                ? t.signInProgress
+                : account.phase == AccountPhase.error
+                ? t.signInFailedMessage
                 : account.phase == AccountPhase.deletionPending
                 ? '${t.accountPending}\n${account.requestId ?? ''}'
                 : account.phase == AccountPhase.providerRecoveryRequired
@@ -322,20 +327,32 @@ class _AccountCard extends ConsumerWidget {
                 : '${t.signedInStatus}: ${account.providers.map((p) => p.name).join(', ')}',
             style: BbText.body(BbTokens.cream.withValues(alpha: .72)),
           ),
+          if (authenticating) ...[
+            const SizedBox(height: 10),
+            const LinearProgressIndicator(
+              key: Key('account-sign-in-progress'),
+              color: BbTokens.primaryGold,
+              backgroundColor: BbTokens.karstDeep,
+            ),
+          ],
           const SizedBox(height: 12),
           if (!account.isAuthenticated &&
               account.phase != AccountPhase.deletionPending) ...[
             BbButton(
               label: t.signInGoogleCta,
               expand: true,
-              onPressed: () => controller.signIn(AuthProviderKind.google),
+              onPressed: authenticating
+                  ? null
+                  : () => controller.signIn(AuthProviderKind.google),
             ),
             const SizedBox(height: 8),
             BbButton(
               label: t.signInAppleCta,
               variant: BbVariant.karst,
               expand: true,
-              onPressed: () => controller.signIn(AuthProviderKind.apple),
+              onPressed: authenticating
+                  ? null
+                  : () => controller.signIn(AuthProviderKind.apple),
             ),
           ] else if (account.isAuthenticated &&
               account.phase != AccountPhase.deletionPending &&

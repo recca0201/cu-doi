@@ -86,6 +86,14 @@ void main() {
               isTrue,
               reason: 'Rule $number $part must remain inside its card',
             );
+            if (part == 'body') {
+              expect(
+                cardRect.bottom - partRect.bottom,
+                greaterThanOrEqualTo(40),
+                reason:
+                    'Rule $number copy must stay above the ornamental bottom rail',
+              );
+            }
           }
         }
         expect(tester.takeException(), isNull);

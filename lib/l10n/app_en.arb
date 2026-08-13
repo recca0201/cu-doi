@@ -127,6 +127,8 @@
   "guestAccountBody": "Sign in optionally to sync this profile across devices.",
   "signInGoogleCta": "Continue with Google",
   "signInAppleCta": "Continue with Apple",
+  "signInProgress": "Opening the sign-in window…",
+  "signInFailedMessage": "Sign-in failed. Check the Google account on this device and try again.",
   "providerConfigRequired": "Sign-in will be available after release provider configuration.",
   "avatarPresetsTitle": "Choose a preset",
   "devicePhotoCta": "Photo from device",

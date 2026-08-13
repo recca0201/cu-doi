@@ -398,6 +398,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInAppleCta => 'Continue with Apple';
 
   @override
+  String get signInProgress => 'Opening the sign-in window…';
+
+  @override
+  String get signInFailedMessage =>
+      'Sign-in failed. Check the Google account on this device and try again.';
+
+  @override
   String get providerConfigRequired =>
       'Sign-in will be available after release provider configuration.';
 

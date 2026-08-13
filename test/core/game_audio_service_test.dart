@@ -20,7 +20,7 @@ void main() {
       expect(backend.preloadCalls, 1);
       expect(backend.preloaded, contains('win.mp3'));
       expect(backend.looped, <String>['background_loop.mp3']);
-      expect(backend.loopVolumes, <double>[0.16]);
+      expect(backend.loopVolumes, <double>[0.128]);
     },
   );
 
