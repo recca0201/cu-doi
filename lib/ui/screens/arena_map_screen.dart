@@ -245,8 +245,6 @@ abstract final class _MapArt {
   static const String backButton = 'assets/images/ui/karst/back_button.png';
   static const String selectTitle =
       'assets/images/ui/karst/stage_title_banner_v2.png';
-  static const String chapterTabSelected =
-      'assets/images/ui/karst/chapter_tab_selected.png';
   static const String levelCardFrame =
       'assets/images/ui/karst/level_card_frame.png';
   static const String detailPanel =
@@ -427,81 +425,174 @@ class _ChapterTabs extends StatelessWidget {
   final ValueChanged<int> onSelected;
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: 70,
-    padding: const EdgeInsets.fromLTRB(9, 8, 9, 8),
-    child: Row(
-      children: List<Widget>.generate(sections.length, (int index) {
-        final ChapterSection section = sections[index];
-        final bool selected = index == selectedIndex;
-        final String full = chapterTitle(
-          section.chapter,
-          AppLocalizations.of(context),
-        );
-        final List<String> parts = full.split('·');
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child: Semantics(
-              selected: selected,
-              button: true,
-              label: full,
-              child: InkWell(
-                onTap: () => onSelected(index),
-                borderRadius: BorderRadius.circular(12),
-                child: AnimatedContainer(
-                  duration: BbTokens.durBase,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+  Widget build(BuildContext context) {
+    final AppLocalizations t = AppLocalizations.of(context);
+    return SizedBox(
+      key: const Key('chapter-journey'),
+      height: 72,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double cellWidth = constraints.maxWidth / sections.length;
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              Positioned(
+                left: cellWidth / 2,
+                right: cellWidth / 2,
+                top: 29,
+                child: Container(
+                  height: 4,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: const AssetImage(_MapArt.chapterTabSelected),
-                      fit: BoxFit.fill,
-                      colorFilter: selected
-                          ? null
-                          : const ColorFilter.mode(
-                              Color(0xFF345E52),
-                              BlendMode.modulate,
-                            ),
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: selected
-                        ? null
-                        : Border.all(color: const Color(0xFF9B7437), width: 2),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          parts.first.trim().toUpperCase(),
-                          style: BbText.button(
-                            selected ? BbTokens.outlineDark : Colors.white,
-                          ).copyWith(fontSize: 13),
-                        ),
-                      ),
-                      if (parts.length > 1)
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            parts.last.trim(),
-                            style: BbText.tiny(
-                              selected
-                                  ? BbTokens.outlineDark
-                                  : BbTokens.textMuted,
-                            ).copyWith(fontSize: 9, letterSpacing: 0),
-                          ),
-                        ),
-                    ],
+                    color: BbTokens.karstShadow,
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(color: BbTokens.karstBronze),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      }),
+              Row(
+                children: List<Widget>.generate(sections.length, (int index) {
+                  final ChapterSection section = sections[index];
+                  final bool selected = index == selectedIndex;
+                  final String full = chapterTitle(section.chapter, t);
+                  final int earned = section.arenas.fold(
+                    0,
+                    (int sum, ArenaSpec arena) =>
+                        sum + progress.starsFor(arena.id),
+                  );
+                  final int max = section.arenas.length * 3;
+                  return Expanded(
+                    child: Semantics(
+                      selected: selected,
+                      button: true,
+                      label: full,
+                      value: t.chapterProgressLabel(earned, max),
+                      child: InkResponse(
+                        key: ValueKey<String>('chapter-${index + 1}'),
+                        onTap: () => onSelected(index),
+                        radius: 34,
+                        containedInkWell: true,
+                        customBorder: const CircleBorder(),
+                        child: Center(
+                          child: AnimatedScale(
+                            scale: selected ? 1 : .86,
+                            duration: BbTokens.durBase,
+                            curve: BbTokens.easeOut,
+                            child: _ChapterMedallion(
+                              number: section.chapter?.number ?? index + 1,
+                              progress: max == 0 ? 0 : earned / max,
+                              selected: selected,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ChapterMedallion extends StatelessWidget {
+  const _ChapterMedallion({
+    required this.number,
+    required this.progress,
+    required this.selected,
+  });
+
+  final int number;
+  final double progress;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: 64,
+    height: 64,
+    child: CustomPaint(
+      painter: _ChapterMedallionPainter(progress: progress, selected: selected),
+      child: Center(
+        child: Text(
+          '$number',
+          textScaler: TextScaler.noScaling,
+          style: BbText.h2(
+            selected ? BbTokens.karstShadow : BbTokens.cream,
+          ).copyWith(fontSize: 24, height: 1),
+        ),
+      ),
     ),
   );
+}
+
+class _ChapterMedallionPainter extends CustomPainter {
+  const _ChapterMedallionPainter({
+    required this.progress,
+    required this.selected,
+  });
+
+  final double progress;
+  final bool selected;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Offset center = size.center(Offset.zero);
+    final double radius = size.shortestSide / 2;
+    final Rect ring = Rect.fromCircle(center: center, radius: radius - 5);
+
+    canvas.drawCircle(
+      center + const Offset(0, 4),
+      radius - 4,
+      Paint()..color = BbTokens.karstShadow,
+    );
+    canvas.drawCircle(
+      center,
+      radius - 4,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: selected
+              ? const <Color>[BbTokens.cream, BbTokens.primaryGold]
+              : const <Color>[BbTokens.karstTeal, BbTokens.karstDeep],
+        ).createShader(Offset.zero & size),
+    );
+    canvas.drawCircle(
+      center,
+      radius - 5,
+      Paint()
+        ..color = BbTokens.karstBronze
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+    canvas.drawArc(
+      ring,
+      -math.pi / 2,
+      math.pi * 2 * progress.clamp(0, 1),
+      false,
+      Paint()
+        ..color = BbTokens.primaryGold
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 5 : 4
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawCircle(
+      center,
+      radius - 12,
+      Paint()
+        ..color = selected
+            ? Colors.white.withValues(alpha: .28)
+            : BbTokens.cream.withValues(alpha: .13)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _ChapterMedallionPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.selected != selected;
 }
 
 class _ChapterProgress extends StatelessWidget {
@@ -518,23 +609,79 @@ class _ChapterProgress extends StatelessWidget {
     );
     final int max = section.arenas.length * 3;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 7, 16, 4),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
+      child: Column(
         children: <Widget>[
-          Expanded(
-            child: FittedBox(
-              alignment: Alignment.centerLeft,
-              fit: BoxFit.scaleDown,
-              child: Text(
-                chapterTitle(section.chapter, AppLocalizations.of(context)),
-                maxLines: 1,
-                style: BbText.h3(Colors.white).copyWith(fontSize: 16),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  height: 2,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Colors.transparent,
+                        BbTokens.karstBronze.withValues(alpha: .8),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 10),
+              const Icon(
+                Icons.explore_rounded,
+                size: 17,
+                color: BbTokens.primaryGold,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  height: 2,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        BbTokens.karstBronze.withValues(alpha: .8),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Text(
-            AppLocalizations.of(context).chapterProgressLabel(earned, max),
-            style: BbText.small(BbTokens.primaryGold),
+          const SizedBox(height: 4),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: FittedBox(
+                  alignment: Alignment.centerLeft,
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    chapterTitle(section.chapter, AppLocalizations.of(context)),
+                    maxLines: 1,
+                    style: BbText.h3(BbTokens.cream).copyWith(fontSize: 17),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Icon(
+                    Icons.star_rounded,
+                    size: 18,
+                    color: BbTokens.primaryGold,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    AppLocalizations.of(
+                      context,
+                    ).chapterProgressLabel(earned, max),
+                    style: BbText.small(BbTokens.primaryGold),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -571,9 +718,6 @@ class _ArenaCard extends StatelessWidget {
     final String stateLabel = locked
         ? t.arenaLocked
         : (skipped ? t.arenaSkippedBadge : t.arenaStars(stars, 3));
-    final Color outline = selected
-        ? BbTokens.primaryGold
-        : (locked ? BbTokens.textMuted : BbTokens.secondaryBlue);
 
     return Semantics(
       container: true,
@@ -583,102 +727,134 @@ class _ArenaCard extends StatelessWidget {
       label: '${t.arenaHeading(arena.id, arenaName)}, $stateLabel',
       onTap: onTap,
       child: ExcludeSemantics(
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: AnimatedContainer(
-            duration: BbTokens.durBase,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: const AssetImage(_MapArt.levelCardFrame),
-                fit: BoxFit.fill,
-                colorFilter: locked
-                    ? const ColorFilter.mode(Colors.black54, BlendMode.darken)
-                    : null,
-              ),
-              border: selected ? Border.all(color: outline, width: 3) : null,
-              boxShadow: selected
-                  ? <BoxShadow>[
-                      BoxShadow(
-                        color: BbTokens.primaryGold.withValues(alpha: .32),
-                        blurRadius: 10,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                Column(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(18),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double width = constraints.maxWidth;
+                final double height = constraints.maxHeight;
+                // These ratios follow the transparent opening in the authored
+                // 1074 x 1522 frame. Keeping the preview inside this aperture
+                // lets the bronze/green rails remain visible on every device.
+                final Rect previewRect = Rect.fromLTRB(
+                  width * .195,
+                  height * .19,
+                  width * .805,
+                  height * .815,
+                );
+                return Stack(
+                  clipBehavior: Clip.none,
                   children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(9, 20, 9, 3),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: _ArenaPreview(arena: arena, locked: locked),
+                    if (selected)
+                      Positioned.fill(
+                        child: ImageFiltered(
+                          imageFilter: ui.ImageFilter.blur(
+                            sigmaX: 5,
+                            sigmaY: 5,
+                          ),
+                          child: ColorFiltered(
+                            colorFilter: const ColorFilter.mode(
+                              BbTokens.primaryGold,
+                              BlendMode.srcIn,
+                            ),
+                            child: Image.asset(
+                              _MapArt.levelCardFrame,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    Positioned.fromRect(
+                      rect: previewRect,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: _ArenaPreview(arena: arena, locked: locked),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: locked ? .62 : 1,
+                        child: Image.asset(
+                          _MapArt.levelCardFrame,
+                          fit: BoxFit.fill,
+                          filterQuality: FilterQuality.high,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 38,
+                    Positioned(
+                      top: 3,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: SizedBox(
+                          width: 54,
+                          height: 40,
+                          child: Center(
+                            child: Text(
+                              '${arena.id}',
+                              style: BbText.h2(
+                                locked ? BbTokens.textMuted : Colors.white,
+                              ).copyWith(fontSize: 23),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      // Keep status content inside the green inset panel of
+                      // the authored frame instead of covering its gold rim.
+                      left: width * .23,
+                      right: width * .23,
+                      bottom: 12,
+                      height: 16,
                       child: skipped
                           ? Center(
-                              child: Text(
-                                t.arenaSkippedBadge.toUpperCase(),
-                                style: BbText.tiny(
-                                  BbTokens.textMuted,
-                                ).copyWith(fontSize: 9),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  t.arenaSkippedBadge.toUpperCase(),
+                                  style: BbText.tiny(
+                                    BbTokens.textMuted,
+                                  ).copyWith(fontSize: 8),
+                                ),
                               ),
                             )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List<Widget>.generate(
-                                3,
-                                (int i) => Icon(
-                                  i < stars
-                                      ? Icons.star_rounded
-                                      : Icons.star_outline_rounded,
-                                  color: i < stars
-                                      ? BbTokens.primaryGold
-                                      : BbTokens.textMuted,
-                                  size: 22,
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List<Widget>.generate(
+                                  3,
+                                  (int i) => Icon(
+                                    i < stars
+                                        ? Icons.star_rounded
+                                        : Icons.star_outline_rounded,
+                                    color: i < stars
+                                        ? BbTokens.primaryGold
+                                        : BbTokens.textMuted,
+                                    size: 16,
+                                  ),
                                 ),
                               ),
                             ),
                     ),
+                    if (locked)
+                      Positioned.fromRect(
+                        rect: previewRect,
+                        child: const Center(
+                          child: Icon(
+                            Icons.lock_rounded,
+                            size: 38,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ),
                   ],
-                ),
-                Positioned(
-                  top: 3,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      width: 54,
-                      height: 40,
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${arena.id}',
-                        style: BbText.h2(
-                          locked ? BbTokens.textMuted : Colors.white,
-                        ).copyWith(fontSize: 23),
-                      ),
-                    ),
-                  ),
-                ),
-                if (locked)
-                  const Positioned.fill(
-                    child: Center(
-                      child: Icon(
-                        Icons.lock_rounded,
-                        size: 38,
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ),
-              ],
+                );
+              },
             ),
           ),
         ),

@@ -405,6 +405,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign-in failed. Check the Google account on this device and try again.';
 
   @override
+  String get choosePlayerNameTitle => 'In-game name';
+
+  @override
+  String choosePlayerNameBody(String name) {
+    return 'Use “$name” from your Google account, or choose a different in-game name?';
+  }
+
+  @override
+  String get choosePlayerNameUseCta => 'Use Google name';
+
+  @override
+  String get choosePlayerNameCustomCta => 'Choose another name';
+
+  @override
   String get providerConfigRequired =>
       'Sign-in will be available after release provider configuration.';
 

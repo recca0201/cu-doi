@@ -22,9 +22,16 @@ enum AccountPhase {
 enum AuthProviderKind { google, apple }
 
 class AccountIdentity {
-  const AccountIdentity({required this.uid, required this.providers});
+  const AccountIdentity({
+    required this.uid,
+    required this.providers,
+    this.displayName,
+    this.email,
+  });
   final String uid;
   final Set<AuthProviderKind> providers;
+  final String? displayName;
+  final String? email;
 }
 
 class ReauthenticationProof {
@@ -38,6 +45,8 @@ class AccountState {
     this.phase = AccountPhase.guest,
     this.uid,
     this.providers = const {},
+    this.displayName,
+    this.email,
     this.lastSyncedAt,
     this.errorCode,
     this.requestId,
@@ -46,6 +55,8 @@ class AccountState {
   final AccountPhase phase;
   final String? uid;
   final Set<AuthProviderKind> providers;
+  final String? displayName;
+  final String? email;
   final DateTime? lastSyncedAt;
   final String? errorCode;
   final String? requestId;
@@ -71,9 +82,19 @@ abstract class AccountRepository {
       );
 }
 
+abstract interface class CurrentAccountRepository {
+  AccountIdentity? get currentIdentity;
+}
+
 class AccountController extends StateNotifier<AccountState> {
   AccountController(this._repository, {this._store, this._deletionRepository})
-    : super(const AccountState());
+    : super(
+        _stateForIdentity(
+          _repository is CurrentAccountRepository
+              ? (_repository as CurrentAccountRepository).currentIdentity
+              : null,
+        ),
+      );
   final AccountRepository _repository;
   final LocalPlayerStore? _store;
   final AccountDeletionRepository? _deletionRepository;
@@ -113,6 +134,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.authenticated,
         uid: identity.uid,
         providers: identity.providers,
+        displayName: identity.displayName,
+        email: identity.email,
       );
     } catch (_) {
       state = previous.phase == AccountPhase.guest
@@ -135,12 +158,16 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.authenticated,
         uid: previous.uid,
         providers: await _repository.link(provider),
+        displayName: previous.displayName,
+        email: previous.email,
       );
     } catch (_) {
       state = AccountState(
         phase: AccountPhase.error,
         uid: previous.uid,
         providers: previous.providers,
+        displayName: previous.displayName,
+        email: previous.email,
         errorCode: 'linkFailed',
       );
     } finally {
@@ -156,6 +183,8 @@ class AccountController extends StateNotifier<AccountState> {
       phase: AccountPhase.signingOut,
       uid: previous.uid,
       providers: previous.providers,
+      displayName: previous.displayName,
+      email: previous.email,
     );
     try {
       if (_store != null) {
@@ -214,6 +243,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.deletionPending,
         uid: previous.uid,
         providers: previous.providers,
+        displayName: previous.displayName,
+        email: previous.email,
         requestId: receipt.requestId,
         deletionReceipt: receipt,
       );
@@ -225,6 +256,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.error,
         uid: previous.uid,
         providers: previous.providers,
+        displayName: previous.displayName,
+        email: previous.email,
         errorCode: 'deletionStartFailed',
       );
       return false;
@@ -241,6 +274,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.error,
         uid: state.uid,
         providers: state.providers,
+        displayName: state.displayName,
+        email: state.email,
         errorCode: 'reauthenticationFailed',
       );
       return false;
@@ -259,6 +294,8 @@ class AccountController extends StateNotifier<AccountState> {
           phase: AccountPhase.providerRecoveryRequired,
           uid: state.uid,
           providers: state.providers,
+          displayName: state.displayName,
+          email: state.email,
           requestId: receipt.requestId,
           deletionReceipt: receipt,
         );
@@ -300,6 +337,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.deletionPending,
         uid: state.uid,
         providers: state.providers,
+        displayName: state.displayName,
+        email: state.email,
         requestId: receipt.requestId,
         deletionReceipt: receipt,
       );
@@ -310,6 +349,8 @@ class AccountController extends StateNotifier<AccountState> {
         phase: AccountPhase.providerRecoveryRequired,
         uid: state.uid,
         providers: state.providers,
+        displayName: state.displayName,
+        email: state.email,
         errorCode: 'providerRecoveryFailed',
         requestId: receipt.requestId,
         deletionReceipt: receipt,
@@ -329,3 +370,13 @@ class AccountController extends StateNotifier<AccountState> {
     super.dispose();
   }
 }
+
+AccountState _stateForIdentity(AccountIdentity? identity) => identity == null
+    ? const AccountState()
+    : AccountState(
+        phase: AccountPhase.authenticated,
+        uid: identity.uid,
+        providers: identity.providers,
+        displayName: identity.displayName,
+        email: identity.email,
+      );

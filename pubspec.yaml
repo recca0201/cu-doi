@@ -1,7 +1,7 @@
 name: ban_bua_tuong
 description: "Bắn Bừa — Cú Dội: game bắn dội tường. Trúng thẳng không tính."
 publish_to: 'none'
-version: 0.1.0+3
+version: 0.1.0+5
 
 environment:
   sdk: ^3.12.2

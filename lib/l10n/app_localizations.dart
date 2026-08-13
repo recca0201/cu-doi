@@ -782,6 +782,30 @@ abstract class AppLocalizations {
   /// **'Không đăng nhập được. Hãy kiểm tra tài khoản Google trên thiết bị rồi thử lại.'**
   String get signInFailedMessage;
 
+  /// No description provided for @choosePlayerNameTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên trong game'**
+  String get choosePlayerNameTitle;
+
+  /// No description provided for @choosePlayerNameBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn muốn dùng “{name}” từ tài khoản Google hay đặt một tên khác?'**
+  String choosePlayerNameBody(String name);
+
+  /// No description provided for @choosePlayerNameUseCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng tên Google'**
+  String get choosePlayerNameUseCta;
+
+  /// No description provided for @choosePlayerNameCustomCta.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt tên khác'**
+  String get choosePlayerNameCustomCta;
+
   /// No description provided for @providerConfigRequired.
   ///
   /// In vi, this message translates to:

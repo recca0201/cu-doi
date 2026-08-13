@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../state/account_controller.dart';
 
-class FirebaseAccountRepository implements AccountRepository {
+class FirebaseAccountRepository
+    implements AccountRepository, CurrentAccountRepository {
   FirebaseAccountRepository(this.auth, {GoogleSignIn? googleSignIn})
     : _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
@@ -11,6 +12,12 @@ class FirebaseAccountRepository implements AccountRepository {
   final GoogleSignIn _googleSignIn;
   Future<void>? _googleInitialization;
   bool _googleInitialized = false;
+
+  @override
+  AccountIdentity? get currentIdentity {
+    final user = auth.currentUser;
+    return user == null ? null : _identity(user);
+  }
 
   Stream<AccountIdentity?> authStateChanges() => auth.authStateChanges().map(
     (user) => user == null ? null : _identity(user),
@@ -91,8 +98,26 @@ class FirebaseAccountRepository implements AccountRepository {
     _googleInitialized = true;
   }
 
-  AccountIdentity _identity(User user) =>
-      AccountIdentity(uid: user.uid, providers: _providers(user));
+  AccountIdentity _identity(User user) => AccountIdentity(
+    uid: user.uid,
+    providers: _providers(user),
+    displayName: _firstNonEmpty(<String?>[
+      user.displayName,
+      ...user.providerData.map((info) => info.displayName),
+    ]),
+    email: _firstNonEmpty(<String?>[
+      user.email,
+      ...user.providerData.map((info) => info.email),
+    ]),
+  );
+
+  String? _firstNonEmpty(Iterable<String?> values) {
+    for (final value in values) {
+      final normalized = value?.trim();
+      if (normalized != null && normalized.isNotEmpty) return normalized;
+    }
+    return null;
+  }
 
   Set<AuthProviderKind> _providers(User user) => user.providerData
       .map(

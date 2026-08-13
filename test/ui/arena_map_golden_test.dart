@@ -1,12 +1,21 @@
 import 'package:ban_bua_tuong/domain/player_progress.dart';
 import 'package:ban_bua_tuong/ui/screens/arena_map_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/pump_app.dart';
 
+Future<void> _loadMaterialIcons() async {
+  await (FontLoader(
+    'MaterialIcons',
+  )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+}
+
 void main() {
-  testWidgets('arena map 390x844 arcade-night hierarchy', (tester) async {
+  setUpAll(_loadMaterialIcons);
+
+  testWidgets('arena map 390x844 karst chapter journey', (tester) async {
     await pumpApp(
       tester,
       progress: const PlayerProgress(
@@ -29,10 +38,6 @@ void main() {
         ),
         precacheImage(
           const AssetImage('assets/images/ui/karst/select_title_frame.png'),
-          context,
-        ),
-        precacheImage(
-          const AssetImage('assets/images/ui/karst/chapter_tab_selected.png'),
           context,
         ),
         precacheImage(

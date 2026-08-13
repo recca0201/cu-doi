@@ -400,6 +400,20 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không đăng nhập được. Hãy kiểm tra tài khoản Google trên thiết bị rồi thử lại.';
 
   @override
+  String get choosePlayerNameTitle => 'Tên trong game';
+
+  @override
+  String choosePlayerNameBody(String name) {
+    return 'Bạn muốn dùng “$name” từ tài khoản Google hay đặt một tên khác?';
+  }
+
+  @override
+  String get choosePlayerNameUseCta => 'Dùng tên Google';
+
+  @override
+  String get choosePlayerNameCustomCta => 'Đặt tên khác';
+
+  @override
   String get providerConfigRequired =>
       'Đăng nhập sẽ khả dụng sau khi cấu hình provider phát hành.';
 

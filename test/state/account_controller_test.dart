@@ -5,13 +5,23 @@ import 'package:ban_bua_tuong/state/account_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FakeAccountRepository implements AccountRepository {
+class FakeAccountRepository
+    implements AccountRepository, CurrentAccountRepository {
   bool canceled = false;
   bool signedOut = false;
   Set<AuthProviderKind> providers = {AuthProviderKind.google};
+  AccountIdentity? restoredIdentity;
   @override
-  Future<AccountIdentity?> signIn(AuthProviderKind provider) async =>
-      canceled ? null : AccountIdentity(uid: 'uid-one', providers: {provider});
+  AccountIdentity? get currentIdentity => restoredIdentity;
+  @override
+  Future<AccountIdentity?> signIn(AuthProviderKind provider) async => canceled
+      ? null
+      : AccountIdentity(
+          uid: 'uid-one',
+          providers: {provider},
+          displayName: 'Nguyen Van Doi',
+          email: 'doi@example.com',
+        );
   @override
   Future<Set<AuthProviderKind>> link(AuthProviderKind provider) async =>
       providers = {...providers, provider};
@@ -72,6 +82,8 @@ void main() {
       auth.canceled = false;
       await controller.signIn(AuthProviderKind.google);
       expect(controller.state.uid, 'uid-one');
+      expect(controller.state.displayName, 'Nguyen Van Doi');
+      expect(controller.state.email, 'doi@example.com');
       expect(
         (await store.load(OwnerKey.account('uid-one'))).progress.coins,
         42,
@@ -84,6 +96,21 @@ void main() {
       );
     },
   );
+  test('restores the Firebase identity fields without another sign-in', () {
+    auth.restoredIdentity = const AccountIdentity(
+      uid: 'returning-user',
+      providers: {AuthProviderKind.google},
+      displayName: 'Doi Returning',
+      email: 'returning@example.com',
+    );
+
+    final controller = AccountController(auth, store: store);
+
+    expect(controller.state.phase, AccountPhase.authenticated);
+    expect(controller.state.uid, 'returning-user');
+    expect(controller.state.displayName, 'Doi Returning');
+    expect(controller.state.email, 'returning@example.com');
+  });
   test('link preserves uid and provider conflict is isolated', () async {
     final controller = AccountController(auth, store: store);
     await controller.signIn(AuthProviderKind.google);

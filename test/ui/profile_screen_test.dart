@@ -6,6 +6,7 @@ import 'package:ban_bua_tuong/state/providers.dart';
 import 'package:ban_bua_tuong/ui/screens/profile_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../support/pump_app.dart';
 
 class _PendingAccountRepository implements AccountRepository {
@@ -62,11 +63,32 @@ void main() {
       expect(find.byIcon(Icons.lock_outline), findsNWidgets(8));
     },
   );
-  testWidgets('account actions stay visible and accessible', (tester) async {
-    await pumpApp(tester, home: const ProfileScreen());
+  testWidgets('Android offers Google sign-in without Apple sign-in', (
+    tester,
+  ) async {
+    await pumpApp(
+      tester,
+      home: Theme(
+        data: ThemeData(platform: TargetPlatform.android),
+        child: const ProfileScreen(),
+      ),
+    );
     await tester.pump();
     await tester.ensureVisible(find.text('Tiếp tục với Google'));
     expect(find.text('Tiếp tục với Google'), findsOneWidget);
+    expect(find.text('Tiếp tục với Apple'), findsNothing);
+  });
+
+  testWidgets('iOS keeps Apple sign-in available', (tester) async {
+    await pumpApp(
+      tester,
+      home: Theme(
+        data: ThemeData(platform: TargetPlatform.iOS),
+        child: const ProfileScreen(),
+      ),
+    );
+    await tester.pump();
+    await tester.ensureVisible(find.text('Tiếp tục với Apple'));
     expect(find.text('Tiếp tục với Apple'), findsOneWidget);
   });
 
@@ -92,5 +114,115 @@ void main() {
     await tester.pump();
     expect(find.textContaining('Không đăng nhập được'), findsOneWidget);
     expect(find.text('Đã đăng nhập:'), findsNothing);
+  });
+
+  testWidgets('Google sign-in asks before replacing an existing player name', (
+    tester,
+  ) async {
+    final repository = _PendingAccountRepository();
+    await pumpApp(
+      tester,
+      home: const ProfileScreen(),
+      overrides: [
+        accountProvider.overrideWith(
+          (ref) => AccountController(
+            repository,
+            store: ref.watch(localPlayerStoreProvider),
+          ),
+        ),
+      ],
+    );
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ProfileScreen)),
+    );
+    await container.read(profileProvider.notifier).ready;
+    await container.read(profileProvider.notifier).saveName('Tên khách cũ');
+    await tester.pump();
+
+    final googleButton = find.text('Tiếp tục với Google');
+    await tester.ensureVisible(googleButton);
+    await tester.tap(googleButton);
+    repository.signInResult.complete(
+      const AccountIdentity(
+        uid: 'google-user',
+        providers: {AuthProviderKind.google},
+        displayName: 'Nguyễn Dội',
+        email: 'doi@example.com',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('google-name-choice')), findsOneWidget);
+    expect(
+      find.textContaining('“Nguyễn Dội” từ tài khoản Google'),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('profile-name'))).data,
+      'Tên khách cũ',
+    );
+
+    await tester.tap(find.byKey(const Key('google-name-use')));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<Text>(find.byKey(const Key('profile-name'))).data,
+      'Nguyễn Dội',
+    );
+    await tester.ensureVisible(find.byKey(const Key('account-email')));
+    expect(find.text('doi@example.com'), findsOneWidget);
+    expect(find.byKey(const Key('account-display-name')), findsOneWidget);
+  });
+
+  testWidgets('Google sign-in can save a different in-game name', (
+    tester,
+  ) async {
+    final repository = _PendingAccountRepository();
+    await pumpApp(
+      tester,
+      home: const ProfileScreen(),
+      overrides: [
+        accountProvider.overrideWith(
+          (ref) => AccountController(
+            repository,
+            store: ref.watch(localPlayerStoreProvider),
+          ),
+        ),
+      ],
+    );
+
+    final googleButton = find.text('Tiếp tục với Google');
+    await tester.ensureVisible(googleButton);
+    await tester.tap(googleButton);
+    repository.signInResult.complete(
+      const AccountIdentity(
+        uid: 'google-user',
+        providers: {AuthProviderKind.google},
+        displayName: 'Nguyễn Dội',
+        email: 'doi@example.com',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('google-name-custom')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('profile-name-editor')), findsOneWidget);
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const Key('profile-name-field')))
+          .initialValue,
+      'Nguyễn Dội',
+    );
+    await tester.enterText(
+      find.byKey(const Key('profile-name-field')),
+      'Dội Cao Thủ',
+    );
+    await tester.tap(find.byKey(const Key('profile-name-save')));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<Text>(find.byKey(const Key('profile-name'))).data,
+      'Dội Cao Thủ',
+    );
   });
 }

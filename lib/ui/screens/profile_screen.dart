@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/bb_tokens.dart';
 import '../../core/bb_theme.dart';
+import '../../domain/player_profile.dart';
 import '../../domain/profile_summary.dart';
 import '../../sim/arenas.dart';
 import '../../l10n/app_localizations.dart';
@@ -70,7 +71,8 @@ class ProfileScreen extends ConsumerWidget {
                                         const SizedBox(height: 8),
                                         Text(
                                           profile.profile.displayName(
-                                            t.defaultPlayerName,
+                                            account.displayName ??
+                                                t.defaultPlayerName,
                                           ),
                                           key: const Key('profile-name'),
                                           style: BbText.h2(BbTokens.cream),
@@ -189,38 +191,63 @@ class ProfileScreen extends ConsumerWidget {
     WidgetRef ref,
     ProfileState state,
   ) async {
-    final controller = TextEditingController(
-      text: state.profile.customDisplayName ?? '',
+    final value = await _showNameEditor(
+      context,
+      initialName: state.profile.customDisplayName ?? '',
     );
-    final value = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).editNameCta),
-        content: TextField(
-          controller: controller,
-          maxLength: 40,
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context).cancelCta),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text(AppLocalizations.of(context).saveCta),
-          ),
-        ],
-      ),
-    );
-    if (value == null) return;
-    final ok = await ref.read(profileProvider.notifier).saveName(value);
-    if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).invalidNameError)),
-      );
-    }
+    if (value == null || !context.mounted) return;
+    await _saveProfileName(context, ref, value);
   }
+}
+
+enum _GoogleNameChoice { google, custom }
+
+Future<String?> _showNameEditor(
+  BuildContext context, {
+  required String initialName,
+}) async {
+  String draft = initialName;
+  return showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      key: const Key('profile-name-editor'),
+      title: Text(AppLocalizations.of(context).editNameCta),
+      content: TextFormField(
+        key: const Key('profile-name-field'),
+        initialValue: initialName,
+        maxLength: kMaxDisplayNameGraphemes,
+        autofocus: true,
+        textInputAction: TextInputAction.done,
+        onChanged: (value) => draft = value,
+        onFieldSubmitted: (value) => Navigator.pop(context, value),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(AppLocalizations.of(context).cancelCta),
+        ),
+        FilledButton(
+          key: const Key('profile-name-save'),
+          onPressed: () => Navigator.pop(context, draft),
+          child: Text(AppLocalizations.of(context).saveCta),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<bool> _saveProfileName(
+  BuildContext context,
+  WidgetRef ref,
+  String value,
+) async {
+  final ok = await ref.read(profileProvider.notifier).saveName(value);
+  if (!ok && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).invalidNameError)),
+    );
+  }
+  return ok;
 }
 
 class _Badges extends StatelessWidget {
@@ -301,6 +328,8 @@ class _AccountCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(accountProvider.notifier);
     final bool authenticating = account.phase == AccountPhase.authenticating;
+    final bool supportsAppleSignIn =
+        Theme.of(context).platform != TargetPlatform.android;
     return _ProfilePanel(
       key: const Key('profile-account-card'),
       child: Column(
@@ -327,6 +356,22 @@ class _AccountCard extends ConsumerWidget {
                 : '${t.signedInStatus}: ${account.providers.map((p) => p.name).join(', ')}',
             style: BbText.body(BbTokens.cream.withValues(alpha: .72)),
           ),
+          if (account.isAuthenticated && account.displayName != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              account.displayName!,
+              key: const Key('account-display-name'),
+              style: BbText.h3(BbTokens.cream),
+            ),
+          ],
+          if (account.isAuthenticated && account.email != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              account.email!,
+              key: const Key('account-email'),
+              style: BbText.small(BbTokens.cream.withValues(alpha: .82)),
+            ),
+          ],
           if (authenticating) ...[
             const SizedBox(height: 10),
             const LinearProgressIndicator(
@@ -343,22 +388,25 @@ class _AccountCard extends ConsumerWidget {
               expand: true,
               onPressed: authenticating
                   ? null
-                  : () => controller.signIn(AuthProviderKind.google),
+                  : () => _signInWithGoogleNameChoice(context, ref, controller),
             ),
-            const SizedBox(height: 8),
-            BbButton(
-              label: t.signInAppleCta,
-              variant: BbVariant.karst,
-              expand: true,
-              onPressed: authenticating
-                  ? null
-                  : () => controller.signIn(AuthProviderKind.apple),
-            ),
+            if (supportsAppleSignIn) ...[
+              const SizedBox(height: 8),
+              BbButton(
+                label: t.signInAppleCta,
+                variant: BbVariant.karst,
+                expand: true,
+                onPressed: authenticating
+                    ? null
+                    : () => controller.signIn(AuthProviderKind.apple),
+              ),
+            ],
           ] else if (account.isAuthenticated &&
               account.phase != AccountPhase.deletionPending &&
               account.phase != AccountPhase.providerRecoveryRequired) ...[
             for (final provider in AuthProviderKind.values)
-              if (!account.providers.contains(provider))
+              if (!account.providers.contains(provider) &&
+                  (provider != AuthProviderKind.apple || supportsAppleSignIn))
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: BbButton(
@@ -400,6 +448,74 @@ class _AccountCard extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _signInWithGoogleNameChoice(
+    BuildContext context,
+    WidgetRef ref,
+    AccountController controller,
+  ) async {
+    await controller.signIn(AuthProviderKind.google);
+    if (!context.mounted) return;
+
+    final AccountState signedIn = ref.read(accountProvider);
+    if (!signedIn.isAuthenticated ||
+        !signedIn.providers.contains(AuthProviderKind.google)) {
+      return;
+    }
+
+    final ProfileController profile = ref.read(profileProvider.notifier);
+    await profile.ready;
+    if (!context.mounted) return;
+
+    final String googleName = signedIn.displayName?.trim() ?? '';
+    if (googleName.isEmpty) {
+      final customName = await _showNameEditor(
+        context,
+        initialName: ref.read(profileProvider).profile.customDisplayName ?? '',
+      );
+      if (customName != null && context.mounted) {
+        await _saveProfileName(context, ref, customName);
+      }
+      return;
+    }
+
+    final choice = await showDialog<_GoogleNameChoice>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          key: const Key('google-name-choice'),
+          title: Text(t.choosePlayerNameTitle),
+          content: Text(t.choosePlayerNameBody(googleName)),
+          actions: [
+            TextButton(
+              key: const Key('google-name-custom'),
+              onPressed: () => Navigator.pop(context, _GoogleNameChoice.custom),
+              child: Text(t.choosePlayerNameCustomCta),
+            ),
+            FilledButton(
+              key: const Key('google-name-use'),
+              onPressed: () => Navigator.pop(context, _GoogleNameChoice.google),
+              child: Text(t.choosePlayerNameUseCta),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!context.mounted) return;
+
+    if (choice == _GoogleNameChoice.google) {
+      await _saveProfileName(context, ref, googleName);
+      return;
+    }
+    if (choice != _GoogleNameChoice.custom) return;
+
+    final customName = await _showNameEditor(context, initialName: googleName);
+    if (customName != null && context.mounted) {
+      await _saveProfileName(context, ref, customName);
+    }
   }
 
   Future<void> _confirmSignOut(

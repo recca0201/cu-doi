@@ -7,6 +7,7 @@ import '../../core/release_features.dart';
 import '../../domain/character.dart';
 import '../../domain/player_progress.dart';
 import '../../state/profile_controller.dart';
+import '../../state/account_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sim/arena.dart';
 import '../../sim/arenas.dart';
@@ -31,6 +32,7 @@ class MenuScreen extends ConsumerWidget {
     final AppLocalizations t = AppLocalizations.of(context);
     final PlayerProgress progress = ref.watch(progressProvider);
     final ProfileState profile = ref.watch(profileProvider);
+    final AccountState account = ref.watch(accountProvider);
     ref.watch(dialogueSeenProvider);
 
     final int firstUnfinished = kArenas
@@ -168,6 +170,7 @@ class MenuScreen extends ConsumerWidget {
                               t: t,
                               progress: progress,
                               profile: profile,
+                              accountDisplayName: account.displayName,
                               currentArena: firstUnfinished,
                               onSettings: () => Navigator.of(context).push(
                                 MaterialPageRoute<void>(
@@ -298,6 +301,7 @@ class _PlayerHud extends StatelessWidget {
     required this.t,
     required this.progress,
     required this.profile,
+    required this.accountDisplayName,
     required this.currentArena,
     required this.onSettings,
     required this.onProfile,
@@ -306,6 +310,7 @@ class _PlayerHud extends StatelessWidget {
   final AppLocalizations t;
   final PlayerProgress progress;
   final ProfileState profile;
+  final String? accountDisplayName;
   final int currentArena;
   final VoidCallback onSettings;
   final VoidCallback onProfile;
@@ -374,7 +379,10 @@ class _PlayerHud extends StatelessWidget {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   profile.profile
-                                      .displayName(t.defaultPlayerName)
+                                      .displayName(
+                                        accountDisplayName ??
+                                            t.defaultPlayerName,
+                                      )
                                       .toUpperCase(),
                                   maxLines: 1,
                                   style: BbText.h3(

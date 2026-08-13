@@ -405,13 +405,6 @@ final localPlayerStoreProvider = Provider<LocalPlayerStore>(
   (ref) => LocalPlayerStore(ref.watch(sharedPreferencesProvider)),
 );
 
-final profileProvider = StateNotifierProvider<ProfileController, ProfileState>(
-  (ref) => ProfileController(
-    ref.watch(localPlayerStoreProvider),
-    const OwnerKey.guest(),
-  ),
-);
-
 final accountRepositoryProvider = Provider<AccountRepository>((ref) {
   if (!ref.watch(firebaseBootstrapProvider).enabled) {
     return _GuestOnlyAccountRepository();
@@ -433,6 +426,18 @@ final accountProvider = StateNotifierProvider<AccountController, AccountState>(
     deletionRepository: ref.watch(accountDeletionRepositoryProvider),
   ),
 );
+
+final profileProvider = StateNotifierProvider<ProfileController, ProfileState>((
+  ref,
+) {
+  final String? uid = ref.watch(
+    accountProvider.select((AccountState account) => account.uid),
+  );
+  return ProfileController(
+    ref.watch(localPlayerStoreProvider),
+    uid == null ? const OwnerKey.guest() : OwnerKey.account(uid),
+  );
+});
 
 final dialogueSeenRepositoryProvider = Provider<DialogueSeenRepository>(
   (ref) => LocalDialogueSeenRepository(ref.watch(sharedPreferencesProvider)),

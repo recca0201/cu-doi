@@ -20,6 +20,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final Rect titleRect = tester.getRect(
+      find.byKey(const Key('how-to-title')),
+    );
+    final Rect closeRect = tester.getRect(
+      find.byKey(const Key('how-to-close')),
+    );
+    expect(
+      titleRect.overlaps(closeRect),
+      isFalse,
+      reason: 'The close button must not cover the rules title banner',
+    );
+
     await expectLater(
       find.byKey(const Key('how-to-play-golden')),
       matchesGoldenFile('goldens/how_to_play_390x1600.png'),
@@ -89,9 +101,15 @@ void main() {
             if (part == 'body') {
               expect(
                 cardRect.bottom - partRect.bottom,
-                greaterThanOrEqualTo(40),
+                greaterThanOrEqualTo(22),
                 reason:
-                    'Rule $number copy must stay above the ornamental bottom rail',
+                    'Rule $number copy must stay inside the framed content well',
+              );
+              expect(
+                partRect.right,
+                lessThanOrEqualTo(cardRect.right - 22),
+                reason:
+                    'Rule $number copy must stay clear of the right frame rail',
               );
             }
           }

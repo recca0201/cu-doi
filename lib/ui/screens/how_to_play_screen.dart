@@ -15,7 +15,6 @@ import '../widgets/bb_widgets.dart';
 abstract final class _TutorialArt {
   static const String title =
       'assets/images/ui/karst/rules_title_banner_v2.png';
-  static const String cardFrame = 'assets/images/ui/karst/detail_panel.png';
 }
 
 enum _RuleArt { aim, bounce, direct, score, floor }
@@ -149,8 +148,10 @@ class _RulesHeader extends StatelessWidget {
       alignment: Alignment.center,
       children: <Widget>[
         Positioned(
-          left: 32,
-          right: 32,
+          // Reserve the close button's 48dp hit area plus breathing room.
+          // Keep both sides equal so the banner remains visually centered.
+          left: 58,
+          right: 58,
           top: 8,
           child: SizedBox(
             key: const Key('how-to-title'),
@@ -171,6 +172,7 @@ class _RulesHeader extends StatelessWidget {
           right: 0,
           top: 0,
           child: BbIconButton(
+            key: const Key('how-to-close'),
             icon: Icons.close_rounded,
             variant: BbVariant.karst,
             semanticLabel: MaterialLocalizations.of(context).closeButtonTooltip,
@@ -202,6 +204,12 @@ class _RuleCard extends StatelessWidget {
     constraints: const BoxConstraints(minHeight: 146),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(18),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: <Color>[Color(0xFA075B56), Color(0xFA043C3B)],
+      ),
+      border: Border.all(color: BbTokens.karstBronze, width: 2),
       boxShadow: const <BoxShadow>[
         BoxShadow(color: Color(0x993D210E), offset: Offset(0, 3)),
       ],
@@ -209,23 +217,10 @@ class _RuleCard extends StatelessWidget {
     clipBehavior: Clip.antiAlias,
     child: Stack(
       children: <Widget>[
-        Positioned.fill(
-          child: Transform.scale(
-            scaleX: 1.16,
-            scaleY: 1.32,
-            alignment: Alignment.topCenter,
-            child: Image.asset(
-              _TutorialArt.cardFrame,
-              fit: BoxFit.fill,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
-        ),
         Padding(
-          // The source frame has a thick ornamental rail along the bottom.
-          // Keep copy above that rail instead of treating the full bitmap as
-          // usable content space, especially in the stacked phone layout.
-          padding: const EdgeInsets.fromLTRB(28, 21, 34, 44),
+          // The copy and diagram use the same geometry as the visible panel,
+          // so they cannot drift outside a transparent bitmap frame.
+          padding: const EdgeInsets.fromLTRB(24, 22, 24, 24),
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               final double textScale = MediaQuery.textScalerOf(

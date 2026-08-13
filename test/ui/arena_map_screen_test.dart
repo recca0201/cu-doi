@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../support/pump_app.dart';
 
 void main() {
-  testWidgets('karst shell shows chapter progress and three-column cards', (
+  testWidgets('karst shell shows chapter journey and three-column cards', (
     tester,
   ) async {
     await pumpApp(tester, home: const ArenaMapScreen());
@@ -16,6 +16,10 @@ void main() {
       BbTokens.karstDeep,
     );
     expect(find.byKey(const Key('arena-map-title')), findsOneWidget);
+    expect(find.byKey(const Key('chapter-journey')), findsOneWidget);
+    for (var chapter = 1; chapter <= 4; chapter++) {
+      expect(find.byKey(ValueKey<String>('chapter-$chapter')), findsOneWidget);
+    }
     expect(find.text('Chương 1 · Học luật dội'), findsOneWidget);
     expect(find.text('0/15 sao'), findsWidgets);
     expect(find.byKey(const ValueKey<String>('arena-1')), findsOneWidget);

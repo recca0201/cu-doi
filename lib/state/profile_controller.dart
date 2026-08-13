@@ -35,10 +35,13 @@ class ProfileState {
 
 class ProfileController extends StateNotifier<ProfileState> {
   ProfileController(this.store, this.owner) : super(const ProfileState()) {
-    restore();
+    _ready = restore();
   }
   final LocalPlayerStore store;
   final OwnerKey owner;
+  late final Future<void> _ready;
+  Future<void> get ready => _ready;
+
   Future<void> restore() async {
     final envelope = await store.load(owner);
     state = ProfileState(profile: envelope.profile, restoring: false);
@@ -53,6 +56,7 @@ class ProfileController extends StateNotifier<ProfileState> {
   void cancelEdit() =>
       state = ProfileState(profile: state.profile, restoring: false);
   Future<bool> saveName([String? value]) async {
+    await ready;
     final draft = value ?? state.draft ?? '';
     final error = PlayerProfile.validateDisplayName(draft);
     if (error != null) {
@@ -87,6 +91,7 @@ class ProfileController extends StateNotifier<ProfileState> {
   }
 
   Future<bool> saveAvatar(PlayerAvatarRef avatar) async {
+    await ready;
     final envelope = await store.load(owner);
     if (!await store.save(
       owner,
