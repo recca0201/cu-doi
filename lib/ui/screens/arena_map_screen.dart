@@ -243,8 +243,10 @@ class _ArenaMapScreenState extends ConsumerState<ArenaMapScreen> {
 
 abstract final class _MapArt {
   static const String backButton = 'assets/images/ui/karst/back_button.png';
-  static const String selectTitle =
-      'assets/images/ui/karst/stage_title_banner_v2.png';
+  static String selectTitle(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'en'
+      ? 'assets/images/ui/karst/stage_title_banner_en_v1.png'
+      : 'assets/images/ui/karst/stage_title_banner_v2.png';
   static const String levelCardFrame =
       'assets/images/ui/karst/level_card_frame.png';
   static const String detailPanel =
@@ -397,7 +399,7 @@ class _MapAppBar extends StatelessWidget {
                   key: const Key('arena-map-title'),
                   height: 80,
                   child: Image.asset(
-                    _MapArt.selectTitle,
+                    _MapArt.selectTitle(context),
                     fit: BoxFit.contain,
                     filterQuality: FilterQuality.high,
                   ),

@@ -13,8 +13,10 @@ import '../widgets/bb_backdrop.dart';
 import '../widgets/bb_widgets.dart';
 
 abstract final class _TutorialArt {
-  static const String title =
-      'assets/images/ui/karst/rules_title_banner_v2.png';
+  static String title(BuildContext context) =>
+      Localizations.localeOf(context).languageCode == 'en'
+      ? 'assets/images/ui/karst/rules_title_banner_en_v1.png'
+      : 'assets/images/ui/karst/rules_title_banner_v2.png';
 }
 
 enum _RuleArt { aim, bounce, direct, score, floor }
@@ -157,7 +159,7 @@ class _RulesHeader extends StatelessWidget {
             key: const Key('how-to-title'),
             height: 92,
             child: Image.asset(
-              _TutorialArt.title,
+              _TutorialArt.title(context),
               fit: BoxFit.contain,
               filterQuality: FilterQuality.high,
             ),

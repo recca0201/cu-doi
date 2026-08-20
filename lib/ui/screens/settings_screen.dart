@@ -34,8 +34,9 @@ class SettingsScreen extends ConsumerWidget {
                 child: Column(
                   children: <Widget>[
                     BbKarstHeader(
-                      titleAsset:
-                          'assets/images/ui/karst/settings_title_banner_v2.png',
+                      titleAsset: settings.localeCode == 'en'
+                          ? 'assets/images/ui/karst/settings_title_banner_en_v1.png'
+                          : 'assets/images/ui/karst/settings_title_banner_v2.png',
                       titleLabel: t.settingsTitle,
                       titleKey: const Key('settings-title'),
                       backLabel: t.backCta,
