@@ -1,0 +1,24 @@
+Use case: ads-marketing
+Asset type: master key art background for mobile game store listing
+Primary request: create a polished landscape key art scene for the Vietnamese
+ricochet arcade game “Cú Dội”, using the supplied karst landscape as the
+environmental style reference, the supplied pangolin as the exact mascot
+identity reference, and the supplied gameplay screenshot only as a reference
+for the cyan ricochet trail and dark-teal arena mood.
+Scene/backdrop: bright Vietnamese limestone karst valley at sunrise, layered
+mist, jade-green cliffs, warm gold light, ornate bronze and lacquer-teal accents.
+Subject: the same orange pangolin mascot, dynamic joyful rolling pose near the
+center-right, riding a vivid cyan ricochet arc that visibly bounces once from a
+bronze-edged stone surface; expressive, energetic, family-friendly.
+Style/medium: high-end stylized mobile game key art, crisp painterly 3D
+illustration, sticker-like hard highlights, premium casual arcade polish.
+Composition/framing: wide landscape, mascot and ricochet action in the central
+safe zone, uncluttered luminous space on the left-center for later logo placement;
+preserve readability when cropped to 1024×500.
+Color palette: karst turquoise, jade lacquer, warm bronze-gold, orange mascot,
+cyan energy.
+Constraints: no text, letters, logo, app icon, UI panels, device, or watermark;
+no bubble-shooter grids, color matching, ceiling grids, or bottom wall; the
+ricochet arc bounces from a solid side surface, not another target.
+Avoid: galaxy, outer space, navy-purple shell, neon sci-fi, photorealism, dark
+gloomy scene, excessive tiny details.
