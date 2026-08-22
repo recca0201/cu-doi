@@ -51,11 +51,14 @@ dev_dependencies:
 # Regenerate with: dart run flutter_launcher_icons
 flutter_launcher_icons:
   ios: true
-  android: false
-  image_path: "assets/icon/app_icon.png"
+  android: true
+  image_path: "assets/icon/app_icon_v2.png"
+  adaptive_icon_background: "#075D55"
+  adaptive_icon_foreground: "assets/icon/app_icon_v2_foreground.png"
   remove_alpha_ios: true # App Store rejects an icon with an alpha channel.
-  image_path_ios_dark_transparent: "assets/icon/app_icon_dark.png"
-  image_path_ios_tinted_grayscale: "assets/icon/app_icon_tinted.png"
+  image_path_ios_dark_transparent: "assets/icon/app_icon_v2_dark.png"
+  image_path_ios_tinted_grayscale: "assets/icon/app_icon_v2_tinted.png"
+  desaturate_tinted_to_grayscale_ios: true
 
 flutter:
   uses-material-design: true
